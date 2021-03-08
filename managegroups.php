@@ -106,12 +106,12 @@ include_once('header.php');
                 <table class="table-fixed min-w-full">
 					<thead class="uppercase text-xs bg-bluegray-50 border-b border-gray-200 text-bluegray-900">
 						<tr>
-                            <th class="text-left w-2/12 py-4 px-4 font-semibold">Group Name</th>
-                            <th class="text-center w-2/12 py-4 px-4 font-semibold">Latitude</th>
-                            <th class="text-center w-2/12 py-4 px-4 font-semibold">Longitude</th>
-                            <th class="text-center w-2/12 py-4 px-4 font-semibold">Number of users</th>
-                            <th class="text-center w-2/12 py-4 px-4 font-semibold">Number of devices</th>
-                            <th class="text-center w-2/12 py-4 px-4 font-semibold"></th>
+                            <th class="text-left w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Group Name</th>
+                            <th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Latitude</th>
+                            <th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Longitude</th>
+                            <th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Number of users</th>
+                            <th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Number of devices</th>
+                            <th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap"></th>
 						</tr>
 					</thead>
 					<tbody id="groupsTableBody">

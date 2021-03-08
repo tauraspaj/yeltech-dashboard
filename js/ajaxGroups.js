@@ -73,7 +73,7 @@ $(document).ready(function () {
 
                     outputTable += `
                     <tr class="hover:bg-bluegray-100 h-12 border-b border-gray-200">
-                        <td class="text-left py-2 px-4 text-sm text-bluegray-600 font-semibold whitespace-nowrap">`+ groups[i].groupName + `</td>
+                        <td class="text-left py-2 px-4 text-sm text-lightblue-500 font-semibold whitespace-nowrap">`+ groups[i].groupName + `</td>
                         <td class="text-center py-2 px-4 text-sm text-gray-600">`+ groups[i].latitude + `</td>
                         <td class="text-center py-2 px-4 text-sm text-gray-600">`+ groups[i].longitude + `</td>
                         <td class="text-center py-2 px-4 text-sm text-gray-600">`+ groups[i].totalUsersCount +`</td>
