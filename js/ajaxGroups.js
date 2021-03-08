@@ -36,14 +36,15 @@ $(document).ready(function () {
 	}
 
 
-	function showGroups(groupId, perPage, pageNumber) {
+	function showGroups(perPage, pageNumber) {
 		$.ajax({
 			url: './includes/sqlGroups.php',
 			type: 'POST',
 			data: {
 				groupsPerPage: perPage,
 				offset: perPage * (pageNumber - 1),
-				groupId: groupId,
+				groupId: groupFilter,
+				pageSearchString: pageSearchString,
 				function: 'showGroups'
 			},
 			beforeSend: function () {
@@ -51,6 +52,7 @@ $(document).ready(function () {
 			},
 			success: function (data) {
 				$('#loadingOverlay').hide();
+				console.log(data);
 				var groups = JSON.parse(data);
 				console.log(groups);
 
@@ -71,12 +73,16 @@ $(document).ready(function () {
 
                     outputTable += `
                     <tr class="hover:bg-bluegray-100 h-12 border-b border-gray-200">
-                        <td class="text-left py-2 px-4 text-sm text-bluegray-700 font-semibold">`+ groups[i].groupName + `</td>
-                        <td class="text-center py-2 px-4 text-sm text-bluegray-600">`+ groups[i].latitude + `</td>
-                        <td class="text-center py-2 px-4 text-sm text-bluegray-600">`+ groups[i].longitude + `</td>
-                        <td class="text-center py-2 px-4 text-sm text-bluegray-600">`+ groups[i].totalUsersCount +`</td>
-                        <td class="text-center py-2 px-4 text-sm text-bluegray-600">`+ groups[i].totalDevicesCount +`</td>
-                        <td class="text-center py-2 px-4 text-sm text-bluegray-600"><button id="select" data-id="`+ groups[i].groupId +`" class="focus:outline-none text-xs text-lightblue-900 uppercase bg-lightblue-100 border border-lightblue-500 rounded font-semibold p-1 hover:bg-lightblue-300">View</button></td>
+                        <td class="text-left py-2 px-4 text-sm text-bluegray-600 font-semibold whitespace-nowrap">`+ groups[i].groupName + `</td>
+                        <td class="text-center py-2 px-4 text-sm text-gray-600">`+ groups[i].latitude + `</td>
+                        <td class="text-center py-2 px-4 text-sm text-gray-600">`+ groups[i].longitude + `</td>
+                        <td class="text-center py-2 px-4 text-sm text-gray-600">`+ groups[i].totalUsersCount +`</td>
+                        <td class="text-center py-2 px-4 text-sm text-gray-600">`+ groups[i].totalDevicesCount +`</td>
+						<td class="text-center" id="select" data-id="`+ groups[i].groupId + `">
+							<button class="focus:outline-none text-xs text-gray-600 uppercase bg-gray-50 border border-gray-300 rounded font-medium p-1 hover:bg-gray-200">
+								Actions
+							</button>
+						</td>
                     </tr>
                     `;
 				}
@@ -94,31 +100,68 @@ $(document).ready(function () {
 	var groupsPerPage = 10;
 	var groupsTable = $('#groupsTableBody');
 	var totalCount = 0;
+
+	// ! Initial table load settings
+	var pageSearchString = '';
 	var groupFilter = '`groups`.groupId';
 
 	// Show groups on load
-	showGroups('`groups`.groupId', groupsPerPage, groupsPageNumber);
+	showGroups(groupsPerPage, groupsPageNumber);
 
-	// Start listening for clicks on any groups
+	// ! Start listening for clicks on any groups
 	groupsTable.delegate('#select', 'click', function () {
 		alert($(this).attr('data-id'));
 	})
 
-	// Display new table on filter
-	$('#groupsGroupFilter').change(function () {
+	// ! Slide down content functionality
+	$('#groupsTitle, #productsTitle').on('click', function() {
+		// $(this).siblings().last().slideToggle('fast');
+		var icons = $(this).children('#icons');
+		var body = $(this).siblings().last()
+		if (body.is(':hidden')) {
+			icons.children('#icon_plus').toggleClass('rotate-180')
+			icons.children('#icon_plus').fadeOut(100, function() {
+				icons.children('#icon_minus').fadeIn(100);
+			});
+			body.slideDown("fast");
+		} else {
+			icons.children('#icon_minus').toggleClass('rotate-180')
+			icons.children('#icon_minus').fadeOut(100, function() {
+				icons.children('#icon_plus').fadeIn(100);
+			});
+			body.slideUp("fast");
+		}
+	})
+
+	// ! Listen for search string
+	var debounceTimeout = null;
+	$('#pageSearchBar').on('keyup', function() {
+		pageSearchString = $(this).val();
+		
+		clearTimeout(debounceTimeout);
+		debounceTimeout = setTimeout(function() {
+			groupsPageNumber = 1;
+			showGroups(groupsPerPage, groupsPageNumber);
+		}, 200);
+	})
+
+	// ! Listen for changes on group filter
+	$('#groupFilter').change(function () {
 		groupFilter = $(this).find(':selected').attr('data-id');
 		groupsPageNumber = 1;
-		showGroups(groupFilter, groupsPerPage, groupsPageNumber);
+		showGroups(groupsPerPage, groupsPageNumber);
 	})
 
+	// ! Next button
 	$('#nextGroupsButton').on('click', function () {
 		groupsPageNumber += 1;
-		showGroups(groupFilter, groupsPerPage, groupsPageNumber);
+		showGroups(groupsPerPage, groupsPageNumber);
 	})
 
+	// ! Previous button
 	$('#previousGroupsButton').on('click', function () {
 		groupsPageNumber -= 1;
-		showGroups(groupFilter, groupsPerPage, groupsPageNumber);
+		showGroups(groupsPerPage, groupsPageNumber);
 	})
 
 
@@ -167,7 +210,7 @@ $(document).ready(function () {
 				setTimeout(function() {
 					$('#successMessage').addClass('hidden');
 				}, 3000)
-				showGroups('`groups`.groupId', groupsPerPage, groupsPageNumber);
+				showGroups(groupsPerPage, groupsPageNumber);
 
 				// Remove green border from input field
 				$('#groupName').removeClass('border-green-500')

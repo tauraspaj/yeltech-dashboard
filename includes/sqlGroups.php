@@ -3,27 +3,20 @@ require_once 'dbh.inc.php';
 session_start();
 
 if ($_POST['function'] == 'showGroups') {
-	if (isset($_POST['groupId'])) {
-		if ($_SESSION['roleId'] == 4 || $_SESSION['roleId'] == 3) {
-			$groupFilter = $_SESSION['groupId'];
-		} else {
-			$groupFilter = $_POST['groupId'];
-		}
+	if ($_SESSION['roleId'] == 4 || $_SESSION['roleId'] == 3) {
+		$groupFilter = $_SESSION['groupId'];
 	} else {
-		if ($_SESSION['roleId'] == 4 || $_SESSION['roleId'] == 3) {
-			$groupFilter = $_SESSION['groupId'];
-		} else {
-			$groupFilter = '`groups`.groupId';
-		}
+		$groupFilter = $_POST['groupId'];
 	}
 	
 	$groupsPerPage = $_POST['groupsPerPage'];
 	$offset = $_POST['offset'];
+	$searchString = $_POST['pageSearchString'];
 	
 	$sql = "
 	SELECT `groups`.groupId, `groups`.groupName, `groups`.latitude, `groups`.longitude
 	FROM `groups`
-	WHERE `groups`.groupId = $groupFilter
+	WHERE (`groups`.groupId = $groupFilter) AND (`groups`.groupName LIKE '%$searchString%')
 	ORDER BY `groups`.groupName ASC
 	LIMIT $groupsPerPage OFFSET $offset
 	";
@@ -72,7 +65,7 @@ if ($_POST['function'] == 'showGroups') {
 	}
 	
 	$sqlTotal = "
-	SELECT COUNT(*) as totalRows FROM `groups` WHERE groupId = $groupFilter
+	SELECT COUNT(*) as totalRows FROM `groups` WHERE (`groups`.groupId = $groupFilter) AND (`groups`.groupName LIKE '%$searchString%')
 	";
 	
 	$result = mysqli_query($conn, $sqlTotal);
