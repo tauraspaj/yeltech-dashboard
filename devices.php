@@ -218,8 +218,8 @@ include_once('header.php');
 		<!-- End of card -->
 
 		<!-- Table card -->
-		<div class="col-span-1 md:col-span-2 lg:col-span-3 bg-white shadow-lg">
-			<div class="flex bg-white overflow-x-auto inline-block min-w-full border border-b-0 border-gray-200">
+		<div class="col-span-1 md:col-span-2 lg:col-span-3 bg-white shadow-lg border">
+			<div class="flex bg-white overflow-x-auto inline-block min-w-full">
 				<table class="table-fixed min-w-full">
 					<thead class="uppercase text-xs bg-bluegray-50 border-b border-gray-200 text-bluegray-900">
 						<tr>

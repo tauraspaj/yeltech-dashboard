@@ -94,7 +94,9 @@ $(document).ready(function () {
 						<td class="text-center py-2 px-4 text-sm text-gray-600">`+ users[i].phoneNumber + `</td>
 						<td class="text-center py-2 px-4 text-sm text-gray-600">`+ users[i].sendingType + `</td>
 						<td class="text-center" id="select" data-id="`+ users[i].userId + `">
-							<button class="focus:outline-none text-xs text-gray-600 uppercase bg-gray-50 border border-gray-300 rounded font-medium p-1 mr-2 hover:bg-gray-200">Actions</button>
+							<button class="focus:outline-none text-xs text-gray-600 uppercase bg-gray-50 border border-gray-300 rounded font-medium p-1 hover:bg-gray-200">
+								Actions
+							</button>
 						</td>
 					</tr>
 					`;

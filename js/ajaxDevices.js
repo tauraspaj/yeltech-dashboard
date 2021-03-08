@@ -128,13 +128,15 @@ $(document).ready(function () {
 					outputTable += `
 					<tr class="hover:bg-bluegray-100 border-b border-gray-200 h-12">
 						<td class="text-left py-2 px-4 text-sm text-bluegray-600"><div class="flex items-center"><span class="font-semibold whitespace-nowrap">`+ display1 + `</span>`+ status +`</div><span class="text-gray-400">`+ display2 + `</span></td>
-						<td class="text-center py-2 px-4 text-sm text-bluegray-600 capitalize">`+ devices[i].groupName + `</td>
-						<td class="text-center py-2 px-4 text-sm text-bluegray-600">`+ location + `</td>
-						<td class="text-center py-2 px-4 text-sm text-bluegray-600">`+ nextCalibrationDate + `</td>
-						<td class="text-center py-2 px-4 text-sm text-bluegray-600">`+ alarm +`</td>
-						<td class="text-center py-2 px-4 text-sm text-bluegray-600"><button id='select' data-id=`+ devices[i].deviceId + ` class="focus:outline-none text-xs text-lightblue-900 uppercase bg-lightblue-100 border border-lightblue-500 rounded font-semibold p-1 hover:bg-lightblue-300">
-							<p>Select</p>
-							</button></td>
+						<td class="text-center py-2 px-4 text-sm text-gray-600 capitalize">`+ devices[i].groupName + `</td>
+						<td class="text-center py-2 px-4 text-sm text-gray-600">`+ location + `</td>
+						<td class="text-center py-2 px-4 text-sm text-gray-600">`+ nextCalibrationDate + `</td>
+						<td class="text-center py-2 px-4 text-sm text-gray-600">`+ alarm +`</td>
+						<td class="text-center" id="select" data-id="`+ devices[i].deviceId + `">
+							<button class="focus:outline-none text-xs text-gray-600 uppercase bg-gray-50 border border-gray-300 rounded font-medium py-1 px-2 hover:bg-gray-200">
+								View
+							</button>
+						</td>
 					</tr>
 					`;
 				}
