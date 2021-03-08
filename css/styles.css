@@ -1,0 +1,46 @@
+/* Poppins font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+/* Roboto font */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+	.text-field-input {
+		@apply outline-none border border-gray-200 h-10 px-4 text-sm font-semibold text-bluegray-800 bg-bluegray-100 w-full transition-all focus:border-gray-400 rounded;
+	}
+
+	.select-field-input {
+		@apply outline-none border border-gray-200 h-10 px-4 text-sm capitalize font-semibold text-bluegray-800 bg-bluegray-100 transition-all hover:border-gray-400 focus:border-gray-400 hover:text-bluegray-900 rounded;
+	}
+
+	.form-field-title {
+		@apply text-xs uppercase font-semibold text-bluegray-600 px-2 py-1;
+	}
+}
+
+@layer utilities {
+	@responsive {
+		.scrollbars-hidden::-webkit-scrollbar {
+			display: none;
+		}
+	}
+}
+
+.-z-m1 {
+	z-index: -1;
+}
+
+.shape {
+	width: 100%;
+	min-height: 100vh;
+	clip-path: polygon(0 50%, 100% 90%, 100% 100%, 0% 100%);
+	position: absolute;
+	z-index: -1;
+}
+
+.nav-hidden {
+	margin-left: -13rem;	
+}
