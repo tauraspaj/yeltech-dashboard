@@ -156,10 +156,7 @@ $(document).ready(function () {
         channels: false
     };
 
-    $('#devPrefix').html( $('#productType').find(':selected').text() );
     $('#productType').on('change blur', function() {
-        $('#devPrefix').html( $('#productType').find(':selected').text() );
-
         var dataid = $(this).find(':selected').attr('data-id');
         if (dataid != -1) {
             $(this).removeClass('border-red-500');
