@@ -4,6 +4,235 @@ session_start();
 
 $function = $_POST['function'];
 
+switch ($_POST['function']) {
+	// ! Load product data
+	case 'loadProductData':
+		$deviceId = $_POST['deviceId'];		
+		$sql = "
+		SELECT devices.productId as productId, products.productName as productName
+		FROM devices 
+		LEFT JOIN products ON devices.productId = products.productId
+		WHERE deviceId = $deviceId
+		";
+
+		$result = mysqli_query($conn, $sql);
+		if ( mysqli_num_rows($result) > 0 ) {
+			while ($row = mysqli_fetch_assoc($result)) {
+				echo json_encode($row);
+			}
+		}
+		break;
+	// ! End of product data
+
+	// ! Get latest readings
+	case 'rtmu_getLatestReadings':
+		$deviceId = $_POST['deviceId'];
+		$return = array();
+
+		// Get the number of AI channels
+		$numberOfAI = '';
+		$sql = "SELECT COUNT(*) as numberOfAI FROM channels WHERE channelType = 'AI' AND deviceId = $deviceId";
+		$result = mysqli_query($conn, $sql);		
+		if (mysqli_num_rows($result) > 0) {
+			while ($row = mysqli_fetch_assoc($result)) {
+				$return['numberOfAI'] = $row['numberOfAI'];
+				$numberOfAI = $row['numberOfAI'];
+			}
+		}
+		
+		// Get latest message from DI channel
+		$sql2 = "
+		SELECT smsAlarms.smsAlarmHeader, smsAlarms.smsAlarmTime
+		FROM smsAlarms
+		LEFT JOIN channels ON smsAlarms.deviceId = channels.deviceId AND channels.channelType = 'DI'
+		WHERE smsAlarms.deviceId = $deviceId 
+		ORDER BY smsAlarms.smsAlarmId DESC
+		LIMIT 1;
+		";
+		$result2 = mysqli_query($conn, $sql2);		
+		if (mysqli_num_rows($result2) > 0) {
+			while ($row = mysqli_fetch_assoc($result2)) {
+				$return['probeStatus'] = $row;
+			}
+		} else {
+			$return['probeStatus'] = 'Undefined';
+		}
+		
+		// Get latest reading from AI channels
+		$sql3 = "
+		SELECT measurements.measurement, measurements.measurementTime, channels.channelName
+		FROM measurements
+		LEFT JOIN channels ON measurements.channelId = channels.channelId
+		WHERE measurements.deviceId = $deviceId
+		ORDER BY measurements.measurementId DESC
+		LIMIT $numberOfAI;
+		";
+		$readings = array();
+		$result3 = mysqli_query($conn, $sql3);
+		if (mysqli_num_rows($result3) > 0) {
+			while ($row = mysqli_fetch_assoc($result3)) {
+				$readings[] = $row;
+			}
+			$return['latestMeasurements'] = $readings;
+		} else {
+			$return['latestMeasurements'] = 'Undefined';
+		}
+
+		$sql4 = "SELECT devices.deviceStatus FROM devices WHERE devices.deviceId = $deviceId";
+		$result4 = mysqli_query($conn, $sql4);
+		if ( mysqli_num_rows($result4) > 0 ) {
+			while ($row = mysqli_fetch_assoc($result4)) {
+				$return['deviceStatus'] = $row['deviceStatus'];
+			}
+		}
+		
+		echo json_encode($return);
+		break;
+	// ! End of latest readings
+
+	// ! Get device coordinates
+	case 'getDeviceCoordinates':
+		$deviceId = $_POST['deviceId'];
+		$return = array();
+
+		$sql = "
+		SELECT smsStatus.latitude, smsStatus.longitude 
+		FROM smsStatus 
+		WHERE ((latitude IS NOT NULL AND longitude IS NOT NULL) AND (deviceId = {$deviceId})) 
+		ORDER BY smsStatusId DESC LIMIT 1;
+		";
+		
+		$result = mysqli_query($conn, $sql);
+		
+		if (mysqli_num_rows($result) > 0) {
+			while ($row = mysqli_fetch_assoc($result)) {
+				$return['latitude'] = $row['latitude'];
+				$return['longitude'] = $row['longitude'];
+			}
+		} else {
+			$return = 'Error';
+		}
+		
+		echo json_encode($return);
+		break;
+	// ! End of device coordinates
+	// ! Show alarms
+	case 'loadTable_alarms':
+		$alarmsPerPage = $_POST['alarmsPerPage'];
+		$offset = $_POST['offset'];
+		$deviceId = $_POST['deviceId'];
+		$return = array();
+		
+		$sql = "
+		SELECT smsAlarms.smsAlarmHeader, smsAlarms.smsAlarmReading, smsAlarms.smsAlarmTime, smsAlarms.isAcknowledged, channels.channelName as channelName
+		FROM smsAlarms
+		LEFT JOIN channels ON smsAlarms.channelId = channels.channelId
+		WHERE smsAlarms.deviceId = $deviceId
+		ORDER BY smsAlarms.smsAlarmTime DESC
+		LIMIT $alarmsPerPage OFFSET $offset
+		";
+		$result = mysqli_query($conn, $sql);
+		if (mysqli_num_rows($result) > 0) {
+			while ($row = mysqli_fetch_assoc($result)) {
+				$return[] = $row;
+			}
+		}
+		
+		
+		$sqlTotal = "
+		SELECT COUNT(*) as totalRows FROM smsAlarms WHERE smsAlarms.deviceId = $deviceId
+		";
+		$result2 = mysqli_query($conn, $sqlTotal);
+		if (mysqli_num_rows($result2) > 0) {
+			while ($row = mysqli_fetch_assoc($result2)) {
+				$return[] = $row;
+			}
+		}
+		
+		echo json_encode($return);
+		break;
+	// ! End of alarms
+	case 'getDatasets':
+		$deviceId = $_POST['deviceId'];
+		$dateFrom = $_POST['dateFrom'];
+		$dateTo = $_POST['dateTo'];
+
+		$return = array();
+
+		$sql = "
+		SELECT channels.channelId, channels.channelName
+		FROM channels
+		WHERE deviceId = $deviceId && channelType = 'AI'
+		";
+		$result = mysqli_query($conn, $sql);
+		if ( mysqli_num_rows($result) > 0 ) {
+			while ($row = mysqli_fetch_assoc($result)) {
+				
+				$sql2 = "
+				SELECT measurements.measurement, measurements.measurementTime
+				FROM measurements
+				WHERE (deviceId = $deviceId AND channelId = {$row['channelId']}) AND (measurements.measurementTime BETWEEN '$dateFrom' AND '$dateTo')
+				";
+				$result2 = mysqli_query($conn, $sql2);
+				$measurementsData = array();
+				if ( mysqli_num_rows($result2) > 0 ) {
+					while ($row2 = mysqli_fetch_assoc($result2)) {
+						$measurementsData[] = $row2;
+					}
+				}
+				$row['data'] = $measurementsData;
+				$return[] = $row;
+			}
+		}
+
+		echo json_encode($return);
+		break;
+	// ! Chart data
+	case 'loadChart':
+		$deviceId = $_POST['deviceId'];
+
+		$sql = "
+		SELECT channels.channelId, channels.channelName
+		FROM channels
+		WHERE deviceId = $deviceId && channelTypeId = 2
+		";
+		
+		$result = mysqli_query($conn, $sql);
+		$resultCheck = mysqli_num_rows($result);
+		$returnArray = array();
+		
+		if ($resultCheck > 0) {
+			while ($row = mysqli_fetch_assoc($result)) {
+				$readingsArray = array();
+				$readingsArray[] = $row;
+
+				$sql2 = "
+				SELECT measurements.measurement, measurements.measurementTime
+				FROM measurements
+				WHERE (deviceId = $deviceId AND channelId = {$row['channelId']})
+				";
+				$dataArr = array();
+				$result2 = mysqli_query($conn, $sql2);
+				$resultCheck2 = mysqli_num_rows($result2);
+				if ($resultCheck2 > 0) {
+					while ($row2 = mysqli_fetch_assoc($result2)) {
+						$dataArr[] = $row2;
+					}
+					$readingsArray[] = $dataArr;
+				}
+
+				$resultArray[] = $readingsArray;
+			}
+		}
+		
+		echo json_encode($resultArray);
+		break;
+	// ! End of chart data
+	default:
+		// 
+}
+exit();
+
 if ($function == 'loadTable_measurements') {
 	$measurementsPerPage = $_POST['measurementsPerPage'];
 	$offset = $_POST['offset'];
