@@ -104,7 +104,7 @@ if ($resultCheck > 0) {
 	<title>YelDash - Manage Your Devices</title>
 
 </head>
-<body class="font-display overflow-x-hidden">
+<body class="font-display overflow-x-hidden bg-gray-100">
 
 	<div class="flex bg-gray-50">
         <!-- Left sidebars-->

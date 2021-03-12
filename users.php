@@ -244,7 +244,7 @@ include_once('header.php');
 				<p>Loading...</p>
 			</div>
 
-			<div class="flex flex-col items-center justify-center mb-16 mt-4">
+			<div class="flex flex-col items-center justify-center py-4">
 				<div class="flex">
 					<button id="previousUsersButton" class="focus:outline-none h-14 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-sm border border-gray-200 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Previous</button>
 					<button id="nextUsersButton" class="focus:outline-none h-14 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-sm border border-gray-200 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Next</button>

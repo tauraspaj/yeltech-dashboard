@@ -78,9 +78,9 @@ include_once('header.php');
                 <!-- Form wrapper -->
                 <div class="max-w-xl mx-auto px-4">
                     <form id="registerGroupForm" method="post" class="flex flex-col space-y-4 relative">
-                        <div id="successMessage" class="flex justify-center items-center w-full bg-green-100 h-12 border border-green-300 uppercase font-semibold text-sm text-green-800 hidden z-50 absolute -top-6">Group has been successfully registered!</div>
+                        <div id="successMessage" class="flex justify-center items-center w-full bg-green-100 h-12 border border-green-300 uppercase font-semibold text-sm text-green-800 hidden z-20 absolute -top-6">Group has been successfully registered!</div>
                         
-                        <div id="errorMessage" class="flex justify-center items-center w-full bg-red-100 h-12 border border-red-300 uppercase font-semibold text-sm text-red-800 hidden z-50 absolute -top-6">Something went wrong!</div>
+                        <div id="errorMessage" class="flex justify-center items-center w-full bg-red-100 h-12 border border-red-300 uppercase font-semibold text-sm text-red-800 hidden z-20 absolute -top-6">Something went wrong!</div>
                             <!-- Row #1: Group name -->
                             <div class="flex flex-col">
                                 <p class="form-field-title">Group name<span class="text-red-500">*</span></p>

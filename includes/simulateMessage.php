@@ -146,7 +146,12 @@ switch ($message_type) {
 		$measurements = explode(',', $data[3]);
 		$channels_num = $measurements[0];
 		// Time offset is always the same which is the first number after the measurements.
-		$time_offset = $measurements[2+$channels_num];
+		// if ($measurements[2+$channels_num] != null) {
+		if (array_key_exists((2+$channels_num), $measurements)) {
+			$time_offset = $measurements[2+$channels_num];
+		} else {
+			$time_offset = 30;
+		}
 		$time_to_add = 0;
 
         // Access each value in the values array. First measurement was recorded at the RTC time and is then increment by appropriate value.

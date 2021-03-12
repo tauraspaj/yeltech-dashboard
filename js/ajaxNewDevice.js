@@ -406,11 +406,12 @@ $(document).ready(function () {
     $('#simMessage').on('click', function() {
         $.post('./includes/simulateMessage.php', {
             to: '07807165552',
-            from: '+44723183723',
-            // textBody: 'RTMU 2671\nDWTS\n261220192046\n1,0,7.0,30,7.0,30,6.9,30,6.8,30,6.7,30,6.7,30,6.7,30,6.9,30,7.1,30,7.2,30,7.5,30,7.9,30,8.2,30,8.6'
+            from: '+447720512900',
+            textBody: 'RTMU 2671\nDWTS\n120320210905\n1,0,29.3'
+  
             // textBody: 'RTMU 2671\nSTATUS MESSAGE\nON\nTOTAL:1\nSQ : ERR:0, MIN:7, MAX:7, AVG:7\nBER: ERR:1, MIN:-, MAX:-, AVG:-\nSUA:0, FUA:0\n63.446114,10.899592'
             // from: '+447231837123',
-            textBody: 'RTMU 2717\nALARM MESSAGE\nDI 1\nPROBE ON TRACK'
+            // textBody: 'RTMU 2717\nALARM MESSAGE\nDI 1\nPROBE ON TRACK'
             // textBody: 'RTMU 2537\nDWTS\n261220192046\n2,0,7.6,8.0,30,7.6,7.8,60,7.7,8.2,90,8.1,8.2,120,8.2,8.4,150,8.2,8.2,180,7.6,8.1,210,7.3,7.3,240,7.1,7.2,270,6.8,7.0,300,6.7,7.0'
             // textBody: 'RTMU 2671\nSTATUS MESSAGE\nON\nTOTAL:1\nSQ : ERR:0, MIN:7, MAX:7, AVG:7\nBER: ERR:1, MIN:-, MAX:-, AVG:-\nSUA:0, FUA:0\n51.504935,-0.431328'
 		}, function(data) {

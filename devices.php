@@ -134,29 +134,23 @@ include_once('header.php');
 		<!-- Card -->
 		<div class="col-span-1 flex flex-col bg-white shadow-lg">
 			<div class="flex flex-col justify-center items-center mt-8">
-				<svg class="w-12 h-12 text-lightblue-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"></path></svg>
-				<p id="card_totalUsers" class="text-6xl font-bold mt-4">24</p>
-				<p class="text-gray-400 font-medium">Total no of users</p>
+				<svg class="w-12 h-12 text-lightblue-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13 7H7v6h6V7z"></path><path fill-rule="evenodd" d="M7 2a1 1 0 012 0v1h2V2a1 1 0 112 0v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2H2a1 1 0 110-2h1V9H2a1 1 0 010-2h1V5a2 2 0 012-2h2V2zM5 5h10v10H5V5z" clip-rule="evenodd"></path></svg>				<p class="text-2xl font-bold mt-4">Devices</p>
 			</div>
-
-			<div class="w-full border-b mt-4"></div>
-
-			<div class="grid grid-cols-2 lg:grid-cols-1 lg:space-y-4 xl:space-y-0 xl:grid-cols-2 mt-6 mb-8">
-				<div class="flex justify-center items-center flex-col px-4 space-y-1">
-					<p class="text-xs text-gray-400 whitespace-nowrap">Standard users: <span id="card_standardUsers" class="font-medium text-black">16</span></p>
-					<!-- Bar -->
-					<div class="h-2 w-full rounded-full bg-gray-200">
-						<div class="h-full bg-lightblue-400 rounded-full" id="card_stdUsersBar"></div>
-					</div>
+				
+			<div id="card_latestUsers" class="grid grid-cols-1 divide-y divide-gray-200 divide-solid px-2 md:px-8 lg:px-4 mt-6">
+				<div class="grid grid-cols-2 py-1">
+					<div class="font-medium mx-4 lg:mx-1 xl:mx-4 whitespace-nowrap">John Doe</div>
+					<div class="text-right mx-4 lg:mx-1 xl:mx-4 text-gray-400 whitespace-nowrap">2020-02-03</div>
 				</div>
-
-				<div class="flex justify-center items-center flex-col px-4 space-y-1">
-					<p class="text-xs text-gray-400 whitespace-nowrap">Group admins: <span id="card_groupAdmins" class="font-medium text-black">4</span></p>
-					<!-- Bar -->
-					<div class="h-2 w-full rounded-full bg-gray-200">
-						<div class="h-full bg-yellow-300 rounded-full" id="card_grpAdminsBar"></div>
-					</div>
+				<div class="grid grid-cols-2 py-1">
+					<div class="font-medium mx-4 lg:mx-1 xl:mx-4 whitespace-nowrap">John Doe</div>
+					<div class="text-right mx-4 lg:mx-1 xl:mx-4 text-gray-400 whitespace-nowrap">2020-02-03</div>
 				</div>
+				<div class="grid grid-cols-2 py-1">
+					<div class="font-medium mx-4 lg:mx-1 xl:mx-4 whitespace-nowrap">John Doe</div>
+					<div class="text-right mx-4 lg:mx-1 xl:mx-4 text-gray-400 whitespace-nowrap">2020-02-03</div>
+				</div>
+				
 			</div>
 		</div>
 		<!-- End of card -->
@@ -223,12 +217,12 @@ include_once('header.php');
 				<table class="table-fixed min-w-full">
 					<thead class="uppercase text-xs bg-bluegray-50 border-b border-gray-200 text-bluegray-900">
 						<tr>
-							<th class="text-left w-2/12 py-4 px-4 font-semibold">Name</th>
-							<th class="text-center w-2/12 py-4 px-4 font-semibold">Group</th>
-							<th class="text-center w-2/12 py-4 px-4 font-semibold">Location</th>
-							<th class="text-center w-2/12 py-4 px-4 font-semibold">Next Calibration</th>
-							<th class="text-center w-2/12 py-4 px-4 font-semibold">Alarm</th>
-							<th class="text-center w-2/12 py-4 px-4 font-semibold"></th>
+							<th class="text-left w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Name</th>
+							<th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Group</th>
+							<th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Location</th>
+							<th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Next Calibration</th>
+							<th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Alarm</th>
+							<th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap"></th>
 						</tr>
 					</thead>
 					<tbody id="devicesTableBody">
@@ -242,7 +236,7 @@ include_once('header.php');
 				<p>Loading...</p>
 			</div>
 
-			<div class="flex flex-col items-center justify-center mb-16 mt-4">
+			<div class="flex flex-col items-center justify-center py-4">
 				<div class="flex">
 					<button id="previousDevicesButton" class="focus:outline-none h-14 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-sm border border-gray-200 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Previous</button>
 					<button id="nextDevicesButton" class="focus:outline-none h-14 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-sm border border-gray-200 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Next</button>

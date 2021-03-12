@@ -35,6 +35,7 @@ $(document).ready(function () {
 		}
 	}
 
+	
 
 	function showDevices(perPage, pageNumber) {
 		$.ajax({
@@ -127,7 +128,7 @@ $(document).ready(function () {
 
 					outputTable += `
 					<tr class="hover:bg-bluegray-100 border-b border-gray-200 h-12">
-						<td class="text-left py-2 px-4 text-sm text-bluegray-600"><div class="flex items-center"><span class="font-semibold whitespace-nowrap">`+ display1 + `</span>`+ status +`</div><span class="text-gray-400">`+ display2 + `</span></td>
+						<td class="text-left py-2 px-4 text-sm"><div class="flex items-center"><span id="select" data-id="`+ devices[i].deviceId + `" title="View device" class="font-semibold whitespace-nowrap text-lightblue-500 cursor-pointer hover:text-lightblue-600">`+ display1 + `</span>`+ status +`</div><span class="text-gray-400">`+ display2 + `</span></td>
 						<td class="text-center py-2 px-4 text-sm text-gray-600 capitalize">`+ devices[i].groupName + `</td>
 						<td class="text-center py-2 px-4 text-sm text-gray-600">`+ location + `</td>
 						<td class="text-center py-2 px-4 text-sm text-gray-600">`+ nextCalibrationDate + `</td>
