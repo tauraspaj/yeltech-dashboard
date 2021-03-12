@@ -116,6 +116,7 @@ switch ($_POST['function']) {
 		echo json_encode($return);
 		break;
 	// ! End of device coordinates
+
 	// ! Show alarms
 	case 'loadTable_alarms':
 		$alarmsPerPage = $_POST['alarmsPerPage'];
@@ -152,6 +153,8 @@ switch ($_POST['function']) {
 		echo json_encode($return);
 		break;
 	// ! End of alarms
+
+	// ! Get readings
 	case 'getDatasets':
 		$deviceId = $_POST['deviceId'];
 		$dateFrom = $_POST['dateFrom'];
@@ -187,47 +190,97 @@ switch ($_POST['function']) {
 
 		echo json_encode($return);
 		break;
-	// ! Chart data
-	case 'loadChart':
+	// ! End of readings
+	
+	// ! Get alarm triggers
+	case 'getAlarmTriggers':
 		$deviceId = $_POST['deviceId'];
+		$return = array();
 
+		// Find device name
 		$sql = "
-		SELECT channels.channelId, channels.channelName
-		FROM channels
-		WHERE deviceId = $deviceId && channelTypeId = 2
+		SELECT deviceName FROM devices WHERE deviceId = $deviceId
 		";
-		
 		$result = mysqli_query($conn, $sql);
-		$resultCheck = mysqli_num_rows($result);
-		$returnArray = array();
-		
-		if ($resultCheck > 0) {
+		if ( mysqli_num_rows($result) > 0 ) {
 			while ($row = mysqli_fetch_assoc($result)) {
-				$readingsArray = array();
-				$readingsArray[] = $row;
-
-				$sql2 = "
-				SELECT measurements.measurement, measurements.measurementTime
-				FROM measurements
-				WHERE (deviceId = $deviceId AND channelId = {$row['channelId']})
-				";
-				$dataArr = array();
-				$result2 = mysqli_query($conn, $sql2);
-				$resultCheck2 = mysqli_num_rows($result2);
-				if ($resultCheck2 > 0) {
-					while ($row2 = mysqli_fetch_assoc($result2)) {
-						$dataArr[] = $row2;
-					}
-					$readingsArray[] = $dataArr;
-				}
-
-				$resultArray[] = $readingsArray;
+				$return['deviceName'] = $row['deviceName'];
 			}
 		}
-		
-		echo json_encode($resultArray);
+
+		$sql2 = "
+		SELECT channels.channelId, channels.channelName, units.unitName, channels.channelType
+		FROM channels
+		LEFT JOIN units ON channels.unitId = units.unitId
+		WHERE channels.deviceId = $deviceId
+		";
+		$result2 = mysqli_query($conn, $sql2);
+		if ( mysqli_num_rows($result2) > 0 ) {
+			$channelsArr = array();
+			while ($row = mysqli_fetch_assoc($result2)) {
+				$channelsArr[] = $row;
+			}
+			$return['channels'] = $channelsArr;
+		} else {
+			$return['channels'] = 'EMPTY';
+		}
+
+		$sql3 = "
+		SELECT alarmTriggers.triggerId, alarmTriggers.operator, alarmTriggers.thresholdValue, channels.channelId, channels.channelName
+		FROM alarmTriggers
+		LEFT JOIN channels ON alarmTriggers.channelId = channels.channelId
+		WHERE alarmTriggers.deviceId = $deviceId
+		";
+
+		$result3 = mysqli_query($conn, $sql3);
+		if ( mysqli_num_rows($result3) > 0 ) {
+			$alarmTriggersArr = array();
+			while ($row = mysqli_fetch_assoc($result3)) {
+				$alarmTriggersArr[] = $row;
+			}
+			$return['alarmTriggers'] = $alarmTriggersArr;
+		} else {
+			$return['alarmTriggers'] = 'EMPTY';
+		}
+		echo json_encode($return);
 		break;
-	// ! End of chart data
+	// ! End of alarm triggers
+	
+	// ! Register new trigger
+	case 'registerNewTrigger':
+		$deviceId = $_POST['deviceId'];
+		$channelId = $_POST['channelId'];
+		$operator = $_POST['operator'];
+		$thresholdValue = $_POST['thresholdValue'];
+
+		$sql = "INSERT INTO alarmTriggers (channelId, deviceId, operator, thresholdValue) VALUES (?, ?, ?, ?);";
+		$stmt = mysqli_stmt_init($conn);
+		mysqli_stmt_prepare($stmt, $sql);
+		mysqli_stmt_bind_param($stmt, "ssss", $channelId, $deviceId, $operator, $thresholdValue);
+		if (mysqli_stmt_execute($stmt)) {
+			echo 'SUCCESS';
+		};
+        mysqli_stmt_close($stmt);
+		break;
+	// ! End of new trigger reg
+
+	// ! Delete trigger
+	case 'deleteTrigger':
+		$deviceId = $_POST['deviceId'];
+		$triggerId = $_POST['triggerId'];
+		$sql = "
+		DELETE FROM alarmTriggers WHERE triggerId = $triggerId;
+		";
+		
+		if (mysqli_query($conn, $sql)) {
+			echo "SUCCESS";
+		} else {
+			echo "ERROR";
+		}
+		
+		mysqli_close($conn);
+		break;
+	// ! End of trigger delete
 	default:
 		// 
 }
