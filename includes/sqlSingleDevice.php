@@ -281,10 +281,102 @@ switch ($_POST['function']) {
 		mysqli_close($conn);
 		break;
 	// ! End of trigger delete
+
+	// ! Get all users
+	case 'getAllUsers':
+		$return = array();
+
+		if ($_SESSION['roleId'] == 1 || $_SESSION['roleId'] == 2) {
+			$groupFilter = 'users.groupId';
+		} else {
+			$groupFilter = $_SESSION['groupId'];
+		}
+
+		$sql = "
+		SELECT users.userId, users.fullName, users.email
+		FROM users
+		WHERE users.groupId = $groupFilter
+		ORDER BY users.roleId ASC, users.fullName ASC
+		";
+		
+		$result = mysqli_query($conn, $sql);
+		
+		if (mysqli_num_rows($result) > 0) {
+			while ($row = mysqli_fetch_assoc($result)) {
+				$return[] = $row;
+			}
+		} else {
+			$return = 'Error';
+		}
+		
+		echo json_encode($return);
+		break;
+	// ! End of all users
+
+	// ! Get device recipients
+	case 'getRecipients':
+		$deviceId = $_POST['deviceId'];
+		$return = array();
+
+		$sql = "
+		SELECT alarmRecipients.userId, alarmRecipients.alarmRecipientId, users.fullName, users.email
+		FROM alarmRecipients
+		LEFT JOIN users ON alarmRecipients.userId = users.userId
+		WHERE deviceId = $deviceId
+		ORDER BY users.roleId ASC, users.fullName ASC
+		";
+		
+		$result = mysqli_query($conn, $sql);
+		
+		if (mysqli_num_rows($result) > 0) {
+			while ($row = mysqli_fetch_assoc($result)) {
+				$return[] = $row;
+			}
+		} else {
+			$return = 'ERROR';
+		}
+		
+		echo json_encode($return);
+		break;
+	// ! End of recipients
+
+	// ! Add new recipient
+	case 'addNewRecipient':
+		$deviceId = $_POST['deviceId'];
+		$userId = $_POST['userId'];
+
+		$sql = "INSERT INTO alarmRecipients (userId, deviceId) VALUES (?, ?);";
+		$stmt = mysqli_stmt_init($conn);
+		mysqli_stmt_prepare($stmt, $sql);
+		mysqli_stmt_bind_param($stmt, "ss", $userId, $deviceId);
+		if (mysqli_stmt_execute($stmt)) {
+			echo 'SUCCESS';
+		};
+        mysqli_stmt_close($stmt);
+		break;
+	// ! End of new recipient
+
+	// ! Delete recipient
+	case 'deleteRecipient':
+		$deviceId = $_POST['deviceId'];
+		$recipientId = $_POST['recipientId'];
+
+		$sql = "DELETE FROM alarmRecipients WHERE alarmRecipients.alarmRecipientId = '$recipientId'";
+
+		if (mysqli_query($conn, $sql)) {
+			echo "SUCCESS";
+		} else {
+			echo "ERROR";
+		}
+		break;
+	// ! End of delete recipient
 	default:
 		// 
 }
 exit();
+
+
+
 
 if ($function == 'loadTable_measurements') {
 	$measurementsPerPage = $_POST['measurementsPerPage'];

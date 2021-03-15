@@ -44,10 +44,10 @@ $(document).ready(function () {
 	// ! Data about each device
 	var subNavbar = {
 		rtmu: [
+			{ title: 'Recipients', component:'recipients' },
 			{ title: 'Dashboard', component:'rtmu_dashboard' },
 			{ title: 'Device Info', component:'deviceData' },
 			{ title: 'Alarms', component:'alarms' },
-			{ title: 'Recipients', component:'recipients' },
 			{ title: 'Log', component:'log' }
 		],
 		ewb: [
@@ -448,7 +448,7 @@ $(document).ready(function () {
 		<div class="grid grid-cols-2 gap-4 md:grid-cols-2 md:gap-4 lg:grid-cols-4 lg:gap-6">
 			<!-- Card -->
 			<div class="col-span-2 md:col-span-2 lg:col-span-2 shadow-lg bg-gray-50 rounded-xl flex flex-col">
-				<!-- Filters -->
+				<!-- Title -->
 				<div class="flex-none flex items-center h-12 bg-white rounded-t-xl border-b">
 					<div class="absolute hidden md:block bg-green-100 text-green-500 rounded-full p-2 mx-4">
 						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path></svg>
@@ -483,7 +483,7 @@ $(document).ready(function () {
 					<!-- Card content -->
 					<div id="alarmSections" class="flex-auto flex flex-col">
 						<!-- List of alarms -->
-						<div id="alarmTriggersDiv" class="p-4 space-y-2">
+						<div id="alarmTriggersDiv" class="px-4 pt-1 pb-4 space-y-2">
 						</div>
 						<!-- End of alarms list -->
 
@@ -500,7 +500,7 @@ $(document).ready(function () {
 
 			<!-- Card -->
 			<div class="col-span-2 md:col-span-2 lg:col-span-2 shadow-lg bg-gray-50 rounded-xl flex flex-col">
-				<!-- Filters -->
+				<!-- Title -->
 				<div class="flex-none flex items-center h-12 bg-white rounded-t-xl border-b">
 					<div class="absolute hidden md:block bg-purple-100 text-purple-500 rounded-full p-2 mx-4">
 						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd"></path></svg>
@@ -792,7 +792,167 @@ $(document).ready(function () {
 
 	// ! SHOW COMPONENT: Display recipients
 	function display_recipients() {
-		siteContent.html('Recipients');
+		function outputAllUsers(data) {
+			var allUsersDivOutput = '';
+			if (data == 'ERROR') {
+				allUsersDivOutput = 'No users to show...';
+			} else {
+				for (i = 0; i < data.length; i++) {
+					allUsersDivOutput += `
+						<!-- User -->
+						<div class="h-10 pl-4 md:pl-0 flex justify-start md:justify-center max-w-xl mx-auto items-center text-sm text-gray-700 font-medium border bg-gray-100 relative overflow-ellipsis overflow-hidden">
+							`+data[i].fullName+` <span class="hidden md:block text-xs text-gray-400 font-normal md:ml-2 "> &lt;`+data[i].email+`&gt; </span>
+	
+							<div id="addRecipient" data-id="`+data[i].userId+`" class="flex items-center bg-lightblue-500 shadow text-white py-1 rounded px-2 cursor-pointer hover:bg-lightblue-600 absolute right-2" title="Add recipient">
+								<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"></path></svg>
+								<p class="hidden md:block ml-2">Select</p>
+							</div>
+						</div>
+						<!-- End of user -->
+					`;
+				}
+			}
+			$('#allUsersDiv').html(allUsersDivOutput);
+		}
+
+		function outputRecipients(data) {
+			var recipientsDivOutput = '';
+			if (data == 'ERROR') {
+				recipientsDivOutput = 'No assigned recipients...';
+			} else {
+				for (i = 0; i < data.length; i++) {
+					recipientsDivOutput += `
+						<!-- User -->
+						<div class="h-10 pl-4 md:pl-0 flex justify-start md:justify-center max-w-xl mx-auto items-center text-sm text-gray-700 font-medium border bg-gray-100 relative overflow-ellipsis overflow-hidden">
+							`+data[i].fullName+` <span class="hidden md:block text-xs text-gray-400 font-normal md:ml-2 "> &lt;`+data[i].email+`&gt; </span>
+	
+							<div id="deleteRecipient" data-id="`+data[i].alarmRecipientId+`" class="flex items-center bg-red-500 shadow text-white py-1 rounded px-2 cursor-pointer hover:bg-red-600 absolute right-2" title="Add recipient">
+								<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg>
+								<p class="hidden md:block ml-2">Remove</p>
+							</div>
+						</div>
+						<!-- End of user -->
+					`;
+				}
+			}
+			$('#recipientsDiv').html(recipientsDivOutput);
+		}
+
+		function populateBothLists() {
+			getAllUsers().then( function (userList) {
+				getRecipients().then( function (recipientList) {
+					// Display recipients list
+					outputRecipients(recipientList);
+
+					// Remove registered recipients from users list and display it
+					for(i = 0; i < userList.length; i++) {
+						for(j = 0; j < recipientList.length; j++) {
+							if (userList[i].userId == recipientList[j].userId && userList[i].email == recipientList[j].email) {
+								userList.splice(i, 1);
+							}
+						}
+					}
+
+					outputAllUsers(userList);
+					updateSearchContent(userList);
+				})
+			})
+		}
+
+		function updateSearchContent(data) {
+			$('#userSearchBar').keyup( function(e) {
+				var searchString = e.target.value.toUpperCase();
+				var filteredUsers = data.filter(user => {
+					return user.fullName.toUpperCase().includes(searchString) || user.email.toUpperCase().includes(searchString);
+				})
+				outputAllUsers(filteredUsers);
+			})
+		}
+
+		output = `
+		<div class="grid grid-cols-2">
+			<!-- Card -->
+			<div class="col-span-2 shadow-lg bg-gray-50 rounded-xl grid grid-cols-2">
+				<!-- Left card -->
+				<div class="flex flex-col" style="height: 36rem;">
+					<!-- Left title -->
+					<div class="flex-none w-full h-12 bg-white rounded-tl-xl border-b flex items-center">
+						<div class="absolute hidden md:block bg-green-100 text-green-500 rounded-full p-2 mx-4">
+							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+						</div>
+						<div class="mx-auto">
+							<div class="text-green-800 font-medium text-sm bg-green-100 rounded-lg py-1 px-4">
+								Selected recipients	
+							</div>
+						</div>
+					</div>
+					<!-- End of left title -->
+
+					<!-- Left body -->
+					<div id="recipientsDiv" class="p-4 space-y-2 h-full overflow-y-auto">
+						<!-- Filled via js -->
+					</div>
+					<!-- End of left body -->
+
+				</div>
+				<!-- End of left card -->
+
+				<!-- Right card -->
+				<div class="flex flex-col border-l relative" style="height: 36rem;">
+					<!-- Right title -->
+					<div class="flex-none w-full h-12 bg-white rounded-tr-xl border-b flex items-center">
+						<div class="absolute hidden md:block bg-lightblue-100 text-lightblue-500 rounded-full p-2 mx-4">
+							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M8 2a1 1 0 000 2h2a1 1 0 100-2H8z"></path><path d="M3 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v6h-4.586l1.293-1.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L10.414 13H15v3a2 2 0 01-2 2H5a2 2 0 01-2-2V5zM15 11h2a1 1 0 110 2h-2v-2z"></path></svg>
+						</div>
+						<div class="mx-auto">
+							<div class="text-lightblue-800 font-medium text-sm bg-lightblue-100 rounded-lg py-1 px-4">
+								User list
+							</div>
+						</div>
+					</div>
+					<!-- End of right title -->
+
+					<!-- Right body -->
+					<div class="py-4 px-2 md:p-4 overflow-y-auto space-y-4 text-center">
+						<input type="text" id="userSearchBar" placeholder="Search..." spellcheck="false" autocomplete="none" class="outline-none h-10 w-full max-w-xl px-4 text-sm font-semibold text-gray-800 bg-gray-100 transition-all focus:bg-white border rounded">
+						
+						<div class="border-b"></div>
+
+						<div id="allUsersDiv" class="h-full space-y-2">
+						
+						</div>
+						<!-- Filled via js -->
+					</div>
+					<!-- End of right body -->
+					
+				</div>
+				<!-- End of right card -->
+
+			</div>
+			<!-- End of card-->		
+		</div>
+		`;
+		siteContent.html(output);
+
+		// #recipientsDiv
+		// #allUsersDiv
+
+		// * Display all users on load
+		populateBothLists();
+
+		$('#allUsersDiv').delegate( '#addRecipient', 'click', function() {
+			var userId = $(this).attr('data-id');
+			addNewRecipient(userId).then( function() {
+				populateBothLists();
+			})
+		})
+
+		$('#recipientsDiv').delegate('#deleteRecipient', 'click', function() {
+			var recipientId = $(this).attr('data-id');
+			deleteRecipient(recipientId).then( function() {
+				populateBothLists();
+			})
+		})
 	}
 
 	// ! SHOW COMPONENT: Display log
@@ -859,7 +1019,6 @@ $(document).ready(function () {
 			})
 		})
 	}
-
 
 	function getDatasets(dateFrom, dateTo) {
 		if (dateTo.toUpperCase() == 'NOW') {
@@ -1097,7 +1256,77 @@ $(document).ready(function () {
 		})
 	}
 	
+	function getAllUsers() {
+		return new Promise(function (resolve, reject) {
+			$.ajax({
+				url: './includes/sqlSingleDevice.php',
+				type: 'POST',
+				data: {
+					function: 'getAllUsers'
+				},
+				success: function (data) {
+					data = JSON.parse(data);
+					resolve(data);
+				}
+			})
+		})
+	}
 
+	function getRecipients() {
+		return new Promise(function (resolve, reject) {
+			$.ajax({
+				url: './includes/sqlSingleDevice.php',
+				type: 'POST',
+				data: {
+					deviceId: deviceId,
+					function: 'getRecipients'
+				},
+				success: function (data) {
+					data = JSON.parse(data);
+					resolve(data);
+				}
+			})
+		})
+	}
+
+	function addNewRecipient(userId) {
+		return new Promise(function (resolve, reject) {
+			$.ajax({
+				url: './includes/sqlSingleDevice.php',
+				type: 'POST',
+				data: {
+					deviceId: deviceId,
+					userId: userId,
+					function: 'addNewRecipient'
+				},
+				success: function (data) {
+					resolve(data);
+				}
+			})
+		})
+	}
+
+	function deleteRecipient(recipientId) {
+		return new Promise(function (resolve, reject) {
+			$.ajax({
+				url: './includes/sqlSingleDevice.php',
+				type: 'POST',
+				data: {
+					deviceId: deviceId,
+					recipientId: recipientId,
+					function: 'deleteRecipient'
+				},
+				success: function (data) {
+					if (data == 'SUCCESS') {
+						resolve('SUCCESS');
+					} else {
+						alert('Error deleting alarm');
+					}
+				}
+			})
+		})
+	}
+	
 
 
 
@@ -1220,16 +1449,5 @@ $(document).ready(function () {
 		measurementPageNumber -= 1;
 		showMeasurements(measurementsPerPage, measurementPageNumber);
 	})
-
-
-
-	$('#userSearchBar').keyup( function(e) {
-		var searchString = e.target.value.toUpperCase();
-		var filteredUsers = unselectedUsers.filter(user => {
-			return user.fullName.toUpperCase().includes(searchString) || user.email.toUpperCase().includes(searchString);
-		})
-		displayUnselectedUsers(filteredUsers);
-	})
-
 	
 })
