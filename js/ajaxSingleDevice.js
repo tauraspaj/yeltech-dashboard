@@ -44,8 +44,8 @@ $(document).ready(function () {
 	// ! Data about each device
 	var subNavbar = {
 		rtmu: [
-			{ title: 'Device Info', component:'deviceData' },
 			{ title: 'Dashboard', component:'rtmu_dashboard' },
+			{ title: 'Device Info', component:'deviceData' },
 			{ title: 'Alarms', component:'alarms' },
 			{ title: 'Recipients', component:'recipients' },
 			{ title: 'Log', component:'log' }
