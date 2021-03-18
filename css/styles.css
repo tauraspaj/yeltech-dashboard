@@ -19,6 +19,22 @@
 	.form-field-title {
 		@apply text-xs uppercase font-semibold text-bluegray-600 px-2 py-1;
 	}
+
+	.card-wrapper {
+		@apply flex flex-col bg-white shadow-md rounded-xl;
+	}
+
+	.card-header {
+		@apply flex-none flex items-center h-12 bg-white rounded-t-xl border-b;
+	}
+
+	.card-header-icon {
+		@apply absolute hidden md:block rounded-full p-2 mx-4;
+	}
+
+	.card-header-title {
+		@apply font-medium text-sm rounded-lg py-1 px-4 mx-auto;
+	}
 }
 
 @layer utilities {
