@@ -44,10 +44,10 @@ $(document).ready(function () {
 	// ! Data about each device
 	var subNavbar = {
 		rtmu: [
-			{ title: 'Recipients', component:'recipients' },
-			{ title: 'Dashboard', component:'rtmu_dashboard' },
 			{ title: 'Device Info', component:'deviceData' },
+			{ title: 'Dashboard', component:'rtmu_dashboard' },
 			{ title: 'Alarms', component:'alarms' },
+			{ title: 'Recipients', component:'recipients' },
 			{ title: 'Log', component:'log' }
 		],
 		ewb: [
@@ -107,7 +107,7 @@ $(document).ready(function () {
 	// ! SHOW COMPONENT: Display rtmu dashboard
 	function display_rtmu_dashboard() {
 		// * Put all cards together and generate final output
-		output = `
+		var output = `
 		<div class="grid grid-cols-2 gap-4 md:grid-cols-2 md:gap-4 lg:grid-cols-4 lg:gap-6">
 			<!-- Card -->
 			<div id="statusAndProbeCards"></div>
@@ -118,24 +118,16 @@ $(document).ready(function () {
 			<!-- End of card -->
 			
 			<!-- Card -->
-			<div id="latestTempCard"></div>
+			<div id="latestTempCard" class="col-span-1 card-wrapper"></div>
 			<!-- End of card -->
 
 			<!-- Card -->
-			<div class="col-span-1 flex flex-col justify-center items-center bg-white shadow-md rounded-xl text-center space-y-2 relative py-4">
-				<div class="hidden md:block lg:hidden xl:block absolute top-2 left-2 bg-purple-100 text-purple-500 rounded-full p-2">
-					<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd"></path></svg>
-				</div>
-				<div class="flex flex-row justify-center items-center">
-					<p class="uppercase text-xs font-medium text-purple-500 bg-purple-50 rounded-xl px-2 py-1">Total alarms sent</p>
-				</div>
-				<p class="font-medium text-gray-800"><span class="text-5xl tracking-tighter">54</span></p>
-				<p class="text-xs text-gray-400">Latest: 2020-20-20</p>
-			</div>
+			<div id="totalAlarmsCard" class="col-span-1 card-wrapper"></div>
 			<!-- End of card -->
+
 			<!-- Card -->
-			<div class="col-span-2 md:col-span-2 lg:col-span-2 shadow-lg bg-gray-50 rounded-xl flex flex-col">
-				<!-- Filters -->
+			<div class="col-span-2 md:col-span-2 lg:col-span-2 card-wrapper bg-gray-50">
+				<!-- Title -->
 				<div class="flex-none flex justify-between items-center h-12 bg-white rounded-t-xl border-b">
 					<div class="flex items-center">
 						<div class="hidden md:block bg-blue-100 text-blue-500 rounded-full p-2 ml-4 mr-2 lg:mr-4">
@@ -164,16 +156,13 @@ $(document).ready(function () {
 			<!-- End of card-->
 
 			<!-- Card -->
-			<div class="col-span-2 md:col-span-2 lg:col-span-2 shadow-lg bg-gray-50 rounded-xl flex flex-col">
-				<!-- Filters -->
-				<div class="flex-none flex items-center h-12 bg-white rounded-t-xl border-b">
-					<div class="absolute hidden md:block bg-purple-100 text-purple-500 rounded-full p-2 mx-4">
-						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd"></path></svg>
+			<div class="col-span-2 md:col-span-2 lg:col-span-2 card-wrapper bg-gray-50">
+				<div class="card-header">
+					<div class="card-header-icon bg-purple-100 text-purple-500">
+						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd"></path></svg>	
 					</div>
-					<div class="mx-auto">
-						<div class="text-purple-800 font-medium text-sm bg-purple-100 rounded-lg py-1 px-4">
-							Alarms	
-						</div>
+					<div class="card-header-title text-purple-800 bg-purple-100">
+					Alarms	
 					</div>
 				</div>
 
@@ -337,13 +326,16 @@ $(document).ready(function () {
 			// * latestTempCard
 			//#region 
 			var latestTempCard = `
-				<div class="col-span-1 flex flex-col justify-center items-center bg-white shadow-md rounded-xl text-center space-y-2 relative py-4 h-36 lg:h-44">
-					<div class="hidden md:block lg:hidden xl:block absolute top-2 left-2 bg-yellow-100 text-yellow-500 rounded-full p-2">
-						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clip-rule="evenodd"></path></svg>
+				<div class="card-header">
+					<div class="card-header-icon bg-yellow-100 text-yellow-500">
+						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clip-rule="evenodd"></path></svg>	
 					</div>
-					<div class="flex flex-row justify-center items-center">
-						<p class="uppercase text-xs font-medium text-yellow-500 bg-yellow-50 rounded-xl px-2 py-1">Current temp</p>
+					<div class="card-header-title text-yellow-800 bg-yellow-100">
+					Latest temp
 					</div>
+				</div>
+
+				<div class="flex-auto flex flex-col justify-center items-center space-y-2 py-4">
 					<p class="font-medium text-gray-800"><span id="api_temp" class="text-5xl tracking-tighter"></span> <span class="">&#176;C</span></p>
 					<p id="api_loc" class="text-xs text-gray-400"></p>
 				</div>
@@ -353,6 +345,26 @@ $(document).ready(function () {
 			getLatestTemp(deviceCoordinates, 'api_temp', 'api_loc');
 			//#endregion
 		})
+
+		// * Total alarms widget card
+		//#region 
+		var totalAlarmsCard = `
+			<div class="card-header">
+				<div class="card-header-icon bg-purple-100 text-purple-500">
+					<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd"></path></svg>
+				</div>
+				<div class="card-header-title text-purple-800 bg-purple-100">
+					Total alarms sent
+				</div>
+			</div>
+
+			<div class="flex-auto flex flex-col justify-center items-center space-y-2 py-4">
+				<p class="font-medium text-gray-800"><span id="api_temp" class="text-5xl tracking-tighter">52</span></p>
+				<p id="api_loc" class="text-xs text-gray-400">Latest: 20-20-20 20:20</p>
+			</div>
+		`
+		$('#totalAlarmsCard').html(totalAlarmsCard);
+		//#endregion 
 
 		// * Load alarms card
 		//#region 
@@ -438,30 +450,442 @@ $(document).ready(function () {
 	
 	// ! SHOW COMPONENT: Display device data
 	function display_deviceData() {
-		siteContent.html('DeviceData');
+		var output = `
+		<div class="grid grid-cols-2 gap-4 md:grid-cols-2 md:gap-4 lg:grid-cols-4 lg:gap-6">
+			<!-- Card -->
+			<div id="deviceInfoCard" class="col-span-1 card-wrapper">
+				<!-- Card header -->
+				<div class="card-header">
+					<div class="card-header-icon bg-lightblue-100 text-lightblue-500">
+						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+					</div>
+					<div class="card-header-title text-lightblue-800 bg-lightblue-100">
+						Device
+					</div>
+				</div>
+
+				<!-- Card body -->
+				<div class="flex-auto flex flex-col p-2 justify-center items-center">
+					<table class="w-full">
+						<tr class="border-b border-gray-100">
+							<th class="font-normal text-xs uppercase text-gray-400 py-2 w-1/3">Name</th>
+							<td id="deviceName" class="font-semibold text-gray-800 text-xs sm:text-sm whitespace-nowrap"></td>
+						</tr>
+						<tr class="border-b border-gray-100">
+							<th class="font-normal text-xs uppercase text-gray-400 py-2 w-1/3">Product</th>
+							<td id="productName" class="font-semibold text-gray-800 text-xs sm:text-sm whitespace-nowrap"></td>
+						</tr>
+						<tr class="">
+							<th class="font-normal text-xs uppercase text-gray-400 py-2 w-1/3">Group</th>
+							<td id="groupName" class="font-semibold text-gray-800 text-xs sm:text-sm whitespace-nowrap"></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<!-- End of card -->
+
+			<!-- Card -->
+			<div id="customisationCard" class="col-span-1 card-wrapper">
+				<!-- Card header -->
+				<div class="card-header">
+					<div class="card-header-icon bg-purple-100 text-purple-500">
+						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path></svg>
+					</div>
+					<div class="card-header-title text-purple-800 bg-purple-100">
+						Customise
+					</div>
+				</div>
+
+				<!-- Card body -->
+				<div class="flex-auto flex flex-col p-2 justify-center items-center">
+					<table class="w-full">
+						<tr class="border-b border-gray-100">
+							<th class="font-normal text-xs uppercase text-gray-400 py-2 w-1/3">Device Alias</th>
+							<td id="deviceAlias" class="font-semibold text-gray-800 text-sm text-center"></td>
+						</tr>
+						<tr class="">
+							<th class="font-normal text-xs uppercase text-gray-400 py-2 w-1/3">Custom Location</th>
+							<td id="customLocation" class="font-semibold text-gray-800 text-sm text-center"></td>
+						</tr>
+					</table>
+					<div class="flex justify-center items-center py-1 space-x-2">
+						<button id="editCustoms" class="flex justify-center items-center focus:outline-none space-x-2 text-sm uppercase font-medium bg-purple-200 rounded px-4 py-1 text-purple-900 duration-200 hover:bg-purple-400">
+							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path></svg>
+							<p>Edit</p>
+						</button>
+						<button id="saveCustoms" class="hidden flex justify-center items-center focus:outline-none space-x-2 text-sm uppercase font-medium bg-green-200 rounded px-4 py-1 text-green-900 duration-200 hover:bg-green-400">
+							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z"></path></svg>
+							<p>Save</p>
+						</button>
+						<button id="cancelCustoms" class="hidden flex justify-center items-center focus:outline-none space-x-2 text-sm uppercase font-medium bg-white rounded px-4 py-1 border border-red-500 text-red-900 duration-200 hover:bg-red-300">
+							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>							
+							<p>Cancel</p>
+						</button>
+					</div>
+				</div>
+			</div>
+			<!-- End of card -->
+
+			<!-- Card -->
+			<div id="subscriptionCard" class="col-span-1 card-wrapper">
+				<!-- Card header -->
+				<div class="card-header">
+					<div class="card-header-icon bg-pink-100 text-pink-500">
+						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path></svg>
+					</div>
+					<div class="card-header-title text-pink-800 bg-pink-100">
+						Subscription
+					</div>
+				</div>
+
+				<!-- Card body -->
+				<div class="flex-auto flex flex-col p-2 justify-center items-center">
+					<table class="w-full">
+						<tr class="border-b border-gray-100">
+							<th class="font-normal text-xs uppercase text-gray-400 py-2 w-1/3">Start</th>
+							<td id="subStart" class="font-semibold text-gray-800 text-sm text-center"></td>
+						</tr>
+						<tr class="">
+							<th class="font-normal text-xs uppercase text-gray-400 py-2 w-1/3">Finish</th>
+							<td id="subFinish" class="font-semibold text-gray-800 text-sm text-center"></td>
+						</tr>
+					</table>
+					<div class="flex justify-center items-center py-1 space-x-2">
+						<button id="editSubs" class="hidden flex justify-center items-center focus:outline-none space-x-2 text-sm uppercase font-medium bg-pink-200 rounded px-4 py-1 text-pink-900 duration-200 hover:bg-pink-400">
+							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path></svg>
+							<p>Edit</p>
+						</button>
+						<button id="saveSubs" class="hidden flex justify-center items-center focus:outline-none space-x-2 text-sm uppercase font-medium bg-green-200 rounded px-4 py-1 text-green-900 duration-200 hover:bg-green-400">
+							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z"></path></svg>
+							<p>Save</p>
+						</button>
+						<button id="cancelSubs" class="hidden flex justify-center items-center focus:outline-none space-x-2 text-sm uppercase font-medium bg-white rounded px-4 py-1 border border-red-500 text-red-900 duration-200 hover:bg-red-300">
+							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>							
+							<p>Cancel</p>
+						</button>
+					</div>
+				</div>
+			</div>
+			<!-- End of card -->
+
+			<!-- Card -->
+			<div id="calibrationCard" class="col-span-1 card-wrapper">
+				<!-- Card header -->
+				<div class="card-header">
+					<div class="card-header-icon bg-gray-100 text-gray-500">
+						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z"></path></svg>
+					</div>
+					<div class="card-header-title text-gray-800 bg-gray-100">
+						Calibration
+					</div>
+				</div>
+
+				<!-- Card body -->
+				<div class="flex-auto flex flex-col p-2 justify-center items-center">
+					<table class="w-full">
+						<tr class="border-b border-gray-100">
+							<th class="font-normal text-xs uppercase text-gray-400 py-2 w-1/3">Last</th>
+							<td id="lastCalibration" class="font-semibold text-gray-800 text-sm text-center"></td>
+						</tr>
+						<tr class="">
+							<th class="font-normal text-xs uppercase text-gray-400 py-2 w-1/3">Next</th>
+							<td id="nextCalibrationDue" class="font-semibold text-gray-800 text-sm text-center"></td>
+						</tr>
+					</table>
+					<div class="flex justify-center items-center py-1 space-x-2">
+						<button id="editCalib" class="hidden flex justify-center items-center focus:outline-none space-x-2 text-sm uppercase font-medium bg-gray-200 rounded px-4 py-1 text-gray-900 duration-200 hover:bg-gray-400">
+							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path></svg>
+							<p>Edit</p>
+						</button>
+						<button id="saveCalib" class="hidden flex justify-center items-center focus:outline-none space-x-2 text-sm uppercase font-medium bg-green-200 rounded px-4 py-1 text-green-900 duration-200 hover:bg-green-400">
+							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z"></path></svg>
+							<p>Save</p>
+						</button>
+						<button id="cancelCalib" class="hidden flex justify-center items-center focus:outline-none space-x-2 text-sm uppercase font-medium bg-white rounded px-4 py-1 border border-red-500 text-red-900 duration-200 hover:bg-red-300">
+							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>							
+							<p>Cancel</p>
+						</button>
+					</div>
+				</div>
+			</div>
+			<!-- End of card -->
+
+			<!-- Card -->
+			<div id="mapCard" class="col-span-2 lg:col-span-4 card-wrapper">
+				<!-- Card header -->
+				<div class="card-header">
+					<div class="card-header-icon bg-red-100 text-red-500">
+						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>
+					</div>
+					<div class="card-header-title text-red-800 bg-red-100">
+						Map
+					</div>
+				</div>
+
+				<!-- Card body -->
+				<div class="flex-auto p-2 h-96">
+					<div id="map" class="w-full h-full"></div>
+				</div>
+			</div>
+			<!-- End of card -->
+		</div>
+		`
+		siteContent.html(output);
+
+		// * Setup info cards
+		getDeviceData().then( function(data) {
+			// Device info card
+			$('#deviceName').html(data.deviceName);
+			$('#productName').html(data.productName);
+			$('#groupName').html(data.groupName);
+
+			function displayDeviceAlias(alias) {
+				if (alias == null || alias == '') {
+					alias = '';
+					$('#deviceAlias').html('<span class="text-gray-400 font-normal">-</span>')
+				} else {
+					$('#deviceAlias').html(alias);
+				}
+			}
+			function displayCustomLocation(location) {
+				if (location == null || location == '') {
+					location = '';
+					$('#customLocation').html('<span class="text-gray-400 font-normal">-</span>')
+				} else {
+					$('#customLocation').html(location);
+				}
+			}
+			function displaySubStart(subStart) {
+				if(subStart == null || subStart == '') {
+					$('#subStart').html('<span class="">-</span>')
+				} else {
+					$('#subStart').html(subStart);
+				}
+			}
+			function displaySubFinish(subFinish) {
+				if(subFinish == null || subFinish == '') {
+					$('#subFinish').html('<span class="">-</span>')
+				} else {
+					$('#subFinish').html(subFinish);
+				}
+			}
+			function displayLastCalibration(lastCalibration) {
+				if(lastCalibration == null || lastCalibration == '') {
+					$('#lastCalibration').html('<span class="">-</span>')
+				} else {
+					$('#lastCalibration').html(lastCalibration);
+				}
+			}
+			function displayNextCalibrationDue(nextCalibrationDue) {
+				if(nextCalibrationDue == null || nextCalibrationDue == '') {
+					$('#nextCalibrationDue').html('<span class="">-</span>')
+				} else {
+					$('#nextCalibrationDue').html(nextCalibrationDue);
+				}
+			}
+		
+
+			var deviceAlias = data.deviceAlias
+			var customLocation = data.customLocation;
+
+			if(data.subStart == null) {data.subStart = '';}
+			var subStart = data.subStart;
+			if(data.subFinish == null) {data.subFinish = '';}
+			var subFinish = data.subFinish;
+
+			if(data.lastCalibration == null) { data.lastCalibration = ''; }
+			var lastCalibration = data.lastCalibration;
+			if(data.nextCalibrationDue == null) { data.nextCalibrationDue = ''; }
+			var nextCalibrationDue = data.nextCalibrationDue;
+
+			displayDeviceAlias(deviceAlias);
+			displayCustomLocation(customLocation);
+			displaySubStart(subStart);
+			displaySubFinish(subFinish);
+			displayLastCalibration(lastCalibration);
+			displayNextCalibrationDue(nextCalibrationDue);
+
+			$('#editCustoms').on('click', function() {
+				$('#editCustoms').toggleClass('hidden');
+				$('#saveCustoms').toggleClass('hidden');
+				$('#cancelCustoms').toggleClass('hidden');
+
+				var aliasVal = '';
+				if (deviceAlias != null && deviceAlias != '') { aliasVal = deviceAlias; }
+				var locationVal = '';
+				if (customLocation != null && customLocation != '') { locationVal = customLocation;	}
+
+				$('#deviceAlias').html('<input type="text" class="border focus:outline-none font-semibold px-2 py-1 mb-1 placeholder-gray-300 focus:border-gray-400 text-xs" placeholder="Alias" value="'+aliasVal+'">')
+				$('#customLocation').html('<input type="text" class="border focus:outline-none font-semibold px-2 py-1 mt-1 mb-2 placeholder-gray-300 focus:border-gray-400 text-xs" placeholder="Location" value="'+locationVal+'">')
+			})
+
+			$('#saveCustoms').on('click', function() {
+				$('#editCustoms').toggleClass('hidden');
+				$('#saveCustoms').toggleClass('hidden');
+				$('#cancelCustoms').toggleClass('hidden');
+
+				var newAlias = $('#deviceAlias > input').val();
+				var newLocation = $('#customLocation > input').val();
+				
+				if (newAlias != deviceAlias) { deviceAlias = newAlias; }
+				if (newLocation != customLocation) { customLocation = newLocation; }
+
+				if (newAlias != data.deviceAlias) {
+					data.deviceAlias = newAlias;
+					updateDeviceAlias(deviceAlias);
+				}
+				if (newLocation != data.customLocation) {
+					data.customLocation = newLocation;
+					updateCustomLocation(customLocation);
+				}
+
+				displayDeviceAlias(deviceAlias);
+				displayCustomLocation(customLocation);
+			})
+
+			$('#cancelCustoms').on('click', function() {
+				$('#editCustoms').toggleClass('hidden');
+				$('#saveCustoms').toggleClass('hidden');
+				$('#cancelCustoms').toggleClass('hidden');
+
+				displayDeviceAlias(deviceAlias);
+				displayCustomLocation(customLocation);
+			})
+
+			getRoleId().then( function(roleId) {
+				var roleId = roleId;
+				if(roleId == 1 || roleId == 2) {
+					$('#editSubs').removeClass('hidden');
+					$('#editCalib').removeClass('hidden');
+					
+					$('#editSubs').on('click', function() {
+						$('#editSubs').toggleClass('hidden');
+						$('#saveSubs').toggleClass('hidden');
+						$('#cancelSubs').toggleClass('hidden');
+		
+						var subStartVal = null;
+						if (subStart != null && subStart != '') { subStartVal = subStart; }
+						var subFinishVal = null;
+						if (subFinish != null && subFinish != '') { subFinishVal = subFinish; }
+		
+						$('#subStart').html('<input type="date" class="border focus:outline-none font-semibold px-2 py-1 mb-1 placeholder-gray-300 focus:border-gray-400 text-xs" placeholder="Alias" value="'+subStartVal+'">')
+						$('#subFinish').html('<input type="date" class="border focus:outline-none font-semibold px-2 py-1 mt-1 mb-2 placeholder-gray-300 focus:border-gray-400 text-xs" placeholder="Location" value="'+subFinishVal+'">')
+					})
+
+					$('#saveSubs').on('click', function() {
+						$('#editSubs').toggleClass('hidden');
+						$('#saveSubs').toggleClass('hidden');
+						$('#cancelSubs').toggleClass('hidden');
+
+						var newSubStart = $('#subStart > input').val();
+						var newSubFinish = $('#subFinish > input').val();
+						
+						if (newSubStart != subStart) { subStart = newSubStart; }
+						if (newSubFinish != subFinish) { subFinish = newSubFinish; }
+
+						if (newSubStart != data.subStart) {
+							data.subStart = newSubStart;
+							updateSubscription('subStart', data.subStart )
+						}
+						if (newSubFinish != data.subFinish) {
+							data.subFinish = newSubFinish;
+							updateSubscription('subFinish', data.subFinish )
+						}
+
+						displaySubStart(data.subStart);
+						displaySubFinish(data.subFinish);
+					})
+
+					$('#cancelSubs').on('click', function() {
+						$('#editSubs').toggleClass('hidden');
+						$('#saveSubs').toggleClass('hidden');
+						$('#cancelSubs').toggleClass('hidden');
+		
+						displaySubStart(subStart);
+						displaySubFinish(subFinish);
+					})
+
+					$('#editCalib').on('click', function() {
+						$('#editCalib').toggleClass('hidden');
+						$('#saveCalib').toggleClass('hidden');
+						$('#cancelCalib').toggleClass('hidden');
+		
+						var lastCalibrationValue = null;
+						if (lastCalibration != null && lastCalibration != '') { lastCalibrationValue = lastCalibration; }
+						var nextCalibrationValue = null;
+						if (nextCalibrationDue != null && nextCalibrationDue != '') { nextCalibrationValue = nextCalibrationDue; }
+		
+						$('#lastCalibration').html('<input type="date" class="border focus:outline-none font-semibold px-2 py-1 mb-1 placeholder-gray-300 focus:border-gray-400 text-xs" placeholder="Alias" value="'+lastCalibrationValue+'">')
+						$('#nextCalibrationDue').html('<input type="date" class="border focus:outline-none font-semibold px-2 py-1 mt-1 mb-2 placeholder-gray-300 focus:border-gray-400 text-xs" placeholder="Location" value="'+nextCalibrationValue+'">')
+					})
+
+					$('#saveCalib').on('click', function() {
+						$('#editCalib').toggleClass('hidden');
+						$('#saveCalib').toggleClass('hidden');
+						$('#cancelCalib').toggleClass('hidden');
+
+						var newLastCalibration = $('#lastCalibration > input').val();
+						var newNextCalibrationDue = $('#nextCalibrationDue > input').val();
+						
+						if (newLastCalibration != lastCalibration) { lastCalibration = newLastCalibration; }
+						if (newNextCalibrationDue != nextCalibrationDue) { nextCalibrationDue = newNextCalibrationDue; }
+
+						if (newLastCalibration != data.lastCalibration) {
+							alert('change start')
+							data.lastCalibration = newLastCalibration;
+							updateCalibration('lastCalibration', data.lastCalibration )
+						}
+						if (newNextCalibrationDue != data.nextCalibrationDue) {
+							alert('change subfiinsh');
+							data.nextCalibrationDue = newNextCalibrationDue;
+							updateCalibration('nextCalibrationDue', data.nextCalibrationDue )
+						}
+
+						displayLastCalibration(data.lastCalibration);
+						displayNextCalibrationDue(data.nextCalibrationDue);
+					})
+
+					$('#cancelCalib').on('click', function() {
+						$('#editCalib').toggleClass('hidden');
+						$('#saveCalib').toggleClass('hidden');
+						$('#cancelCalib').toggleClass('hidden');
+		
+						displayLastCalibration(data.lastCalibration);
+						displayNextCalibrationDue(data.nextCalibrationDue);
+					})
+				}
+			})
+		})
+
+		// * Setup map
+		getDeviceCoordinates().then( function(data) {
+			if (data.latitude == null && data.longitude == null) {
+				$('#mapCard').hide();
+			} else {
+				setupMap(data.longitude, data.latitude, 'map');
+			}
+		})
 	}
 
 	// ! SHOW COMPONENT: Display alarms
 	function display_alarms() {
 		// * Put all cards together and generate final output
-		output = `
+		var output = `
 		<div class="grid grid-cols-2 gap-4 md:grid-cols-2 md:gap-4 lg:grid-cols-4 lg:gap-6">
 			<!-- Card -->
-			<div class="col-span-2 md:col-span-2 lg:col-span-2 shadow-lg bg-gray-50 rounded-xl flex flex-col">
-				<!-- Title -->
-				<div class="flex-none flex items-center h-12 bg-white rounded-t-xl border-b">
-					<div class="absolute hidden md:block bg-green-100 text-green-500 rounded-full p-2 mx-4">
+			<div class="col-span-2 md:col-span-2 lg:col-span-2 card-wrapper">
+				<!-- Card header -->
+				<div class="card-header">
+					<div class="card-header-icon bg-green-100 text-green-500">
 						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path></svg>
 					</div>
-					<div class="mx-auto">
-						<div class="text-green-800 font-medium text-sm bg-green-100 rounded-lg py-1 px-4">
-							Manage Alarms	
-						</div>
+					<div class="card-header-title text-green-800 bg-green-100">
+						Manage Alarms
 					</div>
 				</div>
 
 				<!-- Card body -->
-				<div class="flex-auto flex">
+				<div class="flex-auto flex bg-gray-50">
 					<!-- Side nav -->
 					<div id="alarmsNav" class="flex-none flex flex-col w-14 md:w-20">
 
@@ -499,21 +923,19 @@ $(document).ready(function () {
 			<!-- End of card-->
 
 			<!-- Card -->
-			<div class="col-span-2 md:col-span-2 lg:col-span-2 shadow-lg bg-gray-50 rounded-xl flex flex-col">
-				<!-- Title -->
-				<div class="flex-none flex items-center h-12 bg-white rounded-t-xl border-b">
-					<div class="absolute hidden md:block bg-purple-100 text-purple-500 rounded-full p-2 mx-4">
+			<div class="col-span-2 md:col-span-2 lg:col-span-2 card-wrapper">
+				<!-- Card header -->
+				<div class="card-header">
+					<div class="card-header-icon bg-purple-100 text-purple-500">
 						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd"></path></svg>
 					</div>
-					<div class="mx-auto">
-						<div class="text-purple-800 font-medium text-sm bg-purple-100 rounded-lg py-1 px-4">
-							Alarms Log	
-						</div>
+					<div class="card-header-title text-purple-800 bg-purple-100">
+					Alarms Log	
 					</div>
 				</div>
 
 				<!-- Table -->
-				<div class="flex-auto py-2 px-4">
+				<div class="flex-auto py-2 px-4 bg-gray-50">
 					<div class="flex overflow-x-auto">
 						<table class="table-fixed min-w-full">
 							<thead class="uppercase text-xs bg-bluegray-50 border-b border-gray-200 text-bluegray-900">
@@ -795,7 +1217,7 @@ $(document).ready(function () {
 		function outputAllUsers(data) {
 			var allUsersDivOutput = '';
 			if (data == 'ERROR') {
-				allUsersDivOutput = 'No users to show...';
+				allUsersDivOutput = '<p class="text-center text-sm uppercase font-semibold bg-gray-50 rounded-full py-2 text-gray-600">No users to show...</p>';
 			} else {
 				for (i = 0; i < data.length; i++) {
 					allUsersDivOutput += `
@@ -804,8 +1226,8 @@ $(document).ready(function () {
 							`+data[i].fullName+` <span class="hidden md:block text-xs text-gray-400 font-normal md:ml-2 "> &lt;`+data[i].email+`&gt; </span>
 	
 							<div id="addRecipient" data-id="`+data[i].userId+`" class="flex items-center bg-lightblue-500 shadow text-white py-1 rounded px-2 cursor-pointer hover:bg-lightblue-600 absolute right-2" title="Add recipient">
-								<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"></path></svg>
-								<p class="hidden md:block ml-2">Select</p>
+								<svg class="w-5 h-5 md:pr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"></path></svg>
+								<p class="hidden md:block pl-1 border-l-2 border-lightblue-600 text-xs">Select</p>
 							</div>
 						</div>
 						<!-- End of user -->
@@ -818,7 +1240,7 @@ $(document).ready(function () {
 		function outputRecipients(data) {
 			var recipientsDivOutput = '';
 			if (data == 'ERROR') {
-				recipientsDivOutput = 'No assigned recipients...';
+				recipientsDivOutput = '<p class="text-center text-sm uppercase font-semibold bg-gray-50 rounded-full py-2 text-gray-600">No assigned recipients...</p>';
 			} else {
 				for (i = 0; i < data.length; i++) {
 					recipientsDivOutput += `
@@ -827,8 +1249,8 @@ $(document).ready(function () {
 							`+data[i].fullName+` <span class="hidden md:block text-xs text-gray-400 font-normal md:ml-2 "> &lt;`+data[i].email+`&gt; </span>
 	
 							<div id="deleteRecipient" data-id="`+data[i].alarmRecipientId+`" class="flex items-center bg-red-500 shadow text-white py-1 rounded px-2 cursor-pointer hover:bg-red-600 absolute right-2" title="Add recipient">
-								<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg>
-								<p class="hidden md:block ml-2">Remove</p>
+								<svg class="w-5 h-5 md:pr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg>
+								<p class="hidden md:block pl-1 border-l-2 border-red-600 text-xs">Remove</p>
 							</div>
 						</div>
 						<!-- End of user -->
@@ -875,21 +1297,18 @@ $(document).ready(function () {
 			<div class="col-span-2 shadow-lg bg-gray-50 rounded-xl grid grid-cols-2">
 				<!-- Left card -->
 				<div class="flex flex-col" style="height: 36rem;">
-					<!-- Left title -->
-					<div class="flex-none w-full h-12 bg-white rounded-tl-xl border-b flex items-center">
-						<div class="absolute hidden md:block bg-green-100 text-green-500 rounded-full p-2 mx-4">
+					<!-- Card header -->
+					<div class="card-header">
+						<div class="card-header-icon bg-red-100 text-red-500">
 							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
 						</div>
-						<div class="mx-auto">
-							<div class="text-green-800 font-medium text-sm bg-green-100 rounded-lg py-1 px-4">
-								Selected recipients	
-							</div>
+						<div class="card-header-title text-red-800 bg-red-100">
+							Selected recipients	
 						</div>
 					</div>
-					<!-- End of left title -->
 
 					<!-- Left body -->
-					<div id="recipientsDiv" class="p-4 space-y-2 h-full overflow-y-auto">
+					<div id="recipientsDiv" class="p-4 space-y-2 h-full overflow-y-auto bg-white">
 						<!-- Filled via js -->
 					</div>
 					<!-- End of left body -->
@@ -899,21 +1318,18 @@ $(document).ready(function () {
 
 				<!-- Right card -->
 				<div class="flex flex-col border-l relative" style="height: 36rem;">
-					<!-- Right title -->
-					<div class="flex-none w-full h-12 bg-white rounded-tr-xl border-b flex items-center">
-						<div class="absolute hidden md:block bg-lightblue-100 text-lightblue-500 rounded-full p-2 mx-4">
+					<!-- Card header -->
+					<div class="card-header">
+						<div class="card-header-icon bg-lightblue-100 text-lightblue-500">
 							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M8 2a1 1 0 000 2h2a1 1 0 100-2H8z"></path><path d="M3 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v6h-4.586l1.293-1.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L10.414 13H15v3a2 2 0 01-2 2H5a2 2 0 01-2-2V5zM15 11h2a1 1 0 110 2h-2v-2z"></path></svg>
 						</div>
-						<div class="mx-auto">
-							<div class="text-lightblue-800 font-medium text-sm bg-lightblue-100 rounded-lg py-1 px-4">
-								User list
-							</div>
+						<div class="card-header-title text-lightblue-800 bg-lightblue-100">
+							User list
 						</div>
 					</div>
-					<!-- End of right title -->
-
+					
 					<!-- Right body -->
-					<div class="py-4 px-2 md:p-4 overflow-y-auto space-y-4 text-center">
+					<div class="py-4 px-2 md:p-4 overflow-y-auto space-y-4 text-center bg-white">
 						<input type="text" id="userSearchBar" placeholder="Search..." spellcheck="false" autocomplete="none" class="outline-none h-10 w-full max-w-xl px-4 text-sm font-semibold text-gray-800 bg-gray-100 transition-all focus:bg-white border rounded">
 						
 						<div class="border-b"></div>
@@ -933,9 +1349,6 @@ $(document).ready(function () {
 		</div>
 		`;
 		siteContent.html(output);
-
-		// #recipientsDiv
-		// #allUsersDiv
 
 		// * Display all users on load
 		populateBothLists();
@@ -957,7 +1370,69 @@ $(document).ready(function () {
 
 	// ! SHOW COMPONENT: Display log
 	function display_log() {
-		siteContent.html('Log');
+		var output = `
+		<div class="grid grid-cols-2">
+			<!-- Card -->
+			<div class="col-span-2 lg:col-span-1 card-wrapper">
+				<!-- Card header -->
+				<div class="card-header">
+					<div class="card-header-icon bg-lightblue-100 text-lightblue-500">
+						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5 4a3 3 0 00-3 3v6a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3H5zm-1 9v-1h5v2H5a1 1 0 01-1-1zm7 1h4a1 1 0 001-1v-1h-5v2zm0-4h5V8h-5v2zM9 8H4v2h5V8z" clip-rule="evenodd"></path></svg>
+					</div>
+					<div class="card-header-title text-lightblue-800 bg-lightblue-100">
+						Measurements log
+					</div>
+				</div>
+
+				<!-- Table -->
+				<div class="flex-auto py-2 px-4 bg-gray-50">
+					<div class="flex overflow-x-auto">
+						<table class="table-fixed min-w-full">
+							<thead class="uppercase text-xs bg-bluegray-50 border-b border-gray-200 text-bluegray-900">
+								<tr>
+									<th class="text-left w-4/12 py-2 px-4 font-medium text-gray-500">Channel</th>
+									<th class="text-center w-2/12 lg:w-4/12 py-2 px-4 font-medium text-gray-500">Reading</th>
+									<th class="text-center w-6/12 lg:w-4/12 py-2 px-4 font-medium text-gray-500">Timestamp</th>
+								</tr>
+							</thead>
+							<tbody id="table_measurements">
+								<!-- This area gets filled via js -->
+							</tbody>
+						</table>
+					</div>
+					<div id="loadingOverlay_measurements" class="flex flex-auto w-full block justify-center items-center space-x-2 uppercase font-semibold text-bluegray-800 py-8">
+						<svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+						<p>Loading...</p>
+					</div>
+
+					<div class="flex flex-col items-center justify-center py-4">
+						<div class="flex">
+							<button id="previous_measurements" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-200 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Previous</button>
+							<button id="next_measurements" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-200 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Next</button>
+						</div>
+						<p class="mt-4 text-xs font-semibold">Showing <span id="range_measurements"></span> of <span id="total_measurements"></span></p>
+					</div>
+				</div>
+			</div>
+		</div>
+		`;
+		siteContent.html(output);
+
+		var measurementPageNumber = 1;
+		var measurementsPerPage = 10;
+	
+		// Show measurements on load
+		getMeasurementsLog(measurementsPerPage, measurementPageNumber, 'table_measurements');
+	
+		$('#next_measurements').on('click', function () {
+			measurementPageNumber += 1;
+			getMeasurementsLog(measurementsPerPage, measurementPageNumber, 'table_measurements');
+		})
+	
+		$('#previous_measurements').on('click', function () {
+			measurementPageNumber -= 1;
+			getMeasurementsLog(measurementsPerPage, measurementPageNumber, 'table_measurements');
+		})
 	}
 	
 	// ! Hide loaders on load
@@ -1327,17 +1802,7 @@ $(document).ready(function () {
 		})
 	}
 	
-
-
-
-
-
-
-
-
-
-
-	function showMeasurements(perPage, pageNumber) {
+	function getMeasurementsLog(perPage, pageNumber, displayTableId) {
 		$.ajax({
 			url: './includes/sqlSingleDevice.php',
 			type: 'POST',
@@ -1351,7 +1816,6 @@ $(document).ready(function () {
 				$('#loadingOverlay_measurements').show();
 			},
 			success: function (data) {
-                // console.log(data);
 				$('#loadingOverlay_measurements').hide();
 				var measurements = JSON.parse(data);
 				
@@ -1378,45 +1842,32 @@ $(document).ready(function () {
 					</tr>
 					`;
 				}
-				measurementsTable.html(outputTable);
+				$('#'+displayTableId).html(outputTable);
 			}
 		})
 	}
 
-	// --------------------------
-	// Map setup				|
-	// --------------------------
-	$.ajax({
-		url: './includes/sqlSingleDevice.php',
-		type: 'POST',
-		data: {
-			deviceId: deviceId,
-			function: 'loadMap'
-		},
-		success: function (data) {
-			// console.log(data);
-			var coords = JSON.parse(data);
-			// console.log(coords[0].latitude)
-			if (coords != '') {
-				// Update current temperature
-				updateCurrentTemp(coords[0].latitude, coords[0].longitude)
-				
-				// Setup map widget
-				setupMap(coords[0].longitude, coords[0].latitude)
-			} else {
-				// Update current temperature. Load London if coordinates don't exist
-				updateCurrentTemp('51.5074','0.1278')
-				
-				// Setup map widget
-				setupMap('','')
-			}
-		}
-	})
+	function getDeviceData() {
+		return new Promise(function (resolve, reject) {
+			$.ajax({
+				url: './includes/sqlSingleDevice.php',
+				type: 'POST',
+				data: {
+					deviceId: deviceId,
+					function: 'getDeviceData'
+				},
+				success: function (data) {
+					data = JSON.parse(data);
+					resolve(data);
+				}
+			})
+		})
+	}
 
-	function setupMap(longitude, latitude) {
+	function setupMap(longitude, latitude, mapId) {
 		mapboxgl.accessToken = 'pk.eyJ1IjoidGF1cmFzcCIsImEiOiJja2w2bzl6MmYyaXoyMm9xbzlld3dqaDJnIn0.dJGV_jlSPX-p51ZrQxaBew';
 		var map = new mapboxgl.Map({
-			container: 'map',
+			container: mapId,
 			style: 'mapbox://styles/mapbox/streets-v10',
 			center: [longitude, latitude],
 			zoom: 14
@@ -1427,27 +1878,80 @@ $(document).ready(function () {
 			.addTo(map);
 	}
 
+	function updateDeviceAlias(alias) {
+		$.ajax({
+			url: './includes/sqlSingleDevice.php',
+			type: 'POST',
+			data: {
+				deviceId: deviceId,
+				alias: alias,
+				function: 'updateDeviceAlias'
+			},
+			success: function (data) {
+			
+			}
+		})
+	}
 
-	// --------------------------
-	// Measurements table setup	|
-	// --------------------------
+	function updateCustomLocation(location) {
+		$.ajax({
+			url: './includes/sqlSingleDevice.php',
+			type: 'POST',
+			data: {
+				deviceId: deviceId,
+				location: location,
+				function: 'updateCustomLocation'
+			},
+			success: function (data) {
 
-	var measurementPageNumber = 1;
-	var measurementsPerPage = 5;
-	var measurementsTable = $('#table_measurements');
-	var totalCount = 0;
+			}
+		})
+	}
 
-	// Show devices on load
-	showMeasurements(measurementsPerPage, measurementPageNumber);
+	function getRoleId() {
+		return new Promise(function (resolve, reject) {
+			$.ajax({
+				url: './includes/sqlSingleDevice.php',
+				type: 'POST',
+				data: {
+					function: 'getRoleId'
+				},
+				success: function (data) {
+					resolve(data);
+				}
+			})
+		})
+	}
 
-	$('#next_measurements').on('click', function () {
-		measurementPageNumber += 1;
-		showMeasurements(measurementsPerPage, measurementPageNumber);
-	})
+	function updateSubscription(startOrFinish, date) {
+		$.ajax({
+			url: './includes/sqlSingleDevice.php',
+			type: 'POST',
+			data: {
+				deviceId: deviceId,
+				date: date,
+				startOrFinish: startOrFinish,
+				function: 'updateSubscription'
+			},
+			success: function (data) {
 
-	$('#previous_measurements').on('click', function () {
-		measurementPageNumber -= 1;
-		showMeasurements(measurementsPerPage, measurementPageNumber);
-	})
-	
+			}
+		})
+	}
+
+	function updateCalibration(lastOrNext, date) {
+		$.ajax({
+			url: './includes/sqlSingleDevice.php',
+			type: 'POST',
+			data: {
+				deviceId: deviceId,
+				date: date,
+				lastOrNext: lastOrNext,
+				function: 'updateCalibration'
+			},
+			success: function (data) {
+
+			}
+		})
+	}
 })
