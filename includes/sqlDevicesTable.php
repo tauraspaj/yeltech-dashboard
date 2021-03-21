@@ -67,6 +67,17 @@ if ($function == 'showDevices') {
 				}
 			}
 
+			// Find the number of alarms triggered for each device
+			$sqlAlarms = "
+				SELECT COUNT(triggerId) AS alarmsTriggered FROM alarmTriggers WHERE deviceId = {$row['deviceId']} AND isTriggered = 1;
+			";
+			$resultAlarms = mysqli_query($conn, $sqlAlarms);
+			if ( mysqli_num_rows($resultAlarms) > 0 ) {
+				while ($row3 = mysqli_fetch_assoc($resultAlarms)) {
+					$row +=  $row3;
+				}
+			}
+
 			$resultArray[] = $row;
 		}
 	}

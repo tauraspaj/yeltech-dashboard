@@ -54,14 +54,14 @@ $(document).ready(function () {
 			},
 			success: function (data) {
 				$('#loadingOverlay').hide();
-				console.log(data);
+				// console.log(data);
 				var devices = JSON.parse(data);
 
 				totalCount = devices[devices.length - 1]['totalRows'];
 				returnedCount = devices.length - 1;
 				pageControl(totalCount, returnedCount, perPage, pageNumber);
 
-				// console.log(devices);
+				console.log(devices);
 
 				var outputTable = '';
 				for (i = 0; i < devices.length - 1; i++) {
@@ -104,7 +104,7 @@ $(document).ready(function () {
 						var formattedDate = nextCalibrationDate.toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 
 						if ( currentDate >= nextCalibrationDate ) {
-							nextCalibrationDate = '<span class="text-red-500">' + formattedDate + '</span>';
+							nextCalibrationDate = '<span class="text-white bg-red-500 rounded-full px-2 py-1">' + formattedDate + '</span>';
 						} else if ( currentDate < nextCalibrationDate && currentDate >= monthWarning ) {
 							nextCalibrationDate = '<span class="text-yellow-500">' + formattedDate + '</span>';
 						} else if (currentDate < monthWarning) {
@@ -113,9 +113,13 @@ $(document).ready(function () {
 					}
 
 					// Process alarm
-					var alarm = '-';
-					if (true) {
-						alarm = '<span class="text-yellow-500">COMING</span>';
+					var alarm = '';
+					var rowHover = 'bg-white hover:bg-gray-100 border-b border-gray-200';
+					if (devices[i].alarmsTriggered == 0) {
+						alarm = '<span class="text-green-500">None</span>';
+					} else {
+						alarm = '<span class="text-red-500 whitespace-nowrap font-medium">'+devices[i].alarmsTriggered+' TRIGGERED</span>';
+						rowHover = 'bg-red-100';
 					}
 
 					// Process status
@@ -127,12 +131,12 @@ $(document).ready(function () {
 					}
 
 					outputTable += `
-					<tr class="hover:bg-bluegray-100 border-b border-gray-200 h-12">
+					<tr class="`+rowHover+` h-12">
 						<td class="text-left py-2 px-4 text-sm"><div class="flex items-center"><span id="select" data-id="`+ devices[i].deviceId + `" title="View device" class="font-semibold whitespace-nowrap text-lightblue-500 cursor-pointer hover:text-lightblue-600">`+ display1 + `</span>`+ status +`</div><span class="text-gray-400">`+ display2 + `</span></td>
 						<td class="text-center py-2 px-4 text-sm text-gray-600 capitalize">`+ devices[i].groupName + `</td>
-						<td class="text-center py-2 px-4 text-sm text-gray-600">`+ location + `</td>
-						<td class="text-center py-2 px-4 text-sm text-gray-600">`+ nextCalibrationDate + `</td>
-						<td class="text-center py-2 px-4 text-sm text-gray-600">`+ alarm +`</td>
+						<td class="text-center py-2 px-4 text-sm text-gray-600 whitespace-nowrap">`+ location + `</td>
+						<td class="text-center py-2 px-4 text-sm text-gray-600 whitespace-nowrap">`+ nextCalibrationDate + `</td>
+						<td class="text-center py-2 px-4 text-sm text-gray-600 whitespace-nowrap">`+ alarm +`</td>
 						<td class="text-center" id="select" data-id="`+ devices[i].deviceId + `">
 							<button class="focus:outline-none text-xs text-gray-600 uppercase bg-gray-50 border border-gray-300 rounded font-medium py-1 px-2 hover:bg-gray-200">
 								View
