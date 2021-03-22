@@ -238,7 +238,7 @@ if ($resultCheck > 0) {
 					<!-- Search bar -->
 					<div class="flex-auto flex items-center relative">
 						<div class="flex-none hidden md:flex justify-center text-gray-800 transition-all duration-200 px-4">
-							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path></svg>
 						</div>
 						<input id="searchBarText" type="text" autocomplete="off" placeholder="Search..." class="appearance-none outline-none h-full w-full px-2 md:px-0 flex-auto text-gray-800 bg-transparent">
 						<div id="searchResults" class="hidden absolute bottom-100 bg-gray-50 w-full top-16 rounded-b border border-t-0 shadow-md border-gray-300">
@@ -252,20 +252,74 @@ if ($resultCheck > 0) {
 
 				<div class="flex">
 					<!-- Notification icon -->
-					<button class="flex-none h-16 w-16 md:w-20 flex items-center justify-center border-l hover:bg-lightblue-400 group hover:border-lightblue-400 focus:outline-none focus:bg-lightblue-400 focus:border-lightblue-400">
-						<svg class="w-5 h-5 text-gray-700 group-hover:text-white group-focus:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-						<div class="bg-red-500 w-5 h-5 text-xs text-white rounded-lg flex items-center justify-center ml-1">5</div>
+					<button id="notificationsButton" class="flex-none h-16 w-16 md:w-20 flex items-center justify-center text-gray-700 hover:text-white border-l border-r hover:bg-lightblue-400 hover:border-lightblue-400 focus:outline-none focus:text-white focus:bg-lightblue-400 focus:border-lightblue-400">
+						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path></svg>
+						<?php 
+						if ($_SESSION['roleId'] == 4 || $_SESSION['roleId'] == 3) {
+							$groupFilter = $_SESSION['groupId'];
+						} else {
+							$groupFilter = 'groupId';
+						}
+						
+						$sql = "
+							SELECT devices.deviceId, devices.deviceName, devices.deviceAlias
+							FROM devices
+							LEFT JOIN alarmTriggers ON devices.deviceId = alarmTriggers.deviceId
+							WHERE devices.groupId = devices.$groupFilter AND alarmTriggers.isTriggered = 1;
+						";
+
+						$result = mysqli_query($conn, $sql);
+						$triggeredDevices = array();
+						if ( mysqli_num_rows($result) > 0 ) {
+							while ($row = mysqli_fetch_assoc($result)) {
+								$triggeredDevices[] = $row;
+							}
+						}
+
+						$devicesCount = count($triggeredDevices);
+						if ($devicesCount == 0) {
+							echo '';
+							echo '
+							<div id="devicesNotification" class="hidden absolute bottom-100 bg-gray-50 w-64 top-16 right-12 md:right-20 rounded-b border border-t-0 shadow-md border-gray-300">
+								<div class="flex justify-center items-center border-t text-sm uppercase h-16 font-medium"> 
+									You have no alarms!
+								</div>
+							</div>
+							';
+						} else {
+							echo '<div class="bg-red-500 w-5 h-5 text-xs text-white rounded-lg flex items-center justify-center ml-1">'.$devicesCount.'</div>';
+
+							echo '<div id="devicesNotification" class="hidden absolute bottom-100 bg-gray-50 w-64 top-16 right-12 md:right-20 rounded-b border border-t-0 shadow-md border-gray-300">';
+							for ($i = 0; $i < $devicesCount; $i++) {
+								$name = '';
+								if ($triggeredDevices[$i]['deviceAlias'] != null) {
+									$name = $triggeredDevices[$i]['deviceAlias'];
+								} else {
+									$name = $triggeredDevices[$i]['deviceName'];
+								}
+								echo '
+								<div data-id="'.$triggeredDevices[$i]['deviceId'].'" class="flex justify-start items-center text-lightblue-500 hover:bg-gray-100 hover:text-lightblue-600 cursor-pointer space-x-3 py-4 px-2 border-t"> 
+									<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13 7H7v6h6V7z"></path><path fill-rule="evenodd" d="M7 2a1 1 0 012 0v1h2V2a1 1 0 112 0v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2H2a1 1 0 110-2h1V9H2a1 1 0 010-2h1V5a2 2 0 012-2h2V2zM5 5h10v10H5V5z" clip-rule="evenodd"></path></svg>
+									<div class="flex flex-col justify-start">
+										<p class="uppercase font-medium text-sm text-left">'.$name.'</p>
+										<p class="uppercase font-normal text-xs px-2 bg-red-400 text-white rounded-full w-20">Triggered</p>
+									</div>
+								</div>';
+							}
+							echo '</div>';
+						}
+						?>
 					</button>
 
 					<!-- Profile -->
-					<button class="flex-none h-16 w-12 md:w-20 flex items-center justify-center border-l border-r hover:bg-lightblue-400 group hover:border-lightblue-400 focus:outline-none focus:bg-lightblue-400 focus:border-lightblue-400">
-						<svg class="w-5 h-5 text-gray-700 group-hover:text-white group-focus:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+					<button class="hidden flex-none h-16 w-12 md:w-20 flex items-center justify-center text-gray-700 hover:text-white border-r hover:bg-lightblue-400 hover:border-lightblue-400 focus:outline-none focus:bg-lightblue-400 focus:border-lightblue-400">
+						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path></svg>
 					</button>
-					<!-- Log out icon -->
 
+					<!-- Log out icon -->
 					<a href="includes/logout.inc.php" class="">
-						<button class="flex-none h-16 w-12 md:w-20 flex items-center justify-center hover:bg-lightblue-400 group focus:outline-none focus:bg-lightblue-400">
-							<svg class="w-5 h-5 text-gray-700 group-hover:text-white group-focus:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+						<button class="flex-none h-16 w-12 md:w-20 flex items-center justify-center text-gray-700 hover:text-white hover:bg-lightblue-400 focus:outline-none focus:bg-lightblue-400">
+							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"></path></svg>
 						</button>
 					</a>
 				</div>
