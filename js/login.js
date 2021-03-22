@@ -56,9 +56,9 @@ $(document).ready(function () {
     })
 
     $('#login_email, #login_pwd').keypress(function(e) {
-        console.log(e);
         if(e.which == 13) {
-            $('form').submit();
+            console.log('submit');
+            $('#login_submit').click();
         }
     });
 

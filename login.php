@@ -55,7 +55,7 @@ if (isset($_SESSION["userId"])) {
 			</div>
 
 			<!-- Form -->
-			<form method="post" class="space-y-4">
+			<form action="#" name="loginForm" method="post" class="space-y-4">
 				<!-- Email -->
 				<div class="flex items-center h-12 rounded bg-white border ease-in duration-200">
 					<div class="h-12 w-12 flex items-center justify-center flex-none text-gray-600 ease-in-out transform duration-200">
