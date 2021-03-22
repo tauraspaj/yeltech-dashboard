@@ -73,7 +73,6 @@ VALUES (1, 'Harry Potter', 1, 'staduser@gmail.com', '$2y$10$/MayYegaOu/N59kAQwvq
  (4, 'Jared Dudley', 2,'johaa153sdndoe@gmail.com', '$2y$10$/MayYegaOu/N59kAQwvq.uZOORbfVsBJTY8SfkoyCU5g.R1ab6KGG', 0, '07716494122'),
  (3, 'Luka Doncic', 3,'johasasdndoe@gmail.com', '$2y$10$/MayYegaOu/N59kAQwvq.uZOORbfVsBJTY8SfkoyCU5g.R1ab6KGG', 0, '07716494122'),
  (1, 'Kristaps Porzingis', 1,'johnwd153oe@gmail.com', '$2y$10$/MayYegaOu/N59kAQwvq.uZOORbfVsBJTY8SfkoyCU5g.R1ab6KGG', 0, '07716494122');
-SELECT * FROM users;
 
 
 CREATE TABLE `groups` (
@@ -170,18 +169,6 @@ CREATE TABLE channels(
     FOREIGN KEY (deviceId) REFERENCES devices(deviceId)
 ) ENGINE=InnoDB;
 
-SELECT * FROM devices;
-SELECT * FROM channels;
-
-
-truncate table devices;
-truncate table subscriptions;
-truncate table channels;
-truncate table smsAlarms;
-truncate table smsStatus;
-truncate table measurements;
-truncate table customAlarms;
-truncate table customAlarmRecipients;
 
 CREATE TABLE units(
 	unitId INT UNSIGNED AUTO_INCREMENT NOT NULL,
@@ -189,7 +176,7 @@ CREATE TABLE units(
     PRIMARY KEY (unitId)
 ) ENGINE=InnoDB;
 INSERT INTO units (unitName) VALUES ('oC'), ('mm'), ('mV'), ('mA'), ('A'), ('%'), ('mm/m');
-
+SELECT * FROM measurements WHERE deviceId = 1;
 
 CREATE TABLE measurements(
 	measurementId INT UNSIGNED AUTO_INCREMENT NOT NULL,
@@ -230,25 +217,46 @@ CREATE TABLE smsStatus(
 ) ENGINE=InnoDB;
 
 
-CREATE TABLE customAlarms(
-	customAlarmId INT UNSIGNED AUTO_INCREMENT NOT NULL,
+CREATE TABLE alarmTriggers(
+	triggerId INT UNSIGNED AUTO_INCREMENT NOT NULL,
     channelId INT UNSIGNED NOT NULL,
     deviceId INT UNSIGNED NOT NULL,
     operator VARCHAR(8) NOT NULL,
     thresholdValue VARCHAR(16),
-    timeSet DATETIME DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (customAlarmId),
+    isTriggered TINYINT NOT NULL DEFAULT 0,
+    timeCreated DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (triggerId),
     FOREIGN KEY (channelId) REFERENCES channels(channelId),
     FOREIGN KEY (deviceId) REFERENCES devices(deviceId)
 ) ENGINE=InnoDB;
 
 
-CREATE TABLE customAlarmRecipients(
-	customAlarmRecipientId INT UNSIGNED AUTO_INCREMENT NOT NULL,
-    customAlarmId INT UNSIGNED NOT NULL,
-    userId INT UNSIGNED NOT NULL,
-    PRIMARY KEY (customAlarmRecipientId),
-    FOREIGN KEY (`customAlarmId`) REFERENCES `customAlarms`(`customAlarmId`) ON DELETE CASCADE,
-    FOREIGN KEY (userId) REFERENCES users(userId)
+CREATE TABLE triggeredAlarmsHistory (
+	historyId INT UNSIGNED AUTO_INCREMENT NOT NULL,
+    triggerId INT UNSIGNED NOT NULL,
+    clearedBy INT UNSIGNED,
+    clearedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (historyId),
+    FOREIGN KEY (clearedBy) REFERENCES users(userId),
+    FOREIGN KEY (triggerId) REFERENCES alarmTriggers(triggerId)
 ) ENGINE=InnoDB;
 
+
+CREATE TABLE alarmRecipients(
+	alarmRecipientId INT UNSIGNED AUTO_INCREMENT NOT NULL,
+    deviceId INT UNSIGNED NOT NULL,
+    userId INT UNSIGNED NOT NULL,
+    PRIMARY KEY (alarmRecipientId),
+    FOREIGN KEY (userId) REFERENCES users(userId),
+    FOREIGN KEY (deviceId) REFERENCES devices(deviceId)
+) ENGINE=InnoDB;
+
+
+truncate table devices;
+truncate table subscriptions;
+truncate table channels;
+truncate table smsAlarms;
+truncate table smsStatus;
+truncate table measurements;
+truncate table customAlarms;
+truncate table customAlarmRecipients;

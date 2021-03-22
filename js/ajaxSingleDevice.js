@@ -167,14 +167,18 @@ $(document).ready(function () {
 				</div>
 
 				<!-- Table -->
-				<div class="flex-auto py-2 px-4">
+				<div id="alarmsCardBody" class="flex-auto py-2 px-4">
+					<div id="triggeredAlarms">
+					
+					</div>
 					<div class="flex overflow-x-auto">
 						<table class="table-fixed min-w-full">
 							<thead class="uppercase text-xs bg-bluegray-50 border-b border-gray-200 text-bluegray-900">
 								<tr>
-									<th class="text-left w-2/12 py-2 px-4 font-medium text-gray-500">Channel</th>
-									<th class="text-center w-6/12 lg:w-4/12 py-2 px-4 font-medium text-gray-500">Alarm</th>
-									<th class="text-center w-4/12 lg:w-4/12 py-2 px-4 font-medium text-gray-500">Timestamp</th>
+									<th class="text-left w-2/12 py-2 px-4 font-medium text-gray-500 whitespace-nowrap">Channel</th>
+									<th class="text-center w-6/12 lg:w-4/12 py-2 px-4 font-medium text-gray-500 whitespace-nowrap">Alarm</th>
+									<th class="text-center w-4/12 lg:w-4/12 py-2 px-4 font-medium text-gray-500 whitespace-nowrap">Timestamp</th>
+									<th class="text-center w-4/12 lg:w-4/12 py-2 px-4 font-medium text-gray-500 whitespace-nowrap">Cleared By</th>
 								</tr>
 							</thead>
 							<tbody id="table_alarms">
@@ -319,6 +323,26 @@ $(document).ready(function () {
 				}
 			})
 			//#endregion
+			
+			// * Total alarms widget card
+			//#region 
+			var totalAlarmsCard = `
+			<div class="card-header">
+				<div class="card-header-icon bg-purple-100 text-purple-500">
+					<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd"></path></svg>
+				</div>
+				<div class="card-header-title text-purple-800 bg-purple-100">
+					Total alarms sent
+				</div>
+			</div>
+
+			<div class="flex-auto flex flex-col justify-center items-center space-y-2 py-4">
+				<p class="font-medium text-gray-800"><span class="text-5xl tracking-tighter">`+readingsData.numberOfTriggeredAlarms+`</span></p>
+				<p class="text-xs text-gray-400">`+readingsData.latestAlarmSent+`</p>
+			</div>
+		`
+		$('#totalAlarmsCard').html(totalAlarmsCard);
+		//#endregion 
 		})
 
 		// * Latest temp card
@@ -331,7 +355,7 @@ $(document).ready(function () {
 						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clip-rule="evenodd"></path></svg>	
 					</div>
 					<div class="card-header-title text-yellow-800 bg-yellow-100">
-					Latest temp
+						Current temp
 					</div>
 				</div>
 
@@ -345,26 +369,6 @@ $(document).ready(function () {
 			getLatestTemp(deviceCoordinates, 'api_temp', 'api_loc');
 			//#endregion
 		})
-
-		// * Total alarms widget card
-		//#region 
-		var totalAlarmsCard = `
-			<div class="card-header">
-				<div class="card-header-icon bg-purple-100 text-purple-500">
-					<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd"></path></svg>
-				</div>
-				<div class="card-header-title text-purple-800 bg-purple-100">
-					Total alarms sent
-				</div>
-			</div>
-
-			<div class="flex-auto flex flex-col justify-center items-center space-y-2 py-4">
-				<p class="font-medium text-gray-800"><span id="api_temp" class="text-5xl tracking-tighter">52</span></p>
-				<p id="api_loc" class="text-xs text-gray-400">Latest: 20-20-20 20:20</p>
-			</div>
-		`
-		$('#totalAlarmsCard').html(totalAlarmsCard);
-		//#endregion 
 
 		// * Load alarms card
 		//#region 
@@ -380,6 +384,48 @@ $(document).ready(function () {
 		$('#previous_alarms').on('click', function () {
 			alarmPageNumber -= 1;
 			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms');
+		})
+
+		function displayTriggeredAlarms(triggeredAlarms) {
+			var triggeredAlarmsOutput = '';
+			for (i = 0; i < triggeredAlarms.length; i++) {
+				triggeredAlarmsOutput += `
+				<!-- Alarm -->
+				<div class="flex h-10 text-sm text-red-600 font-medium items-center pl-4 bg-red-50 border border-red-500 my-2">
+					<div class="flex-1 whitespace-nowrap mx-2">
+						`+triggeredAlarms[i].channelName+`
+					</div>
+					<div class="flex-1 mx-2">
+						`+triggeredAlarms[i].operator+` `+triggeredAlarms[i].thresholdValue+`
+					</div>
+					<div class="flex-1 mx-2">
+						<div class="flex-1 flex justify-center mx-2">
+							<div id="clearAlarm" data-id="`+triggeredAlarms[i].triggerId+`" class="flex items-center bg-red-500 shadow text-white py-1 rounded px-2 cursor-pointer hover:bg-red-600" title="Clear alarm">
+								<svg class="w-4 h-4 hidden sm:block mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+								<p class="uppercase text-xs">Clear</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- End of alarm -->
+				`
+			}
+			$('#triggeredAlarms').html(triggeredAlarmsOutput);
+		}
+		// Display triggered alarms
+		getTriggeredAlarms().then( function(triggeredAlarms) {
+			displayTriggeredAlarms(triggeredAlarms);
+		})
+		// Listen for clicks to clear alarms
+		$('#alarmsCardBody').delegate('#clearAlarm', 'click', function() {
+			var triggerId = $(this).attr('data-id');
+			alert();
+			clearAlarm(triggerId).then( function() {
+				// Display triggered alarms
+				getTriggeredAlarms().then( function(triggeredAlarms) {
+					displayTriggeredAlarms(triggeredAlarms);
+				})
+			})
 		})
 		//#endregion
 
@@ -831,12 +877,10 @@ $(document).ready(function () {
 						if (newNextCalibrationDue != nextCalibrationDue) { nextCalibrationDue = newNextCalibrationDue; }
 
 						if (newLastCalibration != data.lastCalibration) {
-							alert('change start')
 							data.lastCalibration = newLastCalibration;
 							updateCalibration('lastCalibration', data.lastCalibration )
 						}
 						if (newNextCalibrationDue != data.nextCalibrationDue) {
-							alert('change subfiinsh');
 							data.nextCalibrationDue = newNextCalibrationDue;
 							updateCalibration('nextCalibrationDue', data.nextCalibrationDue )
 						}
@@ -935,7 +979,10 @@ $(document).ready(function () {
 				</div>
 
 				<!-- Table -->
-				<div class="flex-auto py-2 px-4 bg-gray-50">
+				<div id="alarmsCardBody" class="flex-auto py-2 px-4 bg-gray-50">
+					<div id="triggeredAlarms">
+					
+					</div>
 					<div class="flex overflow-x-auto">
 						<table class="table-fixed min-w-full">
 							<thead class="uppercase text-xs bg-bluegray-50 border-b border-gray-200 text-bluegray-900">
@@ -1208,8 +1255,49 @@ $(document).ready(function () {
 			alarmPageNumber -= 1;
 			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms');
 		})
+
+		function displayTriggeredAlarms(triggeredAlarms) {
+			var triggeredAlarmsOutput = '';
+			for (i = 0; i < triggeredAlarms.length; i++) {
+				triggeredAlarmsOutput += `
+				<!-- Alarm -->
+				<div class="flex h-10 text-sm text-red-600 font-medium items-center pl-4 bg-red-50 border border-red-500 my-2">
+					<div class="flex-1 whitespace-nowrap mx-2">
+						`+triggeredAlarms[i].channelName+`
+					</div>
+					<div class="flex-1 mx-2">
+						`+triggeredAlarms[i].operator+` `+triggeredAlarms[i].thresholdValue+`
+					</div>
+					<div class="flex-1 mx-2">
+						<div class="flex-1 flex justify-center mx-2">
+							<div id="clearAlarm" data-id="`+triggeredAlarms[i].triggerId+`" class="flex items-center bg-red-500 shadow text-white py-1 rounded px-2 cursor-pointer hover:bg-red-600" title="Clear alarm">
+								<svg class="w-4 h-4 hidden sm:block mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+								<p class="uppercase text-xs">Clear</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- End of alarm -->
+				`
+			}
+			$('#triggeredAlarms').html(triggeredAlarmsOutput);
+		}
+		// Display triggered alarms
+		getTriggeredAlarms().then( function(triggeredAlarms) {
+			displayTriggeredAlarms(triggeredAlarms);
+		})
+		// Listen for clicks to clear alarms
+		$('#alarmsCardBody').delegate('#clearAlarm', 'click', function() {
+			var triggerId = $(this).attr('data-id');
+			clearAlarm(triggerId).then(function() {
+				// Display triggered alarms
+				getTriggeredAlarms().then( function(triggeredAlarms) {
+					displayTriggeredAlarms(triggeredAlarms);
+				})
+			})
+		})
 		//#endregion
-	
+		
 	}
 
 	// ! SHOW COMPONENT: Display recipients
@@ -1495,6 +1583,23 @@ $(document).ready(function () {
 		})
 	}
 
+	function getTriggeredAlarms() {
+		return new Promise(function (resolve, reject) {
+			$.ajax({
+				url: './includes/sqlSingleDevice.php',
+				type: 'POST',
+				data: {
+					deviceId: deviceId,
+					function: 'getTriggeredAlarms'
+				},
+				success: function (data) {
+					data = JSON.parse(data);
+					resolve(data);
+				}
+			})
+		})
+	}
+
 	function getDatasets(dateFrom, dateTo) {
 		if (dateTo.toUpperCase() == 'NOW') {
 			var now = new Date();
@@ -1597,35 +1702,42 @@ $(document).ready(function () {
 			success: function (data) {
 				$('#loadingOverlay_alarms').hide();
 				var alarms = JSON.parse(data);
+				console.log(alarms);
 
-				totalCount = alarms[alarms.length - 1]['totalRows'];
-				returnedCount = alarms.length - 1;
+				totalCount = alarms['totalCount'];
+				returnedCount = alarms['alarmHistory'].length;
 				pageControl(totalCount, returnedCount, perPage, pageNumber, 'alarms');
 
 				var outputTable = '';
-				for (i = 0; i < alarms.length - 1; i++) {
+				for (i = 0; i < alarms['alarmHistory'].length; i++) {
 					var alternatingBg = '';
 					if (i%2 == 0) {
 						alternatingBg = 'bg-gray-100';
 					} else {
 						alternatingBg = 'bg-gray-50';
 					}
-					var dateDisplay = new Date( alarms[i].smsAlarmTime );
+					var dateDisplay = new Date( alarms['alarmHistory'][i].timestampCol );
 					dateDisplay = dateDisplay.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
 
 					var alarmDisplay = '-';
-					if (alarms[i].smsAlarmHeader != null) {
-						alarmDisplay = alarms[i].smsAlarmHeader;
-						if (alarms[i].smsAlarmReading != null) {
-							alarmDisplay += ' ' + alarms[i].smsAlarmReading;
-						}
+					if (alarms['alarmHistory'][i]['col1'] == null) {alarms['alarmHistory'][i]['col1'] = '';}
+					if (alarms['alarmHistory'][i]['col2'] == null) {alarms['alarmHistory'][i]['col2'] = '';}
+
+					if (alarms['alarmHistory'][i]['type'] == 'triggeredHistory') {
+						alarmDisplay = '('+alarms['alarmHistory'][i]['col1'] + ' ' + alarms['alarmHistory'][i]['col2'] + ') TRIGGER';
+					} else if (alarms['alarmHistory'][i]['type'] == 'smsAlarm') {
+						alarmDisplay = alarms['alarmHistory'][i]['col1'] + ' ' + alarms['alarmHistory'][i]['col2'];
 					}
+
+					var clearedBy = 'SYSTEM' 
+					if(alarms['alarmHistory'][i].clearedBy != null) { clearedBy = alarms['alarmHistory'][i].clearedBy; }
 
 					outputTable += `
 					<tr class="border-b border-gray-200 h-10 `+ alternatingBg +`">
-						<td class="text-left py-2 px-4 text-xs text-gray-700 font-medium">`+ alarms[i].channelName + `</td>
+						<td class="text-left py-2 px-4 text-xs text-gray-700 font-medium whitespace-nowrap">`+ alarms['alarmHistory'][i].channelName + `</td>
 						<td class="text-center py-2 px-4 text-xs text-gray-700 whitespace-nowrap">`+ alarmDisplay + `</td>
 						<td class="text-center py-2 px-4 text-xs text-gray-700 whitespace-nowrap">`+ dateDisplay + `</td>
+						<td class="text-center py-2 px-4 text-xs text-gray-700 whitespace-nowrap">`+ clearedBy + `</td>
 					</tr>
 					`;
 				}
@@ -1687,6 +1799,23 @@ $(document).ready(function () {
 				success: function (data) {
 					data = JSON.parse(data);
 					resolve(data);
+				}
+			})
+		})
+	}
+
+	function clearAlarm(triggerId) {
+		return new Promise(function (resolve, reject) {
+			$.ajax({
+				url: './includes/sqlSingleDevice.php',
+				type: 'POST',
+				data: {
+					deviceId: deviceId,
+					triggerId: triggerId,
+					function: 'clearAlarm'
+				},
+				success: function () {
+					resolve('SUCCESS');
 				}
 			})
 		})
