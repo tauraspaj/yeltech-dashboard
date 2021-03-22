@@ -19,19 +19,20 @@ $(document).ready(function () {
         success: function (data) {
             var devices = JSON.parse(data);
             var output = '';
-            if (devices.length == 0) {
+            console.log(devices.length);
+            if (devices.length > 0) {
                 for (i = 0; i < devices.length; i++) {
                     // Display custom alias
-                        var display1 = devices[i].deviceName;
-                        var display2 = devices[i].deviceAlias;
-    
-                        if (devices[i].deviceAlias == null) {
-                            display1 = devices[i].deviceName;
-                            display2 = '';
-                        } else {
-                            display1 = devices[i].deviceAlias;
-                            display2 = devices[i].deviceName;
-                        }
+                    var display1 = devices[i].deviceName;
+                    var display2 = devices[i].deviceAlias;
+
+                    if (devices[i].deviceAlias == null) {
+                        display1 = devices[i].deviceName;
+                        display2 = '';
+                    } else {
+                        display1 = devices[i].deviceAlias;
+                        display2 = devices[i].deviceName;
+                    }
     
                     output += `
                         <!-- Alarm -->
@@ -44,7 +45,7 @@ $(document).ready(function () {
                                 </div>
                             </div>
                             <div class="flex-1 mx-2 flex justify-center items-center">
-                                <span class="bg-red-500 px-2 py-1 rounded-full text-white">Alarms Triggered!</span>
+                                <span class="bg-red-500 text-xs sm:text-sm px-2 py-1 rounded-full text-white whitespace-nowrap font-normal">Alarms Triggered!</span>
                             </div>
                         </div>
                         <!-- End of alarm -->
