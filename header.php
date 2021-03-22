@@ -240,9 +240,12 @@ if ($resultCheck > 0) {
 						<div class="flex-none hidden md:flex justify-center text-gray-800 transition-all duration-200 px-4">
 							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
 						</div>
-						<input type="text" autocomplete="off" placeholder="Search..." class="appearance-none outline-none h-full w-full px-2 md:px-0 flex-auto text-gray-800 bg-transparent">
-						<div id="searchResults" class="hidden absolute bottom-100 h-32 bg-red-200 w-full top-16">
+						<input id="searchBarText" type="text" autocomplete="off" placeholder="Search..." class="appearance-none outline-none h-full w-full px-2 md:px-0 flex-auto text-gray-800 bg-transparent">
+						<div id="searchResults" class="hidden absolute bottom-100 bg-gray-50 w-full top-16 rounded-b border border-t-0 shadow-md border-gray-300">
 
+						</div>
+						<div id="clearSearchBtn" class="relative mr-2 text-gray-400 hover:text-gray-600 cursor-pointer hidden">
+							<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
 						</div>
 					</div>
 				</div>
