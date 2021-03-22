@@ -199,9 +199,26 @@ $(document).ready(function () {
 		e.preventDefault();
 
 		var groupName = $("#groupName").val();
+		var dashAccess = 0;
+		var appAccess = 0;
+		if ($('#dashAccess').is(':checked')) {
+			dashAccess = 1;
+		} else {
+			dashAccess = 0;
+		}
 
+		if ($('#appAccess').is(':checked')) {
+			appAccess = 1;
+		} else {
+			appAccess = 0;
+		}
+
+		console.log(dashAccess);
+		console.log(appAccess);
 		$.post('./includes/sqlGroups.php', {
 			groupName: groupName,
+			dashAccess: dashAccess,
+			appAccess: appAccess,
 			function: 'register'
 		}, function(data) {
 			if (data == 'Success') {

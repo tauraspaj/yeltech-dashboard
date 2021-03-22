@@ -89,15 +89,17 @@ if ($_POST['function'] == 'showGroups') {
 } elseif ($_POST['function'] == 'register') {
 	$groupName = $_POST['groupName'];
 	$createdBy = $_SESSION["userId"];
+	$dashAccess = $_POST['dashAccess'];
+	$appAccess = $_POST['appAccess'];
 	
 	// Register group
-	$sql = "INSERT INTO `groups` (groupName, createdBy) VALUES (?, ?);";
+	$sql = "INSERT INTO `groups` (groupName, createdBy, dashAccess, appAccess) VALUES (?, ?, ?, ?);";
 	$stmt = mysqli_stmt_init($conn);
 	if (!mysqli_stmt_prepare($stmt, $sql)) {
 		echo("Error");
 		exit();
 	}
-	if(!mysqli_stmt_bind_param($stmt, "ss", $groupName, $createdBy)){
+	if(!mysqli_stmt_bind_param($stmt, "ssss", $groupName, $createdBy, $dashAccess, $appAccess)){
 		echo("Error");
 		exit();
 	}

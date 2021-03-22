@@ -70,7 +70,7 @@ include_once('header.php');
     <!-- Site content -->
     <div class="flex-auto grid grid-cols-1 p-4 gap-4 md:grid-cols-2 md:gap-4 lg:grid-cols-3 lg:gap-8 lg:p-8 auto-rows-min">
         <!-- Card -->
-        <div class="col-span-1 md:col-span-2 lg:col-span-1 lg:order-2 bg-white shadow-lg border h-52">
+        <div class="col-span-1 md:col-span-2 lg:col-span-1 lg:order-2 bg-white shadow-lg border h-64">
             <div class="h-12 bg-gray-50 flex justify-center items-center uppercase text-xs font-semibold"> 
                 Register New Group
             </div>
@@ -81,11 +81,21 @@ include_once('header.php');
                         <div id="successMessage" class="flex justify-center items-center w-full bg-green-100 h-12 border border-green-300 uppercase font-semibold text-sm text-green-800 hidden z-20 absolute -top-6">Group has been successfully registered!</div>
                         
                         <div id="errorMessage" class="flex justify-center items-center w-full bg-red-100 h-12 border border-red-300 uppercase font-semibold text-sm text-red-800 hidden z-20 absolute -top-6">Something went wrong!</div>
+						
                             <!-- Row #1: Group name -->
                             <div class="flex flex-col">
                                 <p class="form-field-title">Group name<span class="text-red-500">*</span></p>
                                 <input type="text" id="groupName" name="groupName" placeholder="Enter group name" value="" required spellcheck="false" autocomplete="none" class="text-field-input">
                             </div>
+
+							<div class="flex flex-row justify-between items-center px-4 sm:px-8 lg:px-0 2xl:px-8">
+								<label class="flex items-center space-x-1">
+									<input id="dashAccess" type="checkbox" class="h-4 w-4" checked><span class="text-sm text-gray-600 font-medium">Dashboard Access</span>
+								</label>
+								<label class="flex items-center space-x-1">
+									<input id="appAccess" type="checkbox" class="h-4 w-4" checked><span class="text-sm text-gray-600 font-medium">App Access</span>
+								</label>
+							</div>
 
                             <!-- Row #2: Submit button -->
                             <div class="flex justify-center">
