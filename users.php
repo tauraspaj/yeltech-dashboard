@@ -11,10 +11,10 @@ include_once('header.php');
 		<div class="fixed h-full flex flex-col" style="width: inherit;">
 			<!-- New user btn -->
 			<div>
-				<button class="h-8 w-40 xl:w-52 focus:outline-none bg-lightblue-500 rounded-full shadow text-white font-medium flex justify-center items-center text-sm space-x-1 mt-6 mx-auto transition-all hover:bg-lightblue-600" title="Create new user">
+				<a href="./newuser.php" class="h-8 w-40 xl:w-52 focus:outline-none bg-lightblue-500 rounded-full shadow text-white font-medium flex justify-center items-center text-sm space-x-1 mt-6 mx-auto transition-all hover:bg-lightblue-600" title="Create new user">
 					<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"></path></svg>
 					<p>New User</p>
-				</button>
+				</a>
 			</div>
 
 			<!-- Filters div -->
@@ -194,7 +194,27 @@ include_once('header.php');
 		<div class="col-span-1 hidden lg:flex flex-col bg-white shadow-lg">
 			<div class="flex flex-col justify-center items-center mt-8">
 				<svg class="w-12 h-12 text-lightblue-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd"></path></svg>
-				<p class="text-6xl font-bold mt-4">64</p>
+				<?php
+				if ($_SESSION['roleId'] == 4 || $_SESSION['roleId'] == 3) {
+					$devicesGroup = $_SESSION['groupId'];
+				} else {
+					$devicesGroup = 'devices.groupId';
+				}
+				$sql = "
+					SELECT COUNT(*) as totalAlarms
+					FROM triggeredAlarmsHistory
+					LEFT JOIN alarmTriggers ON triggeredAlarmsHistory.triggerId = alarmTriggers.triggerId
+					LEFT JOIN devices ON alarmTriggers.deviceId = devices.deviceId
+					WHERE devices.groupId = $devicesGroup
+				";
+				$result = mysqli_query($conn, $sql);
+				if ( mysqli_num_rows($result) > 0 ) {
+					while ($row = mysqli_fetch_assoc($result)) {
+						$totalAlarms = $row['totalAlarms'];
+					}
+				}
+				?>
+				<p class="text-6xl font-bold mt-4"><?php echo $totalAlarms; ?></p>
 				<p class="text-gray-400 font-medium">No of alarms sent</p>
 			</div>
 
@@ -202,18 +222,18 @@ include_once('header.php');
 
 			<div class="grid grid-cols-2 lg:grid-cols-1 lg:space-y-4 xl:space-y-0 xl:grid-cols-2 mt-6 mb-8">
 				<div class="flex justify-center items-center flex-col px-4 space-y-1">
-					<p class="text-xs text-gray-400 whitespace-nowrap">To your group: <span class="font-medium text-black">32</span></p>
+					<p class="text-xs text-gray-400 whitespace-nowrap">To your group: <span class="font-medium text-black">0</span></p>
 					<!-- Bar -->
 					<div class="h-2 w-full rounded-full bg-gray-200">
-						<div class="h-full bg-lightblue-400 rounded-full" style="width: 60%;"></div>
+						<div class="h-full bg-lightblue-400 rounded-full" style="width: 100%;"></div>
 					</div>
 				</div>
 
 				<div class="flex justify-center items-center flex-col px-4 space-y-1">
-					<p class="text-xs text-gray-400 whitespace-nowrap">To you: <span class="font-medium text-black">16</span></p>
+					<p class="text-xs text-gray-400 whitespace-nowrap">To you: <span class="font-medium text-black">0</span></p>
 					<!-- Bar -->
 					<div class="h-2 w-full rounded-full bg-gray-200">
-						<div class="h-full bg-yellow-300 rounded-full" style="width: 40%;"></div>
+						<div class="h-full bg-yellow-300 rounded-full" style="width: 100%;"></div>
 					</div>
 				</div>
 			</div>
