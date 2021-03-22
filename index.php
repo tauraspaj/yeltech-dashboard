@@ -3,71 +3,103 @@ session_start();
 $_SESSION['activeUrl'] = 'index.php';
 include_once('header.php');
 ?>
+
 <!-- Bottom right dashboard window -->
-<div class="flex-auto bg-lightblue-50">
-	
-	<!-- Page info section -->
-	<div class="bg-white border-b border-gray-200">
-		<!-- Info icon grid -->
-		<div class="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-16 p-8">
-			<!-- Info #1 -->
-			<div class="h-20">
-				<h1 class="text-3xl font-semibold text-gray-700">Home</h1>
-				<h3 class="text-sm text-lightblue-400 uppercase">Group: National Rail</h3>
-			</div>
+<div class="flex-auto bg-gray-100 flex p-4">
+	<!-- Site content -->
+	<div class="flex-auto grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8 auto-rows-min">
 
-			<!-- Info #2 -->
-			<div class="flex h-20 bg-yellow-50">
-				<div class="h-full w-16 md:w-20 bg-yellow-400 flex justify-center items-center text-gray-100 flex-none">
-					<svg class="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+		<div class="col-span-1 card-wrapper h-32">
+			<div class="card-header bg-lightblue-300 text-lightblue-900">
+				<div class="card-header-icon bg-lightblue-200">
+					<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path></svg>
 				</div>
-				<div class="flex flex-col flex-auto mt-2 ml-2">
-					<h4 class="text-sm uppercase text-gray-700">Group</h4>
-					<h2 class="text-md font-semibold capitalize"><?php echo $_SESSION['groupName']; ?></h2>
+				<div class="card-header-title">
+					Group
 				</div>
 			</div>
-
-			<!-- Info #3 -->
-			<div class="flex h-20 bg-green-50">
-				<div class="h-full w-16 md:w-20 bg-green-400 flex justify-center items-center text-gray-100 flex-none">
-					<svg class="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-				</div>
-				<div class="flex flex-col flex-auto mt-2 ml-2">
-					<h4 class="text-sm uppercase text-gray-700">Devices</h4>
-					<h2 class="text-md font-semibold">345</h2>
-				</div>
-			</div>
-
-
-
-			<!-- Info #4 -->
-			<div class="flex h-20 bg-lightblue-50">
-				<div class="h-full w-16 md:w-20 bg-lightblue-400 flex justify-center items-center text-gray-100 flex-none">
-					<svg class="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-				</div>
-				<div class="flex flex-col flex-auto mt-2 ml-2">
-					<h4 class="text-sm uppercase text-gray-700">Other Info</h4>
-					<h2 class="text-md font-semibold">123</h2>
-				</div>
+			<div class="flex-auto flex justify-center items-center">
+				<p id="groupDisplay" class="text-xl font-medium text-lightblue-900"><?php echo $_SESSION['groupName']?></p>
 			</div>
 		</div>
-		<!-- End of info icon grid -->
-		<!-- Sub page navigation -->
-		<div class="overflow-x-auto scrollbars-hidden mt-4">
-			<div class="text-sm text-gray-500 font-semibold uppercase px-8 inline-flex space-x-12">
-				<a href="#" class="py-4 whitespace-nowrap border-b-2 border-lightblue-500 text-gray-700">Overview</a>
-				<a href="#" class="py-4 whitespace-nowrap border-b-2 border-transparent hover:border-lightblue-500 hover:text-gray-700">Map</a>
-				<a href="#" class="py-4 whitespace-nowrap border-b-2 border-transparent hover:border-lightblue-500 hover:text-gray-700">Unacknowledged Alarms</a>
-				<a href="#" class="py-4 whitespace-nowrap border-b-2 border-transparent hover:border-lightblue-500 hover:text-gray-700">One Tab</a>
-				<a href="#" class="py-4 whitespace-nowrap border-b-2 border-transparent hover:border-lightblue-500 hover:text-gray-700">Another Tab</a>
+
+		<div class="col-span-1 card-wrapper h-32">
+			<div class="card-header bg-yellow-300 text-yellow-900">
+				<div class="card-header-icon bg-yellow-200">
+					<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13 7H7v6h6V7z"></path><path fill-rule="evenodd" d="M7 2a1 1 0 012 0v1h2V2a1 1 0 112 0v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2H2a1 1 0 110-2h1V9H2a1 1 0 010-2h1V5a2 2 0 012-2h2V2zM5 5h10v10H5V5z" clip-rule="evenodd"></path></svg>
+				</div>
+				<div class="card-header-title">
+					Total devices
+				</div>
+			</div>
+			<div class="flex-auto flex justify-center items-center">
+				<p id="totalDevicesDisplay" class="text-xl font-medium text-yellow-900"></p>
 			</div>
 		</div>
-		<!-- End of sub page navigation -->
+
+		<div class="col-span-1 card-wrapper h-32">
+			<div class="card-header bg-green-300 text-green-900">
+				<div class="card-header-icon bg-green-200">
+					<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"></path></svg>
+				</div>
+				<div class="card-header-title">
+					Total users
+				</div>
+			</div>
+			<div class="flex-auto flex justify-center items-center">
+				<p id="totalUsersDisplay" class="text-xl font-medium text-green-900"></p>
+			</div>
+		</div>
+
+		<div class="col-span-1 card-wrapper h-32">
+			<div class="card-header bg-purple-300 text-purple-900">
+				<div class="card-header-icon bg-purple-200">
+					<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path></svg>
+				</div>
+				<div class="card-header-title">
+					Total alarms sent
+				</div>
+			</div>
+			<div class="flex-auto flex justify-center items-center">
+				<p id="totalAlarmsDisplay" class="text-xl font-medium text-purple-900"></p>
+			</div>
+		</div>
+
+		<div class="col-span-2 card-wrapper">
+			<div class="card-header bg-red-300 text-red-900">
+				<div class="card-header-icon bg-red-200">
+					<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+				</div>
+				<div class="card-header-title">
+					Alarmed devices
+				</div>
+			</div>
+			<div id="alarmedList" class="flex-auto flex flex-col p-4 space-y-2 overflow-y-auto" style="max-height: 24rem;">
+				
+			</div>
+		</div>
+
+		<div class="col-span-2 card-wrapper">
+			<div class="card-header bg-gray-300 text-gray-900">
+				<div class="card-header-icon bg-gray-200">
+					<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12 1.586l-4 4v12.828l4-4V1.586zM3.707 3.293A1 1 0 002 4v10a1 1 0 00.293.707L6 18.414V5.586L3.707 3.293zM17.707 5.293L14 1.586v12.828l2.293 2.293A1 1 0 0018 16V6a1 1 0 00-.293-.707z" clip-rule="evenodd"></path></svg>
+				</div>
+				<div class="card-header-title">
+					Devices map
+				</div>
+			</div>
+			<div class="flex-auto flex justify-center items-center h-96 p-2">
+				<div id="homeMap" class="w-full h-full"></div>
+			</div>
+		</div>
+
 	</div>
-	<!-- End of page info section -->
-	
+	<!-- End of site content -->
 </div>
-<!-- End of bottom right dashboard window -->
+<!-- End of bottom right dashboard window -->	
+
+<!-- Load AJAX script for this page -->
+<script src="./js/ajaxIndex.js"></script>
 
 <?php 
 include_once('./footer.php');
