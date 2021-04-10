@@ -4,6 +4,9 @@ $(document).ready(function () {
         $(this).prev().toggleClass('text-lightblue-500 scale-125');
     })
 
+    $('#forgotPassword').on('click', function() {
+        $('#forgotPasswordDiv').toggleClass('hidden');
+    })
 
     // Submit form
     $('form').on('submit', function (e) {

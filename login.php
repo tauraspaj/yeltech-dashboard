@@ -78,8 +78,9 @@ if (isset($_SESSION["userId"])) {
 						<input id="remember_me" type="checkbox" class="h-4 w-4 border-gray-300 cursor-pointer">
 						<label for="remember_me" class="text-md text-gray-700 tracking-wide cursor-pointer pl-2 select-none">Remember me</label>
 					</div>
-					<div>
-						<p class="text-sm italic text-gray-400 underline cursor-pointer">Forgot password?</p>
+					<div class="relative">
+						<p id="forgotPassword" class="text-sm italic text-gray-400 underline cursor-pointer">Forgot password?</p>
+						<div id="forgotPasswordDiv" class="hidden absolute py-3 px-6 rounded top-6 -right-1 bg-red-100 border border-red-500 shadow-lg text-gray-800 whitespace-nowrap text-sm text-center italic">Get in touch with us at <br> <span class="font-medium">info@yeltech.com</span></div>
 					</div>
 				</div>
 
