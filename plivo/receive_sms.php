@@ -1,10 +1,20 @@
-<?php 
+<?php
+require 'vendor/autoload.php';
+use Plivo\RestClient;
+$client = new RestClient("MAOGQXZTY0ZDJMODIXZT", "ZDNiMmI5YmY4OWY1MzVhYzIzZTAzOGQzMDRhZDgy");
 
-require_once 'dbh.inc.php';
+require_once './../includes/dbh.inc.php';
 
-$to = $_POST['to'];
-$from = $_POST['from'];
-$textBody = $_POST['textBody'];
+// Sender's phone numer
+$from = $_REQUEST["From"];
+$from = '+'.$from;
+
+// Receiver's phone number - Plivo number
+$to = $_REQUEST["To"];
+$to = '+'.$to;
+
+// The SMS text message which was received
+$textBody = $_REQUEST["Text"];
 
 $tempData = explode("\n", $textBody);
 
