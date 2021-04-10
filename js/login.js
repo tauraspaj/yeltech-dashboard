@@ -4,8 +4,13 @@ $(document).ready(function () {
         $(this).prev().toggleClass('text-lightblue-500 scale-125');
     })
 
+    $('#forgotPasswordDiv').hide();
     $('#forgotPassword').on('click', function() {
-        $('#forgotPasswordDiv').toggleClass('hidden');
+        if ($('#forgotPasswordDiv').is(':visible')) {
+            $('#forgotPasswordDiv').slideUp('fast');
+        } else {
+            $('#forgotPasswordDiv').slideDown('fast');
+        }
     })
 
     // Submit form
