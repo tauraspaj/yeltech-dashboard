@@ -35,14 +35,15 @@ include_once('header.php');
 							<div class="flex flex-col lg:flex-row flex-auto">
 								<div class="flex flex-col flex-1 mx-4 mt-2">
 									<p class="form-field-title">Product Type<span class="text-red-500">*</span></p>
-									<select id="productType" class="select-field-input">
+
+									<select id="productType">
 										<?php
 											$sql = "SELECT productId, productName FROM products ORDER BY productName ASC";
 											$result = mysqli_query($conn, $sql);
 											$resultCheck = mysqli_num_rows($result);
 											if ($resultCheck > 0) {
 												while ($row = mysqli_fetch_assoc($result)) {
-													echo '<option data-id="'.$row['productId'].'" class="font-medium text-sm bg-bluegray-50 text-bluegray-800 normal-case">'.$row['productName'].'</option>';
+													echo '<option data-id="'.$row['productId'].'">'.$row['productName'].'</option>';
 												}
 											}  
 										?>
@@ -51,15 +52,16 @@ include_once('header.php');
 
 								<div class="flex flex-col flex-1 mx-4 mt-2">
 									<p class="form-field-title">Device Type<span class="text-red-500">*</span></p>
-									<select id="deviceType" class="select-field-input">
-										<option data-id="-1" class="font-medium text-sm bg-bluegray-50 text-bluegray-800" selected disabled>Type</option>
+
+									<select id="deviceType">
+										<option data-id="-1" selected disabled>Type</option>
 										<?php
 											$sql = "SELECT deviceTypeId, deviceTypeName FROM deviceTypes ORDER BY deviceTypeName ASC";
 											$result = mysqli_query($conn, $sql);
 											$resultCheck = mysqli_num_rows($result);
 											if ($resultCheck > 0) {
 												while ($row = mysqli_fetch_assoc($result)) {
-													echo '<option data-id="'.$row['deviceTypeId'].'" class="font-medium text-sm bg-bluegray-50 text-bluegray-800 normal-case">'.$row['deviceTypeName'].'</option>';
+													echo '<option data-id="'.$row['deviceTypeId'].'">'.$row['deviceTypeName'].'</option>';
 												}
 											}  
 										?>
@@ -72,12 +74,12 @@ include_once('header.php');
 							<div class="flex flex-col lg:flex-row flex-auto">
 								<div class="flex flex-col flex-1 mx-4 mt-2">
 									<p class="form-field-title">Device Name<span class="text-red-500">*</span></p>
-									<input type="text" id="deviceName" placeholder="Device Name" required spellcheck="false" autocomplete="none" class="text-field-input rounded-l-none">
+									<input type="text" id="deviceName" placeholder="Device Name" required spellcheck="false" autocomplete="none">
 								</div>
 
 								<div class="flex flex-col flex-1 mx-4 mt-2">
 									<p class="form-field-title">Device phone number<span class="text-red-500">*</span></p>
-									<input type="text" id="devicePhone" placeholder="Device phone number" required spellcheck="false" autocomplete="none" class="text-field-input">
+									<input type="text" id="devicePhone" placeholder="Device phone number" required spellcheck="false" autocomplete="none">
 								</div>
 							</div>
 							<!-- End of row -->
@@ -87,14 +89,14 @@ include_once('header.php');
 								<div class="flex flex-col flex-1 mx-4 mt-2">
 									<p class="form-field-title">Group<span class="text-red-500">*</span></p>
 									<select id="groupId" class="select-field-input">
-										<option data-id="-1" class="font-medium text-sm bg-bluegray-50 text-bluegray-800" selected disabled>Group</option>
+										<option data-id="-1" selected disabled>Group</option>
 										<?php
 											$sql = "SELECT groupId, groupName FROM `groups` ORDER BY groupName ASC";
 											$result = mysqli_query($conn, $sql);
 											$resultCheck = mysqli_num_rows($result);
 											if ($resultCheck > 0) {
 												while ($row = mysqli_fetch_assoc($result)) {
-													echo '<option data-id="'.$row['groupId'].'" class="font-medium text-sm bg-bluegray-50 text-bluegray-800 normal-case">'.$row['groupName'].'</option>';
+													echo '<option data-id="'.$row['groupId'].'">'.$row['groupName'].'</option>';
 												}
 											}  
 										?>
@@ -109,31 +111,32 @@ include_once('header.php');
 							<div class="flex flex-col lg:flex-row flex-auto">
 								<div class="flex-auto flex flex-col mx-4 mt-2">
 									<p class="form-field-title">Channel Type<span class="text-red-500">*</span></p>
-									<select id="channelType" class="select-field-input">
-										<option data-id="-1" class="font-medium text-sm bg-bluegray-50 text-bluegray-800" selected disabled>Type</option>
-										<option data-id="AI" class="font-medium text-sm bg-bluegray-50 text-bluegray-800">AI</option>
-										<option data-id="DI" class="font-medium text-sm bg-bluegray-50 text-bluegray-800">DI</option>
-										<option data-id="COUNTER" class="font-medium text-sm bg-bluegray-50 text-bluegray-800">COUNTER</option>
+									<select id="channelType">
+										<option data-id="-1" selected disabled>Type</option>
+										<option data-id="AI">AI</option>
+										<option data-id="DI">DI</option>
+										<option data-id="COUNTER">COUNTER</option>
 									</select>
 								</div>
 
 								<div class="flex-auto flex">
 									<div class="flex flex-col flex-auto mx-4 mt-2">
 										<p class="form-field-title">Channel Name<span class="text-red-500">*</span></p>
-										<input type="text" id="channelName" placeholder="Channel name" spellcheck="false" autocomplete="none" class="text-field-input">
+										<input type="text" id="channelName" placeholder="Channel name" spellcheck="false" autocomplete="none">
 									</div>
 
 									<div id="channelUnit" class="flex flex-col flex-1 mx-4 mt-2">
 										<p class="form-field-title">Unit<span class="text-red-500">*</span></p>
-										<select id="channelUnitSelect" class="select-field-input">
-											<option data-id="-1" class="font-medium text-sm bg-bluegray-50 text-bluegray-800" selected disabled>Unit</option>
+
+										<select id="channelUnitSelect">
+											<option data-id="-1" selected disabled>Unit</option>
 											<?php
 												$sql = "SELECT unitId, unitName FROM units ORDER BY unitName ASC";
 												$result = mysqli_query($conn, $sql);
 												$resultCheck = mysqli_num_rows($result);
 												if ($resultCheck > 0) {
 													while ($row = mysqli_fetch_assoc($result)) {
-														echo '<option data-id="'.$row['unitId'].'" class="font-medium text-sm bg-bluegray-50 text-bluegray-800 normal-case">'.$row['unitName'].'</option>';
+														echo '<option data-id="'.$row['unitId'].'">'.$row['unitName'].'</option>';
 													}
 												}  
 											?>
@@ -171,16 +174,17 @@ include_once('header.php');
 										</div>
 										<!-- End of checkbox -->
 										<div id="calibrationFields" class="flex-auto flex-col mt-4 mx-4 lg:mx-0 hidden">
-											<p class="text-xs uppercase font-semibold text-bluegray-600 px-2 py-1">Next calibration date<span class="text-red-500">*</span></p>
-											<input type="date" id="nextCalibrationDate" class="outline-none border border-gray-200 h-12 px-4 text-sm font-semibold text-bluegray-800 bg-bluegray-100 w-full transition-all focus:border-gray-400 rounded">
+											<p class="form-field-title">Next calibration date<span class="text-red-500">*</span></p>
+											<input type="date" id="nextCalibrationDate">
 
-											<p class="text-xs uppercase font-semibold text-bluegray-600 px-2 py-1 mt-2">Last calibration date<span class="text-red-500">*</span></p>
-											<input type="date" id="lastCalibrationDate" class="outline-none border border-gray-200 h-12 px-4 text-sm font-semibold text-bluegray-800 bg-bluegray-100 w-full transition-all focus:border-gray-400 rounded">
+											<p class="form-field-title mt-3">Last calibration date<span class="text-red-500">*</span></p>
+											<input type="date" id="lastCalibrationDate">
 										</div>
 
 									</div>
 								</div>
 								<!-- End of calibration -->
+
 								<!-- Subscriptions -->
 								<div class="flex-1">
 									<p class="form-field-title text-center mt-8 border-b mb-4 mx-4 lg:mx-0">Subscription</p>
@@ -194,11 +198,11 @@ include_once('header.php');
 										</div>
 										<!-- End of checkbox -->
 										<div id="subscriptionFields" class="flex-auto flex-col mt-4 mx-4 lg:mx-0 hidden">
-											<p class="text-xs uppercase font-semibold text-bluegray-600 px-2 py-1">Start<span class="text-red-500">*</span></p>
-											<input type="date" id="subStartDate" class="outline-none border border-gray-200 h-12 px-4 text-sm font-semibold text-bluegray-800 bg-bluegray-100 w-full transition-all focus:border-gray-400 rounded">
+											<p class="form-field-title">Start<span class="text-red-500">*</span></p>
+											<input type="date" id="subStartDate">
 
-											<p class="text-xs uppercase font-semibold text-bluegray-600 px-2 py-1 mt-2">Finish<span class="text-red-500">*</span></p>
-											<input type="date" id="subFinishDate" class="outline-none border border-gray-200 h-12 px-4 text-sm font-semibold text-bluegray-800 bg-bluegray-100 w-full transition-all focus:border-gray-400 rounded">
+											<p class="form-field-title mt-3">Finish<span class="text-red-500">*</span></p>
+											<input type="date" id="subFinishDate">
 										</div>
 									</div>
 								</div>
@@ -206,32 +210,30 @@ include_once('header.php');
 							</div>
 							<!-- End of row -->
 							
-
 							<!-- Submit button -->
-							<p class="text-xs uppercase font-semibold text-bluegray-600 px-2 py-1 text-center mt-8 border-b mb-4 mx-4 lg:mx-0">Submit</p>
+							<p class="form-field-title text-center mt-8 border-b mb-4 mx-4 lg:mx-0">Submit</p>
 							<div class="flex flex-row flex-1 my-0 mt-2 mx-4 lg:mx-0 lg:my-0 lg:mt-2 justify-center">
-								<button type="submit" id="submit" name="submit" title="Create" class="focus:outline-none flex items-center justify-center border border-transparent bg-lightblue-500 transition-all hover:bg-lightblue-600 text-lightblue-100 hover:border-lightblue-500 hover:text-white space-x-2 font-semibold uppercase text-sm h-12 w-40 mb-8 rounded shadow">
+								<button type="submit" id="submit" name="submit" title="Create device" class="w-40">
+									<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>
 									<p>Create</p>
-									<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg></i>
 								</button>
 
 							</div>
 
 						</form>
 						<!-- End of form -->
-						<div id="simMessage" class="bg-red-200 cursor-pointer">Simulate Message</div>
 					</div>
 					<!-- End of BSC form wrapper -->
 				</div>
 				<!-- End of BSC section -->
 				
-				<div id="ADU" class="bg-white hidden">
+				<!-- <div id="ADU" class="bg-white hidden">
 				adu
 				</div>
 				
 				<div id="SIGFOX" class="bg-white hidden">
 				sigfox
-				</div>
+				</div> -->
 
 			</div>
 			<!-- End of sub page nav bar -->
