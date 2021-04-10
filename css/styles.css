@@ -7,15 +7,36 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+	[type='text'],
+    [type='email'],
+    [type='url'],
+    [type='password'],
+    [type='number'],
+    [type='date'],
+    [type='datetime-local'],
+    [type='month'],
+    [type='search'],
+    [type='tel'],
+    [type='time'],
+    [type='week'],
+    [multiple],
+    textarea,
+    select {
+		@apply w-full h-10 rounded border-gray-200 px-4 text-sm font-medium bg-gray-100 transition placeholder-gray-400 focus:bg-gray-50;
+	}
+
+	[type='checkbox'],
+	[type='radio'] {
+		@apply rounded border-gray-200 text-lightblue-500 focus:ring-lightblue-500;
+	}
+
+	[type='submit'] {
+		@apply flex items-center justify-center border border-transparent bg-lightblue-500 transition-all hover:bg-lightblue-600 text-lightblue-100 hover:border-lightblue-500 hover:text-white space-x-2 font-medium uppercase text-sm h-10 rounded shadow;
+	}
+}
+
 @layer components {
-	.text-field-input {
-		@apply outline-none border border-gray-200 h-10 px-4 text-sm font-semibold text-bluegray-800 bg-bluegray-100 w-full transition-all focus:border-gray-400 rounded;
-	}
-
-	.select-field-input {
-		@apply outline-none border border-gray-200 h-10 px-4 text-sm capitalize font-semibold text-bluegray-800 bg-bluegray-100 transition-all hover:border-gray-400 focus:border-gray-400 hover:text-bluegray-900 rounded;
-	}
-
 	.form-field-title {
 		@apply text-xs uppercase font-semibold text-bluegray-600 px-2 py-1;
 	}
