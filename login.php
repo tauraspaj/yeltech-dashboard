@@ -30,13 +30,12 @@ if (isset($_SESSION["userId"])) {
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 	<link rel="stylesheet" href="css/dist.css">
-	<link rel="stylesheet" href="css/styles.css">
 	<script src="https://kit.fontawesome.com/3ade8de4ba.js" crossorigin="anonymous"></script>
 
 	<!-- jQuery -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-	<title>YelDash - Manage Your Devices</title>
+	<title>YelCloud - Manage Your Devices</title>
 
 </head>
 
@@ -51,17 +50,18 @@ if (isset($_SESSION["userId"])) {
 		<div class="max-w-sm w-full space-y-12 px-6 md:px-0">
 			<!-- Logo -->
 			<div>
-				<img src="img/yeltech-dark.png" class="h-18 md:h-24 w-auto mx-auto" alt="Yeltech" title="Yeltech">
+				<img src="img/yeltech-dark.png" class="h-18 md:h-24 w-auto mx-auto" alt="Yeltech logo" title="Yeltech logo">
 			</div>
 
 			<!-- Form -->
-			<form action="#" name="loginForm" method="post" class="space-y-4">
+			<form method="post" class="space-y-4">
+				<p id="errorMessage" class="hidden text-center text-sm italic text-red-500">Password is incorrect</p>
 				<!-- Email -->
 				<div class="flex items-center h-12 rounded bg-white border ease-in duration-200">
 					<div class="h-12 w-12 flex items-center justify-center flex-none text-gray-600 ease-in-out transform duration-200">
 						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path></svg>
 					</div>
-					<input type="email" id="login_email" name="login_email" placeholder="Email Address" required spellcheck="false" autocomplete="on" class="appearance-none text-md w-full py-2 pr-2 bg-transparent placeholder-gray-300 text-gray-900 focus:outline-none">
+					<input type="email" id="login_email" name="login_email" placeholder="Email Address" required spellcheck="false" autocomplete="on" class="w-full h-full border-none bg-transparent focus:bg-transparent focus:ring-0 px-2">
 				</div>
 
 				<!-- Password -->
@@ -69,7 +69,7 @@ if (isset($_SESSION["userId"])) {
 					<div class="h-12 w-12 flex items-center justify-center flex-none text-gray-600 ease-in-out transform duration-200">
 						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
 					</div>
-					<input type="password" id="login_pwd" name="login_pwd" placeholder="Password" required class="appearance-none text-md w-full py-2 pr-2 bg-transparent placeholder-gray-300 text-gray-900 focus:outline-none">
+					<input type="password" id="login_pwd" name="login_pwd" placeholder="Password"  class="w-full h-full border-none bg-transparent focus:bg-transparent focus:ring-0 px-2">
 				</div>
 
 				<!-- Remember me -->
