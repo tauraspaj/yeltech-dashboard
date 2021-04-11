@@ -15,14 +15,13 @@ function cookieExists($conn, $selector) {
 	mysqli_stmt_execute($stmt);
 
 	$resultData = mysqli_stmt_get_result($stmt);
-
+	
 	if ($row = mysqli_fetch_assoc($resultData)) {
 		return $row;
 	} else {
 		$result = false;
 		return $result;
 	}
-
 	mysqli_stmt_close($stmt);
 }
 
@@ -56,17 +55,19 @@ function createRememberMeCookie($conn, $userId) {
 		// Expiry time: Current time + 1 week in seconds
 		$activeFrom = time();
 		$activeFrom = date("Y-m-d H:i:s", "$activeFrom");
-		$activeTo = time()+(60*60*24*7); 
-		$activeTo = date("Y-m-d H:i:s", "$activeTo");
-
-		mysqli_stmt_bind_param($stmt, "sssss", $selector, $hashedValidator, $userId, $activeFrom, $activeTo);
-		mysqli_stmt_execute($stmt);
-		mysqli_stmt_close($stmt);
+		$activeTo = time()+(60*60*24*7);
 
 		// 3. Create COOKIE with selector:UnhashedValidator
 		$cookieString = $selector.':'.$validator;
 		$cookieName = 'remember';
 		setcookie($cookieName, $cookieString, $activeTo, '/');
+
+		// Add  to db
+		$activeTo = date("Y-m-d H:i:s", "$activeTo");
+		mysqli_stmt_bind_param($stmt, "sssss", $selector, $hashedValidator, $userId, $activeFrom, $activeTo);
+		mysqli_stmt_execute($stmt);
+		mysqli_stmt_close($stmt);
+
 	}
 }
 
@@ -76,10 +77,6 @@ function verifyRememberCookie($conn, $cookieString) {
 
 	$row = cookieExists($conn, $selector);
 	if ($row) {
-		// $hashCheck = hash_equals($row['hashedValidator'], hash('SHA256', $validator));
-
-		$result;
-
 		if (hash_equals($row['hashedValidator'], hash('SHA256', $validator))) {
 			$result = $row["userId"];
 		} else {

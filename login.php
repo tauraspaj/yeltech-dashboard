@@ -18,8 +18,6 @@ if (isset($_SESSION["userId"])) {
 	header("location: index.php");
 	exit();
 }
-
-
 ?>
 
 <!DOCTYPE html>
@@ -61,7 +59,7 @@ if (isset($_SESSION["userId"])) {
 					<div class="h-12 w-12 flex items-center justify-center flex-none text-gray-600 ease-in-out transform duration-200">
 						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path></svg>
 					</div>
-					<input type="email" id="login_email" name="login_email" placeholder="Email Address" required spellcheck="false" autocomplete="on" class="w-full h-full border-none bg-transparent focus:bg-transparent focus:ring-0 px-2">
+					<input type="email" id="login_email" name="login_email" placeholder="Email Address" required spellcheck="false" autocomplete="on" class="w-full h-full border-none bg-transparent focus:bg-transparent focus:ring-0 px-0 placeholder-gray-300 text-base font-normal">
 				</div>
 
 				<!-- Password -->
@@ -69,7 +67,7 @@ if (isset($_SESSION["userId"])) {
 					<div class="h-12 w-12 flex items-center justify-center flex-none text-gray-600 ease-in-out transform duration-200">
 						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
 					</div>
-					<input type="password" id="login_pwd" name="login_pwd" placeholder="Password"  class="w-full h-full border-none bg-transparent focus:bg-transparent focus:ring-0 px-2">
+					<input type="password" id="login_pwd" name="login_pwd" placeholder="Password"  class="-full h-full border-none bg-transparent focus:bg-transparent focus:ring-0 px-0 placeholder-gray-300 text-base font-normal">
 				</div>
 
 				<!-- Remember me -->
