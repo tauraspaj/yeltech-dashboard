@@ -99,9 +99,8 @@ if ($resultCheck > 0) {
 	<link href='https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css' rel='stylesheet' />
 
 	<link rel="stylesheet" href="css/dist.css">
-	<link rel="stylesheet" href="css/styles.css">
 
-	<title>YelDash - Manage Your Devices</title>
+	<title>YelCloud - Manage Your Devices</title>
 
 </head>
 <body class="font-display overflow-x-hidden bg-gray-100">
@@ -161,9 +160,7 @@ if ($resultCheck > 0) {
 		<!-- Mobile version sidebar -->
         <div id="leftSidebar_mobile" class="block lg:hidden fixed top-0 z-50 flex-none h-screen w-full border-r shadow ease-in-out transform duration-200 -translate-x-full">
 			<div id="leftSidebarFade" class="bg-black bg-opacity-25 h-screen w-screen absolute top-0">
-				<div class="absolute top-3 right-3 border-2 border-gray-100 text-white p-2 bg-gray-700">
-					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-				</div>
+				
 			</div>
 			
 			<div id="leftSidebar_mobileInner" class="bg-white h-full w-36 ease-in-out transform duration-500 -translate-x-full z-50">
@@ -240,7 +237,7 @@ if ($resultCheck > 0) {
 						<div class="flex-none hidden md:flex justify-center text-gray-800 transition-all duration-200 px-4">
 							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path></svg>
 						</div>
-						<input id="searchBarText" type="text" autocomplete="off" placeholder="Search..." class="appearance-none outline-none h-full w-full px-2 md:px-0 flex-auto text-gray-800 bg-transparent">
+						<input id="searchBarText" type="text" autocomplete="off" placeholder="Search..." class="h-full w-full border-none bg-transparent font-normal focus:ring-0 px-2 md:px-0 text-base">
 						<div id="searchResults" class="hidden absolute bottom-100 bg-gray-50 w-full top-16 rounded-b border border-t-0 shadow-md border-gray-300">
 
 						</div>
