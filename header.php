@@ -252,17 +252,13 @@ if ($resultCheck > 0) {
 					<button id="notificationsButton" class="flex-none h-16 w-16 md:w-20 flex items-center justify-center text-gray-700 hover:text-white border-l border-r hover:bg-lightblue-400 hover:border-lightblue-400 focus:outline-none focus:text-white focus:bg-lightblue-400 focus:border-lightblue-400">
 						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path></svg>
 						<?php 
-						if ($_SESSION['roleId'] == 4 || $_SESSION['roleId'] == 3) {
-							$groupFilter = $_SESSION['groupId'];
-						} else {
-							$groupFilter = 'devices.groupId';
-						}
+						$groupFilter = $_SESSION['groupId'];
 						
 						$sql = "
-							SELECT devices.deviceId, devices.deviceName, devices.deviceAlias
+							SELECT devices.deviceId, devices.deviceName, devices.deviceAlias, COUNT(alarmTriggers.isTriggered) as nAlarmsTriggered
 							FROM devices
 							LEFT JOIN alarmTriggers ON devices.deviceId = alarmTriggers.deviceId
-							WHERE devices.groupId = $groupFilter AND alarmTriggers.isTriggered = 1;
+							WHERE devices.groupId = $groupFilter AND alarmTriggers.isTriggered = 1
 						";
 
 						$result = mysqli_query($conn, $sql);
@@ -275,33 +271,35 @@ if ($resultCheck > 0) {
 
 						$devicesCount = count($triggeredDevices);
 						if ($devicesCount == 0) {
-							echo '';
 							echo '
 							<div id="devicesNotification" class="hidden absolute bottom-100 bg-gray-50 w-64 top-16 right-12 md:right-20 rounded-b border border-t-0 shadow-md border-gray-300">
-								<div class="flex justify-center items-center border-t text-sm uppercase h-16 font-medium"> 
+								<p class="flex justify-center items-center border-t text-sm uppercase h-16 font-medium text-black cursor-default"> 
 									You have no alarms!
-								</div>
+								</p>
 							</div>
 							';
+							
 						} else {
 							echo '<div class="bg-red-500 w-5 h-5 text-xs text-white rounded-lg flex items-center justify-center ml-1">'.$devicesCount.'</div>';
 
-							echo '<div id="devicesNotification" class="hidden absolute bottom-100 bg-gray-50 w-64 top-16 right-12 md:right-20 rounded-b border border-t-0 shadow-md border-gray-300">';
+							echo '<div id="devicesNotification" class="hidden absolute bottom-100 bg-gray-50 w-64 top-16 right-12 md:right-20 rounded-b border border-t-0 shadow-md border-gray-300 overflow-y-auto" style="max-height: 20rem;">';
 							for ($i = 0; $i < $devicesCount; $i++) {
 								$name = '';
-								if ($triggeredDevices[$i]['deviceAlias'] != null) {
-									$name = $triggeredDevices[$i]['deviceAlias'];
-								} else {
+								if ($triggeredDevices[$i]['deviceAlias'] == null || $triggeredDevices[$i]['deviceAlias'] == '') {
 									$name = $triggeredDevices[$i]['deviceName'];
+								} else {
+									$name = $triggeredDevices[$i]['deviceAlias'];
 								}
 								echo '
-								<div data-id="'.$triggeredDevices[$i]['deviceId'].'" class="flex justify-start items-center text-lightblue-500 hover:bg-gray-100 hover:text-lightblue-600 cursor-pointer space-x-3 py-4 px-2 border-t"> 
-									<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13 7H7v6h6V7z"></path><path fill-rule="evenodd" d="M7 2a1 1 0 012 0v1h2V2a1 1 0 112 0v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2H2a1 1 0 110-2h1V9H2a1 1 0 010-2h1V5a2 2 0 012-2h2V2zM5 5h10v10H5V5z" clip-rule="evenodd"></path></svg>
-									<div class="flex flex-col justify-start">
+								<div data-id="'.$triggeredDevices[$i]['deviceId'].'" class="flex justify-between items-center text-lightblue-500 hover:bg-gray-100 hover:text-lightblue-600 cursor-pointer space-x-3 py-4 px-2 border-t">
+									<div class="flex items-center space-x-2">
+										<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13 7H7v6h6V7z"></path><path fill-rule="evenodd" d="M7 2a1 1 0 012 0v1h2V2a1 1 0 112 0v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2H2a1 1 0 110-2h1V9H2a1 1 0 010-2h1V5a2 2 0 012-2h2V2zM5 5h10v10H5V5z" clip-rule="evenodd"></path></svg>
 										<p class="uppercase font-medium text-sm text-left">'.$name.'</p>
-										<p class="uppercase font-normal text-xs px-2 bg-red-400 text-white rounded-full w-20">Triggered</p>
 									</div>
-								</div>';
+									<div>
+										<p class="uppercase font-medium text-xs py-1 px-3 mr-2 bg-red-500 text-white rounded-full whitespace-nowrap">'.$triggeredDevices[$i]['nAlarmsTriggered'].' Alarms</p>
+									</div>
+								</div>';								
 							}
 							echo '</div>';
 						}
