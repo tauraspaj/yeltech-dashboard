@@ -252,7 +252,11 @@ if ($resultCheck > 0) {
 					<button id="notificationsButton" class="flex-none h-16 w-16 md:w-20 flex items-center justify-center text-gray-700 hover:text-white border-l border-r hover:bg-lightblue-400 hover:border-lightblue-400 focus:outline-none focus:text-white focus:bg-lightblue-400 focus:border-lightblue-400">
 						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path></svg>
 						<?php 
-						$groupFilter = $_SESSION['groupId'];
+						if ($_SESSION['roleId'] == 4 || $_SESSION['roleId'] == 3) {
+							$groupFilter = $_SESSION['groupId'];
+						} else {
+							$groupFilter = 'groupId';
+						}
 						
 						$sql = "
 							SELECT devices.deviceId, devices.deviceName, devices.deviceAlias, COUNT(alarmTriggers.isTriggered) as nAlarmsTriggered
