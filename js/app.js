@@ -20,7 +20,7 @@ $(document).ready(function () {
 			$('#clearSearchBtn').removeClass('hidden');
 			for (i = 0; i < data.length; i++) {
 				var alias = '';
-				if (data[i].aliasEmail != null) { alias = '<span class="text-xs text-gray-300">('+data[i].aliasEmail+')</span>';} 
+				if (data[i].aliasEmail != null && data[i].aliasEmail != '') { alias = '<span class="text-xs text-gray-300">('+data[i].aliasEmail+')</span>';} 
 				switch (data[i].type) {
 					case 'device':
 						output += `

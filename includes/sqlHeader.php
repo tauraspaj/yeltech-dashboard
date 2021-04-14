@@ -47,14 +47,14 @@ switch ($function) {
         if ($_SESSION['roleId'] == 4 || $_SESSION['roleId'] == 3) {
             $groupFilter = $_SESSION['groupId'];
         } else {
-            $groupFilter = 'groupId';
+            $groupFilter = 'devices.groupId';
         }
         
         $sql = "
-            SELECT devices.deviceId, devices.deviceName, devices.deviceAlias
+            SELECT devices.deviceId, devices.deviceName, devices.deviceAlias, COUNT(alarmTriggers.isTriggered) as nAlarmsTriggered
             FROM devices
             LEFT JOIN alarmTriggers ON devices.deviceId = alarmTriggers.deviceId
-            WHERE devices.groupId = devices.$groupFilter AND alarmTriggers.isTriggered = 1;
+            WHERE devices.groupId = $groupFilter AND alarmTriggers.isTriggered = 1
         ";
 
         $result = mysqli_query($conn, $sql);
