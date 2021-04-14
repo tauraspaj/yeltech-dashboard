@@ -68,7 +68,7 @@ $(document).ready(function () {
 					// Display custom alias
 					var display1 = devices[i].deviceName;
 					var display2 = devices[i].deviceAlias;
-					if (devices[i].deviceAlias == null) {
+					if (devices[i].deviceAlias == null || devices[i].deviceAlias == '') {
 						display1 = devices[i].deviceName;
 						display2 = '';
 					} else {
@@ -80,10 +80,11 @@ $(document).ready(function () {
 							display2 = devices[i].deviceName;
 						}
 					}
+					console.log(devices);
 
 					// Process location, display - if not existent. Display custom location if set
 					var location = '-';
-					if (devices[i].customLocation == null) {
+					if (devices[i].customLocation == null || devices[i].customLocation == '') {
 						if (devices[i].latitude != null && devices[i].longitude != null) {
 							location = devices[i].latitude + ', ' + devices[i].longitude;
 						}
@@ -104,7 +105,7 @@ $(document).ready(function () {
 						var formattedDate = nextCalibrationDate.toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 
 						if ( currentDate >= nextCalibrationDate ) {
-							nextCalibrationDate = '<span class="text-white bg-red-500 rounded-full px-2 py-1">' + formattedDate + '</span>';
+							nextCalibrationDate = '<span class="bg-red-100 text-red-500 font-medium rounded-full px-2 py-1">' + formattedDate + '</span>';
 						} else if ( currentDate < nextCalibrationDate && currentDate >= monthWarning ) {
 							nextCalibrationDate = '<span class="text-yellow-500">' + formattedDate + '</span>';
 						} else if (currentDate < monthWarning) {
@@ -114,31 +115,37 @@ $(document).ready(function () {
 
 					// Process alarm
 					var alarm = '';
-					var rowHover = 'bg-white hover:bg-gray-100 border-b border-gray-200';
+					var rowFormat = 'bg-white hover:bg-gray-100';
 					if (devices[i].alarmsTriggered == 0) {
 						alarm = '<span class="text-green-500">None</span>';
 					} else {
 						alarm = '<span class="text-red-500 whitespace-nowrap font-medium">'+devices[i].alarmsTriggered+' TRIGGERED</span>';
-						rowHover = 'bg-red-100';
+						display1 = '<span class="text-red-500 hover:text-red-600">'+display1+'</span>';
 					}
 
 					// Process status
 					var status = '';
 					if (devices[i].deviceStatus == 0) {
-						status = '<span class="bg-red-400 rounded-full px-2 ml-2 font-semibold uppercase text-white text-xs">OFF</span>';
+						status = '<span class="flex-none bg-red-100 h-8 w-8 flex justify-center items-center rounded-full font-semibold uppercase text-red-500"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M3.707 2.293a1 1 0 00-1.414 1.414l6.921 6.922c.05.062.105.118.168.167l6.91 6.911a1 1 0 001.415-1.414l-.675-.675a9.001 9.001 0 00-.668-11.982A1 1 0 1014.95 5.05a7.002 7.002 0 01.657 9.143l-1.435-1.435a5.002 5.002 0 00-.636-6.294A1 1 0 0012.12 7.88c.924.923 1.12 2.3.587 3.415l-1.992-1.992a.922.922 0 00-.018-.018l-6.99-6.991zM3.238 8.187a1 1 0 00-1.933-.516c-.8 3-.025 6.336 2.331 8.693a1 1 0 001.414-1.415 6.997 6.997 0 01-1.812-6.762zM7.4 11.5a1 1 0 10-1.73 1c.214.371.48.72.795 1.035a1 1 0 001.414-1.414c-.191-.191-.35-.4-.478-.622z"></path></svg></span>';
 					} else if (devices[i].deviceStatus == 1) {
-						status = '<span class="bg-green-400 rounded-full px-2 ml-2 font-semibold uppercase text-white text-xs">ON</span>'
+						status = '<span class="flex-none bg-green-100 h-8 w-8 flex justify-center items-center rounded-full font-semibold uppercase text-green-500"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.05 3.636a1 1 0 010 1.414 7 7 0 000 9.9 1 1 0 11-1.414 1.414 9 9 0 010-12.728 1 1 0 011.414 0zm9.9 0a1 1 0 011.414 0 9 9 0 010 12.728 1 1 0 11-1.414-1.414 7 7 0 000-9.9 1 1 0 010-1.414zM7.879 6.464a1 1 0 010 1.414 3 3 0 000 4.243 1 1 0 11-1.415 1.414 5 5 0 010-7.07 1 1 0 011.415 0zm4.242 0a1 1 0 011.415 0 5 5 0 010 7.072 1 1 0 01-1.415-1.415 3 3 0 000-4.242 1 1 0 010-1.415zM10 9a1 1 0 011 1v.01a1 1 0 11-2 0V10a1 1 0 011-1z" clip-rule="evenodd"></path></svg></span>'
 					}
 
 					outputTable += `
-					<tr class="`+rowHover+` h-12">
-						<td class="text-left py-2 px-4 text-sm"><div class="flex items-center"><span id="select" data-id="`+ devices[i].deviceId + `" title="View device" class="font-semibold whitespace-nowrap text-lightblue-500 cursor-pointer hover:text-lightblue-600">`+ display1 + `</span>`+ status +`</div><span class="text-gray-400">`+ display2 + `</span></td>
-						<td class="text-center py-2 px-4 text-sm text-gray-600 capitalize">`+ devices[i].groupName + `</td>
+					<tr class="`+rowFormat+` h-12">
+						<td class="text-left py-2 px-4 text-sm flex space-x-3 items-center">
+							`+ status +`
+							<div class=" flex flex-col justify-center">
+								<span id="select" data-id="`+ devices[i].deviceId + `" title="View device" class="font-semibold whitespace-nowrap text-lightblue-500 cursor-pointer hover:text-lightblue-600">`+ display1 + `</span>
+								<span class="text-gray-400">`+ display2 + `</span>
+							</div>
+						</td>
+						<td class="text-center py-2 px-4 text-sm text-gray-600 whitespace-nowrap capitalize">`+ devices[i].groupName + `</td>
 						<td class="text-center py-2 px-4 text-sm text-gray-600 whitespace-nowrap">`+ location + `</td>
 						<td class="text-center py-2 px-4 text-sm text-gray-600 whitespace-nowrap">`+ nextCalibrationDate + `</td>
 						<td class="text-center py-2 px-4 text-sm text-gray-600 whitespace-nowrap">`+ alarm +`</td>
-						<td class="text-center" id="select" data-id="`+ devices[i].deviceId + `">
-							<button class="focus:outline-none text-xs text-gray-600 uppercase bg-gray-50 border border-gray-300 rounded font-medium py-1 px-2 hover:bg-gray-200">
+						<td class="text-center px-4">
+							<button id="select" data-id="`+ devices[i].deviceId + `" class="focus:outline-none text-xs text-gray-600 uppercase bg-gray-50 border border-gray-300 rounded font-medium py-1 px-2 hover:bg-gray-200" title="View device">
 								View
 							</button>
 						</td>

@@ -11,7 +11,7 @@ include_once('header.php');
 		<div class="fixed h-full flex flex-col" style="width: inherit;">
 			<!-- Filters div -->
 			<div class="flex flex-col space-y-8 h-full pt-8 bg-gray-200 rounded-tr-3xl shadow-md">
-				<input id="pageSearchBar" type="text" class="h-10 w-40 xl:w-52 outline-none focus:outline-none bg-gray-100 rounded-full text-gray-800 font-medium flex justify-center items-center text-sm space-x-1 mx-auto px-4 border border-gray-300 transition-all focus:border-gray-500" placeholder="Filter devices...">
+				<input id="pageSearchBar" type="text" class="h-10 w-40 xl:w-52 outline-none focus:outline-none bg-gray-100 rounded-lg text-gray-800 font-medium flex justify-center items-center text-sm space-x-1 mx-auto px-4 border border-gray-300 transition-all" placeholder="Filter devices...">
 
 				<!-- Php code for roles filter -->
 				<?php
@@ -32,7 +32,7 @@ include_once('header.php');
 
 						<!-- Filter content -->
 						<div class="mt-2 hidden">
-							<select id="groupFilter" class="focus:outline-none w-full h-8 bg-gray-50 border border-gray-400 px-2 text-sm">
+							<select id="groupFilter" class="focus:outline-none w-full h-10 bg-gray-50 border border-gray-400 px-2 text-sm">
 								<option data-id="devices.groupId" class="font-medium text-sm bg-bluegray-50 text-bluegray-800" selected>All Groups</option>
 					';
 
@@ -132,8 +132,8 @@ include_once('header.php');
 	<!-- Site content -->
 	<div class="flex-auto grid grid-cols-1 p-4 gap-4 md:grid-cols-2 md:gap-4 lg:grid-cols-3 lg:gap-8 lg:p-8 auto-rows-min">
 		<!-- Table card -->
-		<div class="col-span-1 md:col-span-2 lg:col-span-3 bg-white shadow-lg border">
-			<div class="flex bg-white overflow-x-auto inline-block min-w-full">
+		<div class="col-span-1 md:col-span-2 lg:col-span-3 bg-white shadow-lg border rounded-b">
+			<div class="flex bg-white overflow-x-auto min-w-full">
 				<table class="table-fixed min-w-full">
 					<thead class="uppercase text-xs bg-bluegray-50 border-b border-gray-200 text-bluegray-900">
 						<tr>
@@ -145,7 +145,7 @@ include_once('header.php');
 							<th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap"></th>
 						</tr>
 					</thead>
-					<tbody id="devicesTableBody">
+					<tbody id="devicesTableBody" class="divide-y border-b">
 						<!-- This area gets filled via PHP -->
 
 					</tbody>
