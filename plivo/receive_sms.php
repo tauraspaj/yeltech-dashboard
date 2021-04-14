@@ -1,7 +1,9 @@
 <?php
 require 'vendor/autoload.php';
 use Plivo\RestClient;
-$client = new RestClient("MAOGQXZTY0ZDJMODIXZT", "ZDNiMmI5YmY4OWY1MzVhYzIzZTAzOGQzMDRhZDgy");
+$auth_id = "";
+$auth_token = "";
+$client = new RestClient($auth_id, $auth_token);
 
 require_once './../includes/dbh.inc.php';
 
