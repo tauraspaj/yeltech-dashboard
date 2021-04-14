@@ -24,7 +24,8 @@ module.exports = {
       textColor: ['group-focus', 'disabled'],
       opacity: ['disabled'],
       backgroundColor: ['disabled'],
-      cursor: ['disabled']
+      cursor: ['disabled'],
+      ringWidth: ['hover']
     }
   },
   plugins: [require('@tailwindcss/forms')],
