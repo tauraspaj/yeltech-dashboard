@@ -4,22 +4,131 @@ $_SESSION['activeUrl'] = 'users.php';
 include_once('header.php');
 ?>
 
+<!-- New user modal -->
+<div id="newuser-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center hidden">
+	<div id="modal-box" class="border border-gray-300 shadow-xl bg-gray-200 w-full mx-4 max-w-sm sm:max-w-md md:max-w-2xl overflow-hidden flex flex-col rounded p-4">
+		<!-- Title/close btn -->
+		<div class="flex justify-between items-center border-b pb-1 border-gray-300">
+			<p class="uppercase text-gray-800 font-extrabold text-sm mx-2">New user</p>
+			<svg id="close-newuser-modal" class="w-6 h-6 text-gray-400 hover:text-gray-600 cursor-pointer" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+		</div>
+		<div class="w-full">
+			<p id="errorResponse" class="hidden text-sm italic text-red-500 text-center mt-2"></p>
+			<p id="okResponse" class="hidden text-sm italic text-green-500 text-center mt-2">User successfully registered!</p>
+			<form id="newUserForm" method="post" autocomplete="off" class="flex flex-col">
+				<!-- Row -->
+				<div class="flex flex-col md:flex-row md:space-x-6 flex-auto">
+					<div class="flex flex-col flex-1 mt-2">
+						<p class="form-field-title">Full name<span class="text-red-500">*</span></p>
+						<input id="new_fullName" required type="text" class="border border-gray-300">
+					</div>
+
+					<div class="flex flex-col flex-1 mt-2">
+						<p class="form-field-title">Role<span class="text-red-500">*</span></p>
+						<select id="new_roleId" class="border border-gray-300">
+							<?php
+								$sql = "SELECT roleId, roleName FROM roles WHERE roleId >= ".$_SESSION['roleId']." ORDER BY roleId DESC;";
+								$result = mysqli_query($conn, $sql);
+								if (mysqli_num_rows($result) > 0) {
+									while ($row = mysqli_fetch_assoc($result)) {
+										echo '<option data-id="'.$row['roleId'].'">'.$row['roleName'].'</option>';
+									}
+								}  
+							?>
+						</select>
+					</div>
+				</div>
+				<!-- End of row -->
+
+				<!-- Row -->
+				<div class="flex flex-col md:flex-row md:space-x-6 flex-auto">
+					<div class="flex flex-col flex-1 mt-2">
+						<p class="form-field-title">Email<span class="text-red-500">*</span></p>
+						<input id="new_email" type="email" required class="border border-gray-300">
+					</div>
+				</div>
+				<!-- End of row -->
+
+				<!-- Row -->
+				<div class="flex flex-col md:flex-row md:space-x-6 flex-auto">
+					<div class="flex flex-col flex-1 mt-2">
+						<p class="form-field-title">Group<span class="text-red-500">*</span></p>
+						<select id="new_groupId" class="border border-gray-300">
+							<?php
+								if ($_SESSION['roleId'] == 1 || $_SESSION['roleId'] == 2) {
+									$groupFilter = '`groups`.groupId';
+								} else {
+									$groupFilter = $_SESSION['groupId'];
+								}
+
+								$sql = "SELECT groupId, groupName FROM `groups` WHERE groupId = $groupFilter ORDER BY groupName ASC;";
+								$result = mysqli_query($conn, $sql);
+								if (mysqli_num_rows($result) > 0) {
+									while ($row = mysqli_fetch_assoc($result)) {
+										echo '<option data-id="'.$row['groupId'].'">'.$row['groupName'].'</option>';
+									}
+								}  
+							?>
+						</select>
+					</div>
+
+					<div class="flex flex-col flex-1 mt-2">
+						<p class="form-field-title">Phone number</p>
+						<input id="new_phone" type="text" class="border border-gray-300">
+						<p class="text-xs italic text-gray-500 ml-2 mt-1">Must start with + or be left empty</p>
+					</div>
+				</div>
+				<!-- End of row -->
+
+				<!-- Row -->
+				<div class="flex flex-col md:flex-row md:space-x-6 flex-auto">
+					<div class="flex flex-col flex-1 mt-2">
+						<p class="form-field-title">Password<span class="text-red-500">*</span></p>
+						<input id="new_password" type="password" required class="border border-gray-300">
+						<p class="text-xs italic text-gray-500 ml-2 mt-1">Must be longer than 6 characters</p>
+					</div>
+
+					<div class="flex flex-col flex-1 mt-2">
+						<p class="form-field-title">Confirm Password<span class="text-red-500">*</span></p>
+						<input id="new_confpassword" type="password" required class="border border-gray-300">
+					</div>
+				</div>
+				<!-- End of row -->
+
+				<div class="flex justify-end items-center mt-4 md:mt-0 space-x-4">
+					<button id="cancelBtn" class="h-10 border-0 hover:border-0 px-4 rounded text-gray-800 hover:bg-red-500 hover:text-white transition-all focus:bg-red-500 focus:text-white">Cancel</button>
+					<button type="submit" class="px-4">Create</button>
+				</div>
+
+			</form>
+		</div>
+	</div>
+</div>
+
 <!-- Bottom right dashboard window -->
 <div class="flex-auto flex-col lg:flex-row bg-gray-100 flex">
 	<!-- Filters subnav -->
-	<div class="hidden lg:block flex-none bg-gray-100 lg:h-full lg:w-44 xl:w-60 shadow-md">
-		<div class="fixed h-full flex flex-col" style="width: inherit;">
+	<div class="hidden lg:block flex-none lg:h-full bg-transparent lg:w-44 xl:w-60">
+		<div class="fixed h-full flex flex-col bg-transparent" style="width: inherit;">
 			<!-- New user btn -->
-			<div>
-				<a href="./newuser.php" class="h-8 w-40 xl:w-52 focus:outline-none bg-lightblue-500 rounded-full shadow text-white font-medium flex justify-center items-center text-sm space-x-1 mt-6 mx-auto transition-all hover:bg-lightblue-600" title="Create new user">
-					<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"></path></svg>
-					<p>New User</p>
-				</a>
-			</div>
-
+			<?php 
+			if ($_SESSION['roleId'] != 4) {
+				echo '<div class="bg-gray-100 pb-8 shadow-md rounded-br-3xl">
+					<div href="./newuser.php" class="h-10 w-40 xl:w-52 focus:outline-none bg-lightblue-400 rounded-lg shadow text-white font-medium flex items-center text-sm mt-6 mx-auto transition-all hover:bg-lightblue-500 hover:ring-1 cursor-pointer" title="Create new user">
+						<div class="w-10 h-full rounded-l-lg flex justify-center items-center bg-lightblue-600">
+							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"></path></svg>
+						</div>
+						<div id="open-newuser-modal" class="flex-auto h-full flex justify-center items-center">
+							<p>New User</p>
+						</div>
+					</div>
+				</div>';
+			}
+			?>
+					
 			<!-- Filters div -->
-			<div class="flex flex-col space-y-8 mt-8 h-full pt-8 bg-gray-200 rounded-tr-3xl">
-				<input id="userSearch" type="text" class="h-10 w-40 xl:w-52 outline-none focus:outline-none bg-gray-100 rounded-full text-gray-800 font-medium flex justify-center items-center text-sm space-x-1 mx-auto px-4 border border-gray-300 transition-all focus:border-gray-500" placeholder="Filter users...">
+			<div class="flex flex-col space-y-8 h-full pt-8 bg-gray-200 rounded-tr-3xl shadow-md">
+				<input id="userSearch" type="text" class="h-10 w-40 xl:w-52 outline-none focus:outline-none bg-gray-100 rounded-lg text-gray-800 font-medium flex justify-center items-center text-sm space-x-1 mx-auto px-4 border border-gray-300 transition-all" placeholder="Filter users...">
 
 				<!-- Php code for groups filter -->
 				<?php
@@ -40,7 +149,7 @@ include_once('header.php');
 
 						<!-- Filter content -->
 						<div class="mt-2 hidden">
-							<select id="groupFilter" class="focus:outline-none w-full h-8 bg-gray-50 border border-gray-400 px-2 text-sm">
+							<select id="groupFilter" class="focus:outline-none w-full h-10 bg-gray-50 border border-gray-400 px-2 text-sm">
 								<option data-id="users.groupId" class="font-medium text-sm bg-bluegray-50 text-bluegray-800" selected>All Groups</option>
 					';
 
@@ -147,95 +256,118 @@ include_once('header.php');
 	<!-- Site content -->
 	<div class="flex-auto grid grid-cols-1 p-4 gap-4 md:grid-cols-2 md:gap-4 lg:grid-cols-3 lg:gap-8 lg:p-8 auto-rows-min">
 		<!-- Card -->
-		<div class="col-span-1 flex flex-col bg-white shadow-lg">
-			<div class="flex flex-col justify-center items-center mt-8">
-				<svg class="w-12 h-12 text-lightblue-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"></path></svg>
-				<p id="card_totalUsers" class="text-6xl font-bold mt-4"></p>
-				<p class="text-gray-400 font-medium">Total no of users</p>
-			</div>
+		<div class="col-span-1 flex flex-row justify-center items-center space-x-10 card-wrapper h-32 relative bg-gradient-to-r from-white to-gray-200 overflow-hidden">
 
-			<div class="w-full border-b mt-4"></div>
-
-			<div class="grid grid-cols-2 lg:grid-cols-1 lg:space-y-4 xl:space-y-0 xl:grid-cols-2 mt-6 mb-8">
-				<div class="flex justify-center items-center flex-col px-4 space-y-1">
-					<p class="text-xs text-gray-400 whitespace-nowrap">Standard users: <span id="card_standardUsers" class="font-medium text-black"></span></p>
-					<!-- Bar -->
-					<div class="h-2 w-full rounded-full bg-gray-200">
-						<div class="h-full bg-lightblue-400 rounded-full" id="card_stdUsersBar"></div>
-					</div>
-				</div>
-
-				<div class="flex justify-center items-center flex-col px-4 space-y-1">
-					<p class="text-xs text-gray-400 whitespace-nowrap">Group admins: <span id="card_groupAdmins" class="font-medium text-black"></span></p>
-					<!-- Bar -->
-					<div class="h-2 w-full rounded-full bg-gray-200">
-						<div class="h-full bg-yellow-300 rounded-full" id="card_grpAdminsBar"></div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- End of card -->
-
-		<!-- Card -->
-		<div class="col-span-1 hidden md:flex flex-col bg-white shadow-lg">
-			<div class="flex flex-col justify-center items-center mt-8">
-				<svg class="w-12 h-12 text-lightblue-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path></svg>
-				<p class="text-2xl font-bold mt-4">Newest users</p>
-			</div>
-				
-			<div id="card_latestUsers" class="grid grid-cols-1 divide-y divide-gray-200 divide-solid px-2 md:px-8 lg:px-4 mt-6">
-				<!-- Filled via js -->
-			</div>
-			
-		</div>
-		<!-- End of card -->
-
-		<!-- Card -->
-		<div class="col-span-1 hidden lg:flex flex-col bg-white shadow-lg">
-			<div class="flex flex-col justify-center items-center mt-8">
-				<svg class="w-12 h-12 text-lightblue-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd"></path></svg>
+			<div class="flex flex-col items-center" style="z-index:1;">
 				<?php
-				if ($_SESSION['roleId'] == 4 || $_SESSION['roleId'] == 3) {
-					$devicesGroup = $_SESSION['groupId'];
+				if ($_SESSION['roleId'] == 1 || $_SESSION['roleId'] == 2 ) {
+					$groupFilter = 'users.groupId';
 				} else {
-					$devicesGroup = 'devices.groupId';
+					$groupFilter = $_SESSION['groupId'];
 				}
 				$sql = "
-					SELECT COUNT(*) as totalAlarms
-					FROM triggeredAlarmsHistory
-					LEFT JOIN alarmTriggers ON triggeredAlarmsHistory.triggerId = alarmTriggers.triggerId
-					LEFT JOIN devices ON alarmTriggers.deviceId = devices.deviceId
-					WHERE devices.groupId = $devicesGroup
+				SELECT COUNT(userId) as totalUsers FROM users WHERE users.groupId = $groupFilter
 				";
 				$result = mysqli_query($conn, $sql);
 				if ( mysqli_num_rows($result) > 0 ) {
 					while ($row = mysqli_fetch_assoc($result)) {
-						$totalAlarms = $row['totalAlarms'];
+						$totalUsers = $row['totalUsers'];
+					}
+				}
+
+				$sql = "
+				SELECT COUNT(userId) as totalGroupAdmins FROM users WHERE users.groupId = $groupFilter AND users.roleId = 3
+				";
+				$result = mysqli_query($conn, $sql);
+				if ( mysqli_num_rows($result) > 0 ) {
+					while ($row = mysqli_fetch_assoc($result)) {
+						$totalGroupAdmins = $row['totalGroupAdmins'];
 					}
 				}
 				?>
-				<p class="text-6xl font-bold mt-4"><?php echo $totalAlarms; ?></p>
-				<p class="text-gray-400 font-medium">No of alarms sent</p>
+				<p class="uppercase text-6xl font-bold"><?php echo $totalUsers; ?></p>
+				<p class="uppercase text-sm text-gray-400 font-medium whitespace-nowrap">Total users</p>
+			</div>
+			<div class="flex flex-col items-center lg:hidden xl:flex" style="z-index:1;">
+				<p class="uppercase text-6xl font-bold"><?php echo $totalGroupAdmins; ?></p>
+				<p class="uppercase text-sm text-gray-400 font-medium whitespace-nowrap">Group admins</p>
 			</div>
 
-			<div class="w-full border-b mt-4"></div>
+			<div class="absolute -bottom-6 -right-2 text-white opacity-80 transform -rotate-6" style="z-index:0;">
+				<svg class="w-40 h-40" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path></svg>
+			</div>
+		</div>
+		<!-- End of card -->
 
-			<div class="grid grid-cols-2 lg:grid-cols-1 lg:space-y-4 xl:space-y-0 xl:grid-cols-2 mt-6 mb-8">
-				<div class="flex justify-center items-center flex-col px-4 space-y-1">
-					<p class="text-xs text-gray-400 whitespace-nowrap">To your group: <span class="font-medium text-black">0</span></p>
-					<!-- Bar -->
-					<div class="h-2 w-full rounded-full bg-gray-200">
-						<div class="h-full bg-lightblue-400 rounded-full" style="width: 100%;"></div>
-					</div>
-				</div>
+		<!-- Card -->
+		<div class="flex col-span-1 flex-row justify-center items-center space-x-4 card-wrapper h-32 relative bg-gradient-to-r from-white to-gray-200 overflow-hidden">
 
-				<div class="flex justify-center items-center flex-col px-4 space-y-1">
-					<p class="text-xs text-gray-400 whitespace-nowrap">To you: <span class="font-medium text-black">0</span></p>
-					<!-- Bar -->
-					<div class="h-2 w-full rounded-full bg-gray-200">
-						<div class="h-full bg-yellow-300 rounded-full" style="width: 100%;"></div>
-					</div>
-				</div>
+			<div class="flex flex-col text-center" style="z-index:1;">
+				<?php
+				if ($_SESSION['roleId'] == 1 || $_SESSION['roleId'] == 2 ) {
+					$groupFilter = '`groups`.groupId';
+				} else {
+					$groupFilter = $_SESSION['groupId'];
+				}
+				$sql = "
+				SELECT COUNT(historyId) as nAlarmsTriggered 
+				FROM triggeredAlarmsHistory
+				LEFT JOIN alarmTriggers ON triggeredAlarmsHistory.triggerId = alarmTriggers.triggerId
+				LEFT JOIN devices ON alarmTriggers.deviceId = devices.deviceId
+				LEFT JOIN `groups` ON devices.groupId = `groups`.groupId
+				WHERE `groups`.groupId = $groupFilter;
+				";
+				$result = mysqli_query($conn, $sql);
+				if ( mysqli_num_rows($result) > 0 ) {
+					while ($row = mysqli_fetch_assoc($result)) {
+						$nAlarms = $row['nAlarmsTriggered'];
+					}
+				}
+				if ($nAlarms > 0) {
+					$sql = "
+					SELECT clearedAt
+					FROM triggeredAlarmsHistory
+					LEFT JOIN alarmTriggers ON triggeredAlarmsHistory.triggerId = alarmTriggers.triggerId
+					LEFT JOIN devices ON alarmTriggers.deviceId = devices.deviceId
+					LEFT JOIN `groups` ON devices.groupId = `groups`.groupId
+					WHERE `groups`.groupId = $groupFilter
+					ORDER BY triggeredAlarmsHistory.clearedAt DESC
+					LIMIT 1;
+					";
+					$result = mysqli_query($conn, $sql);
+					if ( mysqli_num_rows($result) > 0 ) {
+						while ($row = mysqli_fetch_assoc($result)) {
+							$alarmDate = 'Latest: '.$row['clearedAt'];
+						}
+					}
+				} else {
+					$alarmDate = '';
+				}
+				?>
+				<p class="uppercase text-sm text-gray-400 font-medium text-center">Alarms Sent</p>
+				<p class="uppercase text-6xl font-bold"><?php echo $nAlarms; ?></p>
+				<p class="uppercase text-sm text-gray-400 font-medium text-center"><?php echo $alarmDate; ?></p>
+			</div>
+
+			<div class="absolute -bottom-6 -right-2 text-white opacity-80 transform -rotate-6" style="z-index:0;">
+				<svg class="w-40 h-40" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd"></path></svg>
+			</div>
+		</div>
+		<!-- End of card -->
+
+		<!-- Card -->
+		<div class="hidden col-span-1 lg:flex flex-row justify-center items-center space-x-4 card-wrapper h-32 relative bg-gradient-to-r from-white to-gray-200 overflow-hidden">
+
+			<div class="flex flex-col" style="z-index:1;">
+				<p class="uppercase text-sm text-gray-400 font-medium text-center">Newest users</p>
+			</div>
+
+			<div id="card_latestUsers" class="grid grid-cols-1 divide-y divide-gray-200 divide-solid" style="z-index: 1;">
+				<!-- Filled via js -->
+			</div>
+
+			<div class="absolute -bottom-6 -right-2 text-white opacity-80 transform -rotate-6" style="z-index:0;">
+				<svg class="w-40 h-40" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path></svg>
 			</div>
 		</div>
 		<!-- End of card -->

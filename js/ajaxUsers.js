@@ -106,36 +106,6 @@ $(document).ready(function () {
 		})
 	}
 
-	function showRoleCount() {
-		$.ajax({
-			url: './includes/sqlUsersTable.php',
-			type: 'POST',
-			data: {
-				function: 'roleCount'
-			},
-			success: function (data) {
-				var data = JSON.parse(data);
-				// Process
-				var totalUsers = data.totalUsers;
-				var totalGroupAdmins = data.totalGroupAdmins;
-				var totalStdUsers = totalUsers - totalGroupAdmins;
-				// Display totals
-				$('#card_totalUsers').html(totalUsers)
-				$('#card_groupAdmins').html(totalGroupAdmins)
-				$('#card_standardUsers').html(totalStdUsers)
-				// Display bars
-				var percentage = 0;
-				if (totalGroupAdmins == 0) {
-					percentage = 0;
-				} else {
-					percentage = Math.ceil((totalUsers/100)*totalGroupAdmins);
-				}
-				$('#card_stdUsersBar').css('width', eval(100-percentage)+'%');
-				$('#card_grpAdminsBar').css('width', percentage+'%');
-			}
-		})
-	}
-
 	function showLatestUsers() {
 		$.ajax({
 			url: './includes/sqlUsersTable.php',
@@ -180,7 +150,6 @@ $(document).ready(function () {
 
 	// Display info on load
 	showUsers(usersPerPage, usersPageNumber);
-	showRoleCount();
 	showLatestUsers();
 
 	// Start listening for clicks on any users
@@ -267,4 +236,100 @@ $(document).ready(function () {
 		showUsers(usersPerPage, usersPageNumber);
 	})
 
+	// Modal functionality
+	function toggleNewUserModal() {
+		$('#newuser-modal').toggleClass('hidden');
+	}
+	$('#open-newuser-modal, #close-newuser-modal, #cancelBtn').on('click', function() {
+		toggleNewUserModal();
+	});
+
+	$(document).keydown(function(e) {
+		if (e.keyCode == 27 && !$('#newuser-modal').hasClass('hidden')) {
+			toggleNewUserModal();
+		}
+	})
+
+	function validatePhone(field) {
+        // All numbers must start with international prefix
+        // Checks:
+        // First char must be +
+        // Length longer than 7
+        // Must not contain any letters
+        // Must not contain any spaces
+		
+		var check = false;
+		var number = field.val();
+		if ( number ) {
+			if (number[0] == '+' && number.length > 7) {
+				// Test to only contain numbers after the first +
+				var regex = /^[0-9]+$/;
+				var test = regex.test( number.substr(1,number.length) );
+	
+				if (test == true) {
+					// Means only allowed numbers exist
+					check = true;
+				} else {
+					// Contains other values than legal numbers
+					check = false;
+				}
+			} else {
+				// Does not start with +
+				check = false;
+			}
+		} else {
+			check = true;
+		}
+
+        return check;
+    }
+
+	$('#new_phone').on('blur', function() {
+		if (validatePhone( $('#new_phone')) ){
+			$(this).removeClass('border-red-500');
+		} else {
+			$(this).addClass('border-red-500');
+		}
+	})
+
+	$('form').on('submit', function (e) {
+		e.preventDefault();
+		// alert(validatePhone($('#new_phone')));
+
+		// Check for empty fields
+		if ( $('#new_fullName').val() != '' && $('#new_email').val() != '' && validatePhone( $('#new_phone') ) && $('new_password').val() != '' && $('#new_confpassword').val() != '' ) {
+			$.ajax({
+                url: './includes/sqlNewUser.php',
+                type: 'POST',
+                data: {
+                    fullName: $('#new_fullName').val(),
+					roleId: $('#new_roleId').find(':selected').attr('data-id'),
+					email: $('#new_email').val(),
+					groupId: $('#new_groupId').find(':selected').attr('data-id'),
+					phoneNumber: $('#new_phone').val(),
+					password: $('#new_password').val(),
+					confPassword: $('#new_confpassword').val()
+                },
+                success: function (data) {
+                    var response = JSON.parse(data);
+					if (response.status == 'OK') {
+						$('#errorResponse').addClass('hidden');
+						$('#okResponse').removeClass('hidden');
+
+						// Display new users list
+						usersPageNumber = 1;
+						showUsers(usersPerPage, usersPageNumber);
+
+						// Reset form
+						$('form').trigger('reset');
+					} else {
+						$('#errorResponse').removeClass('hidden');
+						$('#errorResponse').html(response.message);
+						$('#okResponse').addClass('hidden');
+					}
+                    console.log(response);
+                }
+            })
+		}
+	})
 })
