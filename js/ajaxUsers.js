@@ -61,24 +61,24 @@ $(document).ready(function () {
 				pageControl(totalCount, returnedCount, perPage, pageNumber);
 
 				var outputTable = '';
-				$role = '';
+				var role = '';
 				for (i = 0; i < users.length - 1; i++) {
 					// Apply formatting
 					switch ((users[i].role).toUpperCase()) {
 						case ('Super Admin'.toUpperCase()):
-							$role = '<span class="bg-red-100 text-red-500 rounded-full py-1 px-2 text-xs font-semibold uppercase whitespace-nowrap">Super Admin</span>';
+							role = '<span class="bg-red-100 text-red-500 rounded-full py-1 px-2 text-xs font-semibold uppercase whitespace-nowrap">Super Admin</span>';
 							break;
 
 						case ('Yeltech Admin'.toUpperCase()):
-							$role = '<span class="bg-lightblue-100 text-lightblue-500 rounded-full py-1 px-2 text-xs font-semibold uppercase whitespace-nowrap">Yeltech Admin</span>';
+							role = '<span class="bg-lightblue-100 text-lightblue-500 rounded-full py-1 px-2 text-xs font-semibold uppercase whitespace-nowrap">Yeltech Admin</span>';
 							break;
 
 						case ('Group Admin'.toUpperCase()):
-							$role = '<span class="bg-green-100 text-green-500 rounded-full py-1 px-2 text-xs font-semibold uppercase whitespace-nowrap">Group Admin</span>';
+							role = '<span class="bg-green-100 text-green-500 rounded-full py-1 px-2 text-xs font-semibold uppercase whitespace-nowrap">Group Admin</span>';
 							break;
 
 						case ('Standard User'.toUpperCase()):
-							$role = '<span class="bg-gray-100 text-gray-500 rounded-full py-1 px-2 text-xs font-semibold uppercase whitespace-nowrap">Standard User</span>';
+							role = '<span class="bg-gray-100 text-gray-500 rounded-full py-1 px-2 text-xs font-semibold uppercase whitespace-nowrap">Standard User</span>';
 							break;
 
 						default:
@@ -86,12 +86,17 @@ $(document).ready(function () {
 							break;
 					}
 
+					var phoneNumber = '-';
+					if (users[i].phoneNumber != null && users[i].phoneNumber != '') {
+						phoneNumber = users[i].phoneNumber;
+					}
+
 					outputTable += `
 					<tr class="hover:bg-bluegray-100 border-b border-gray-200">
 						<td class="text-left py-2 px-4 text-sm text-lightblue-500 font-semibold whitespace-nowrap">`+ users[i].fullName + `<br><span class="font-normal text-bluegray-400">` + users[i].email + `</span</td>
 						<td class="text-center py-2 px-4 text-sm text-gray-600 whitespace-nowrap">`+ users[i].groupName + `</td>
-						<td class="text-center py-2 px-4 cursor-default">`+ $role + `</td>
-						<td class="text-center py-2 px-4 text-sm text-gray-600">`+ users[i].phoneNumber + `</td>
+						<td class="text-center py-2 px-4 cursor-default">`+ role + `</td>
+						<td class="text-center py-2 px-4 text-sm text-gray-600">`+ phoneNumber + `</td>
 						<td class="text-center py-2 px-4 text-sm text-gray-600">`+ users[i].sendingType + `</td>
 						<td class="text-center" id="select" data-id="`+ users[i].userId + `">
 							<button class="focus:outline-none text-xs text-gray-600 uppercase bg-gray-50 border border-gray-300 rounded font-medium p-1 hover:bg-gray-200">
@@ -115,16 +120,15 @@ $(document).ready(function () {
 			},
 			success: function (data) {
 				var data = JSON.parse(data);
-				// alert(data);
 				var outputString = '';
 				for (i = 0; i < data.length; i++) {
 					var dateDisplay = new Date( data[i].createdAt );
 					dateDisplay = dateDisplay.toLocaleString('en-GB', {day: 'numeric', month: 'short', year: 'numeric' });
 
 					outputString += `
-						<div class="grid grid-cols-2 py-1">
-							<div class="font-medium mx-4 lg:mx-1 xl:mx-4 whitespace-nowrap overflow-ellipsis overflow-hidden">`+data[i].fullName+`</div>
-							<div class="text-right mx-4 lg:mx-1 xl:mx-4 text-gray-400 whitespace-nowrap overflow-ellipsis overflow-hidden">`+dateDisplay+`</div>
+						<div class="grid grid-cols-3 py-1">
+							<div class="col-span-2 font-medium mx-4 lg:mx-1 xl:mx-2 text-gray-800 whitespace-nowrap overflow-ellipsis overflow-hidden">`+data[i].fullName+`</div>
+							<div class="col-span-1 text-right mx-4 lg:mx-1 xl:mx-2 text-gray-500 whitespace-nowrap overflow-ellipsis overflow-hidden">`+dateDisplay+`</div>
 						</div>`;
 				}
 				$('#card_latestUsers').html(outputString);
@@ -327,7 +331,6 @@ $(document).ready(function () {
 						$('#errorResponse').html(response.message);
 						$('#okResponse').addClass('hidden');
 					}
-                    console.log(response);
                 }
             })
 		}
