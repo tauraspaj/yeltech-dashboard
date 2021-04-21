@@ -29,8 +29,8 @@ switch ($_POST['function']) {
 		$deviceId = $_POST['deviceId'];
 		$return = array();
 
-		// Get the number of AI channels
-		$numberOfAI = '';
+		// Get the AI channels
+		$aiChannels = '';
 		$sql = "SELECT COUNT(*) as numberOfAI FROM channels WHERE channelType = 'AI' AND deviceId = $deviceId";
 		$result = mysqli_query($conn, $sql);		
 		if (mysqli_num_rows($result) > 0) {
@@ -103,7 +103,7 @@ switch ($_POST['function']) {
 			SELECT clearedAt
 			FROM triggeredAlarmsHistory 
 			LEFT JOIN alarmTriggers ON triggeredAlarmsHistory.triggerId = alarmTriggers.triggerId
-			WHERE alarmTriggers.deviceId = 6
+			WHERE alarmTriggers.deviceId = $deviceId
             ORDER BY clearedAt DESC 
             LIMIT 1
 		";
@@ -112,6 +112,8 @@ switch ($_POST['function']) {
 			while ($row = mysqli_fetch_assoc($result6)) {
 				$return['latestAlarmSent'] = $row['clearedAt'];
 			}
+		} else {
+			$return['latestAlarmSent'] = '';
 		}
 		
 		echo json_encode($return);
@@ -127,7 +129,7 @@ switch ($_POST['function']) {
 			SELECT channels.channelName, alarmTriggers.operator, alarmTriggers.thresholdValue, alarmTriggers.triggerId
 			FROM alarmTriggers
 			LEFT JOIN channels ON alarmTriggers.channelId = channels.channelId
-			WHERE alarmTriggers.deviceId = 6 AND alarmTriggers.isTriggered = 1;
+			WHERE alarmTriggers.deviceId = $deviceId AND alarmTriggers.isTriggered = 1;
 		";
 		
 		$result = mysqli_query($conn, $sql);
@@ -141,21 +143,6 @@ switch ($_POST['function']) {
 		echo json_encode($return);
 		break;
 	// ! End of triggered alarms
-	
-	// ! Clear alarm
-	case 'clearAlarm':
-		$triggerId = $_POST['triggerId'];
-		$userId = $_SESSION['userId'];
-		// Update isTriggered
-		$sqlUpdateTrigger = "UPDATE alarmTriggers SET isTriggered = 0 WHERE triggerId = $triggerId";
-		mysqli_query($conn, $sqlUpdateTrigger);
-
-		// Add to triggersHistory
-		$sqlUpdateTrigger = "INSERT INTO triggeredAlarmsHistory (triggerId, clearedBy) VALUES ($triggerId, $userId)";
-		mysqli_query($conn, $sqlUpdateTrigger);
-
-		break;
-	// ! End of clear alarm
 
 	// ! Get device coordinates
 	case 'getDeviceCoordinates':
@@ -192,19 +179,24 @@ switch ($_POST['function']) {
 		$return = array();
 		
 		$sql = "
-			SELECT 'smsAlarm' AS type, channels.channelName AS channelName, smsAlarms.smsAlarmHeader AS col1, smsAlarms.smsAlarmReading AS col2, null AS clearedBy, smsAlarms.smsAlarmTime AS timestampCol
+			SELECT 'smsAlarm' AS type, channels.channelName AS channelName, smsAlarms.smsAlarmHeader AS msg1, smsAlarms.smsAlarmReading AS msg2, smsAlarms.smsAlarmTime AS timestampCol
 			FROM smsAlarms
 			LEFT JOIN channels ON smsAlarms.channelId = channels.channelId
 			WHERE smsAlarms.deviceId = $deviceId
 
 			UNION
 
-			SELECT 'triggeredHistory' AS type, channels.channelName AS channelName, alarmTriggers.operator, alarmTriggers. thresholdValue, users.fullName, triggeredAlarmsHistory.clearedAt
+			SELECT 'triggeredHistory' AS type, channels.channelName AS channelName, alarmTriggers.operator AS msg1, alarmTriggers.thresholdValue AS msg2, triggeredAlarmsHistory.clearedAt AS timestampCol
 			FROM triggeredAlarmsHistory
 			LEFT JOIN alarmTriggers ON triggeredAlarmsHistory.triggerId = alarmTriggers.triggerId
 			LEFT JOIN channels ON alarmTriggers.channelId = channels.channelId
-			LEFT JOIN users ON triggeredAlarmsHistory.clearedBy = users.userId
 			WHERE alarmTriggers.deviceId = $deviceId
+
+			UNION
+
+			SELECT 'smsStatus' AS type, 'DEVICE' AS channelName, smsStatus.smsStatus AS msg1, null AS msg2, smsStatus.smsStatusTime AS timestampCol
+			FROM smsStatus
+			WHERE smsStatus.deviceId = $deviceId
 
 			ORDER BY timestampCol DESC
 			LIMIT $alarmsPerPage OFFSET $offset;
@@ -243,7 +235,19 @@ switch ($_POST['function']) {
 			}
 		}
 
-		$return['totalCount'] = $smsAlarmsCount + $triggersHistoryCount;
+		$totalTriggers = "
+			SELECT COUNT(*) as totalRows 
+			FROM smsStatus 
+   			WHERE smsStatus.deviceId = $deviceId
+		";
+		$result = mysqli_query($conn, $totalTriggers);
+		if ( mysqli_num_rows($result) > 0 ) {
+			while ($row = mysqli_fetch_assoc($result)) {
+				$smsStatusCount = $row['totalRows'];
+			}
+		}
+
+		$return['totalCount'] = $smsAlarmsCount + $triggersHistoryCount + $smsStatusCount;
 		
 		echo json_encode($return);
 		break;

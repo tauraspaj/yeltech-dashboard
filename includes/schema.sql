@@ -175,8 +175,8 @@ CREATE TABLE units(
     unitName VARCHAR(8) UNIQUE,
     PRIMARY KEY (unitId)
 ) ENGINE=InnoDB;
-INSERT INTO units (unitName) VALUES ('oC'), ('mm'), ('mV'), ('mA'), ('A'), ('%'), ('mm/m');
-SELECT * FROM measurements WHERE deviceId = 1;
+INSERT INTO units (unitName) VALUES ('oC'), ('mm'), ('mV'), ('mA'), ('A'), ('%');
+
 
 CREATE TABLE measurements(
 	measurementId INT UNSIGNED AUTO_INCREMENT NOT NULL,
@@ -234,10 +234,8 @@ CREATE TABLE alarmTriggers(
 CREATE TABLE triggeredAlarmsHistory (
 	historyId INT UNSIGNED AUTO_INCREMENT NOT NULL,
     triggerId INT UNSIGNED NOT NULL,
-    clearedBy INT UNSIGNED,
     clearedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (historyId),
-    FOREIGN KEY (clearedBy) REFERENCES users(userId),
     FOREIGN KEY (triggerId) REFERENCES alarmTriggers(triggerId)
 ) ENGINE=InnoDB;
 

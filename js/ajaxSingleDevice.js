@@ -114,15 +114,27 @@ $(document).ready(function () {
 			<!-- End of card -->
 
 			<!-- Card -->
-			<div id="latestMeasurementsCard"></div>
+			<div id="latestMeasurementsCard" class="col-span-1 card-wrapper bg-gray-50">
+				<div class="card-header">
+					<div class="card-header-icon bg-lightblue-100 text-lightblue-500">
+						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5.5 16a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 16h-8z"></path></svg>
+					</div>
+					<div class="card-header-title text-lightblue-800 bg-lightblue-100">
+						Last reading	
+					</div>
+				</div>
+				<div id="latestMeasurements_body">
+					<p class="text-center italic mt-4">No channels found...</p>
+				</div>
+			</div>
 			<!-- End of card -->
 			
 			<!-- Card -->
-			<div id="latestTempCard" class="col-span-1 card-wrapper"></div>
+			<div id="latestTempCard" class="col-span-1 card-wrapper bg-gray-50"></div>
 			<!-- End of card -->
 
 			<!-- Card -->
-			<div id="totalAlarmsCard" class="col-span-1 card-wrapper"></div>
+			<div id="totalAlarmsCard" class="col-span-1 card-wrapper bg-gray-50"></div>
 			<!-- End of card -->
 
 			<!-- Card -->
@@ -178,7 +190,6 @@ $(document).ready(function () {
 									<th class="text-left w-2/12 py-2 px-4 font-medium text-gray-500 whitespace-nowrap">Channel</th>
 									<th class="text-center w-6/12 lg:w-4/12 py-2 px-4 font-medium text-gray-500 whitespace-nowrap">Alarm</th>
 									<th class="text-center w-4/12 lg:w-4/12 py-2 px-4 font-medium text-gray-500 whitespace-nowrap">Timestamp</th>
-									<th class="text-center w-4/12 lg:w-4/12 py-2 px-4 font-medium text-gray-500 whitespace-nowrap">Cleared By</th>
 								</tr>
 							</thead>
 							<tbody id="table_alarms">
@@ -215,20 +226,28 @@ $(document).ready(function () {
 				var deviceStatus = 'ON';
 				var statusColor = 'green';
 				var statusIcon = '<svg class="w-6 h-6 text-'+statusColor+'-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.05 3.636a1 1 0 010 1.414 7 7 0 000 9.9 1 1 0 11-1.414 1.414 9 9 0 010-12.728 1 1 0 011.414 0zm9.9 0a1 1 0 011.414 0 9 9 0 010 12.728 1 1 0 11-1.414-1.414 7 7 0 000-9.9 1 1 0 010-1.414zM7.879 6.464a1 1 0 010 1.414 3 3 0 000 4.243 1 1 0 11-1.415 1.414 5 5 0 010-7.07 1 1 0 011.415 0zm4.242 0a1 1 0 011.415 0 5 5 0 010 7.072 1 1 0 01-1.415-1.415 3 3 0 000-4.242 1 1 0 010-1.415zM10 9a1 1 0 011 1v.01a1 1 0 11-2 0V10a1 1 0 011-1z" clip-rule="evenodd"></path></svg>'
+
+				var probeStatus = 'ON TRACK';
 			} else {
 				var deviceStatus = 'OFF';
 				var statusColor = 'red';
 				var statusIcon = '<svg class="w-6 h-6 text-'+statusColor+'-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M3.707 2.293a1 1 0 00-1.414 1.414l6.921 6.922c.05.062.105.118.168.167l6.91 6.911a1 1 0 001.415-1.414l-.675-.675a9.001 9.001 0 00-.668-11.982A1 1 0 1014.95 5.05a7.002 7.002 0 01.657 9.143l-1.435-1.435a5.002 5.002 0 00-.636-6.294A1 1 0 0012.12 7.88c.924.923 1.12 2.3.587 3.415l-1.992-1.992a.922.922 0 00-.018-.018l-6.99-6.991zM3.238 8.187a1 1 0 00-1.933-.516c-.8 3-.025 6.336 2.331 8.693a1 1 0 001.414-1.415 6.997 6.997 0 01-1.812-6.762zM7.4 11.5a1 1 0 10-1.73 1c.214.371.48.72.795 1.035a1 1 0 001.414-1.414c-.191-.191-.35-.4-.478-.622z"></path></svg>'
+
+				var probeStatus = 'OFF TRACK';
 			}
 
+			// This is not used. Defined to overcome Tailwind Purge feature
+			var unused1 = 'bg-green-500';
+			var unused2 = 'bg-red-500';
+
 			// Process probe status
-			if (readingsData.probeStatus.smsAlarmHeader == 'PROBE ON TRACK') {
-				var probeStatus = 'ON';
-				var probeColor = 'green';
-			} else {
-				var probeStatus = 'OFF';
-				var probeColor = 'red';
-			}
+			// if (readingsData.probeStatus.smsAlarmHeader == 'PROBE ON TRACK') {
+			// 	var probeStatus = 'ON';
+			// 	var probeColor = 'green';
+			// } else {
+			// 	var probeStatus = 'OFF';
+			// 	var probeColor = 'red';
+			// }
 
 			var statusAndProbeCards = `
 				<div class="col-span-1 flex flex-col space-y-4">
@@ -244,13 +263,13 @@ $(document).ready(function () {
 					</div>
 
 					<!-- Probe status -->
-					<div class="bg-`+probeColor+`-50 shadow-md rounded-xl h-16 lg:h-20 flex justify-between items-center">
+					<div class="bg-`+statusColor+`-50 shadow-md rounded-xl h-16 lg:h-20 flex justify-between items-center">
 						<div class="flex-1 flex items-center space-x-2 pl-4">
-							<svg class="w-6 h-6 text-`+probeColor+`-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path></svg>
+							<svg class="w-6 h-6 text-`+statusColor+`-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path></svg>
 							<p class="uppercase text-xs lg:text-sm font-medium text-gray-700">Probe</p>
 						</div>
 						<div class="flex-1 text-center">
-							<p class="uppercase text-xs lg:text-sm font-medium text-`+probeColor+`-500">`+probeStatus+`</p>
+							<p class="uppercase text-xs lg:text-sm font-medium text-`+statusColor+`-500">`+probeStatus+`</p>
 						</div>
 					</div>
 				</div> 
@@ -332,7 +351,7 @@ $(document).ready(function () {
 					<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd"></path></svg>
 				</div>
 				<div class="card-header-title text-purple-800 bg-purple-100">
-					Total alarms sent
+					Alarms sent
 				</div>
 			</div>
 
@@ -352,7 +371,7 @@ $(document).ready(function () {
 			var latestTempCard = `
 				<div class="card-header">
 					<div class="card-header-icon bg-yellow-100 text-yellow-500">
-						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clip-rule="evenodd"></path></svg>	
+						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path></svg>
 					</div>
 					<div class="card-header-title text-yellow-800 bg-yellow-100">
 						Current temp
@@ -391,20 +410,15 @@ $(document).ready(function () {
 			for (i = 0; i < triggeredAlarms.length; i++) {
 				triggeredAlarmsOutput += `
 				<!-- Alarm -->
-				<div class="flex h-10 text-sm text-red-600 font-medium items-center pl-4 bg-red-50 border border-red-500 my-2">
+				<div class="flex h-10 text-sm text-red-600 font-medium items-center pl-4 bg-red-50 border border-red-500 rounded my-2">
+					<div class="hidden xl:block flex-1 whitespace-nowrap mx-2 text-xs italic">
+						ACTIVE ALARM!
+					</div>
 					<div class="flex-1 whitespace-nowrap mx-2">
-						`+triggeredAlarms[i].channelName+`
+						<span class="text-xs uppercase text-red-400 mr-1">Channel:</span> `+triggeredAlarms[i].channelName+`
 					</div>
-					<div class="flex-1 mx-2">
-						`+triggeredAlarms[i].operator+` `+triggeredAlarms[i].thresholdValue+`
-					</div>
-					<div class="flex-1 mx-2">
-						<div class="flex-1 flex justify-center mx-2">
-							<div id="clearAlarm" data-id="`+triggeredAlarms[i].triggerId+`" class="flex items-center bg-red-500 shadow text-white py-1 rounded px-2 cursor-pointer hover:bg-red-600" title="Clear alarm">
-								<svg class="w-4 h-4 hidden sm:block mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-								<p class="uppercase text-xs">Clear</p>
-							</div>
-						</div>
+					<div class="flex-1 whitespace-nowrap mx-2 text-center">
+						<span class="text-xs uppercase text-red-400 mr-1">Trigger:</span> `+triggeredAlarms[i].operator+` `+triggeredAlarms[i].thresholdValue+`
 					</div>
 				</div>
 				<!-- End of alarm -->
@@ -1261,20 +1275,15 @@ $(document).ready(function () {
 			for (i = 0; i < triggeredAlarms.length; i++) {
 				triggeredAlarmsOutput += `
 				<!-- Alarm -->
-				<div class="flex h-10 text-sm text-red-600 font-medium items-center pl-4 bg-red-50 border border-red-500 my-2">
+				<div class="flex h-10 text-sm text-red-600 font-medium items-center pl-4 bg-red-50 border border-red-500 rounded my-2">
+					<div class="hidden xl:block flex-1 whitespace-nowrap mx-2 text-xs italic">
+						ACTIVE ALARM!
+					</div>
 					<div class="flex-1 whitespace-nowrap mx-2">
-						`+triggeredAlarms[i].channelName+`
+						<span class="text-xs uppercase text-red-400 mr-1">Channel:</span> `+triggeredAlarms[i].channelName+`
 					</div>
-					<div class="flex-1 mx-2">
-						`+triggeredAlarms[i].operator+` `+triggeredAlarms[i].thresholdValue+`
-					</div>
-					<div class="flex-1 mx-2">
-						<div class="flex-1 flex justify-center mx-2">
-							<div id="clearAlarm" data-id="`+triggeredAlarms[i].triggerId+`" class="flex items-center bg-red-500 shadow text-white py-1 rounded px-2 cursor-pointer hover:bg-red-600" title="Clear alarm">
-								<svg class="w-4 h-4 hidden sm:block mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-								<p class="uppercase text-xs">Clear</p>
-							</div>
-						</div>
+					<div class="flex-1 whitespace-nowrap mx-2 text-center">
+						<span class="text-xs uppercase text-red-400 mr-1">Trigger:</span> `+triggeredAlarms[i].operator+` `+triggeredAlarms[i].thresholdValue+`
 					</div>
 				</div>
 				<!-- End of alarm -->
@@ -1594,6 +1603,7 @@ $(document).ready(function () {
 				},
 				success: function (data) {
 					data = JSON.parse(data);
+					console.log(data);
 					resolve(data);
 				}
 			})
@@ -1714,30 +1724,26 @@ $(document).ready(function () {
 					if (i%2 == 0) {
 						alternatingBg = 'bg-gray-100';
 					} else {
-						alternatingBg = 'bg-gray-50';
+						alternatingBg = '';
 					}
 					var dateDisplay = new Date( alarms['alarmHistory'][i].timestampCol );
 					dateDisplay = dateDisplay.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
 
 					var alarmDisplay = '-';
-					if (alarms['alarmHistory'][i]['col1'] == null) {alarms['alarmHistory'][i]['col1'] = '';}
-					if (alarms['alarmHistory'][i]['col2'] == null) {alarms['alarmHistory'][i]['col2'] = '';}
+					if (alarms['alarmHistory'][i]['msg1'] == null) {alarms['alarmHistory'][i]['msg1'] = '';}
+					if (alarms['alarmHistory'][i]['msg2'] == null) {alarms['alarmHistory'][i]['msg2'] = '';}
 
 					if (alarms['alarmHistory'][i]['type'] == 'triggeredHistory') {
-						alarmDisplay = '('+alarms['alarmHistory'][i]['col1'] + ' ' + alarms['alarmHistory'][i]['col2'] + ') TRIGGER';
-					} else if (alarms['alarmHistory'][i]['type'] == 'smsAlarm') {
-						alarmDisplay = alarms['alarmHistory'][i]['col1'] + ' ' + alarms['alarmHistory'][i]['col2'];
+						alarmDisplay = '<span class="font-semibold">('+alarms['alarmHistory'][i]['msg1'] + ' ' + alarms['alarmHistory'][i]['msg2'] + ')</span> TRIGGER';
+					} else if (alarms['alarmHistory'][i]['type'] == 'smsAlarm' || alarms['alarmHistory'][i]['type'] == 'smsStatus') {
+						alarmDisplay = alarms['alarmHistory'][i]['msg1'] + ' ' + alarms['alarmHistory'][i]['msg2'];
 					}
-
-					var clearedBy = 'SYSTEM' 
-					if(alarms['alarmHistory'][i].clearedBy != null) { clearedBy = alarms['alarmHistory'][i].clearedBy; }
 
 					outputTable += `
 					<tr class="border-b border-gray-200 h-10 `+ alternatingBg +`">
 						<td class="text-left py-2 px-4 text-xs text-gray-700 font-medium whitespace-nowrap">`+ alarms['alarmHistory'][i].channelName + `</td>
 						<td class="text-center py-2 px-4 text-xs text-gray-700 whitespace-nowrap">`+ alarmDisplay + `</td>
 						<td class="text-center py-2 px-4 text-xs text-gray-700 whitespace-nowrap">`+ dateDisplay + `</td>
-						<td class="text-center py-2 px-4 text-xs text-gray-700 whitespace-nowrap">`+ clearedBy + `</td>
 					</tr>
 					`;
 				}
@@ -1799,23 +1805,6 @@ $(document).ready(function () {
 				success: function (data) {
 					data = JSON.parse(data);
 					resolve(data);
-				}
-			})
-		})
-	}
-
-	function clearAlarm(triggerId) {
-		return new Promise(function (resolve, reject) {
-			$.ajax({
-				url: './includes/sqlSingleDevice.php',
-				type: 'POST',
-				data: {
-					deviceId: deviceId,
-					triggerId: triggerId,
-					function: 'clearAlarm'
-				},
-				success: function () {
-					resolve('SUCCESS');
 				}
 			})
 		})
@@ -1956,9 +1945,9 @@ $(document).ready(function () {
 				for (i = 0; i < measurements.length - 1; i++) {
 					var alternatingBg = '';
 					if (i%2 == 0) {
-						alternatingBg = 'bg-white'
+						alternatingBg = 'bg-gray-100';
 					} else {
-						alternatingBg = 'bg-bluegray-50'
+						alternatingBg = '';
 					}
 					var dateDisplay = new Date( measurements[i].measurementTime );
 					dateDisplay = dateDisplay.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
