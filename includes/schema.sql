@@ -140,6 +140,8 @@ CREATE TABLE devices (
     deviceName VARCHAR(128) NOT NULL UNIQUE,
     deviceAlias VARCHAR(128),
     customLocation VARCHAR(64),
+    latitude DECIMAL(9,6),
+    longitude DECIMAL(8,6),
     devicePhone VARCHAR(64) UNIQUE NOT NULL,
     deviceTypeId INT UNSIGNED NOT NULL,
     productId INT UNSIGNED  NOT NULL,
