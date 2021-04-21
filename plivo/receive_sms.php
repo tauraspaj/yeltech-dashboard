@@ -399,6 +399,15 @@ switch ($message_type) {
 				} else {
 					echo "Error: " . $sql . "<br>" . mysqli_error($conn);
 				}
+
+				// Also update latitude and longitude in devices table
+				$sql = "UPDATE devices SET latitude = $latitude, longitude = $longitude WHERE deviceId = $deviceId";
+				if (mysqli_query($conn, $sql)) {
+					echo "Record updated successfully";
+				} else {
+					echo "Error updating record: " . mysqli_error($conn);
+				}
+				
 			} else {
 				$sql = "INSERT INTO smsStatus(deviceId, smsStatus, samplingData) VALUES($deviceId, '$status', '$samplingData')";
 				if (mysqli_query($conn, $sql)) {
