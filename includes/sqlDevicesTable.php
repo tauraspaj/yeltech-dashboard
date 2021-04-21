@@ -35,7 +35,7 @@ if ($function == 'showDevices') {
 	$offset = $_POST['offset'];
 
 	$sql = "
-	SELECT devices.deviceId, devices.deviceName, devices.deviceAlias, devices.nextCalibrationDue, devices.deviceStatus, devices.customLocation, `groups`.groupName as groupName
+	SELECT devices.deviceId, devices.deviceName, devices.deviceAlias, devices.nextCalibrationDue, devices.deviceStatus, devices.customLocation, devices.latitude, devices.longitude, `groups`.groupName as groupName
 	FROM devices
 	LEFT JOIN `groups` on devices.groupId = `groups`.groupId
 	WHERE ($productTypeSearch) AND (devices.groupId = $groupFilter) AND (devices.deviceName LIKE '%$searchString%' OR devices.deviceAlias LIKE '%$searchString%')
@@ -50,23 +50,6 @@ if ($function == 'showDevices') {
 
 	if ($resultCheck > 0) {
 		while ($row = mysqli_fetch_assoc($result)) {
-			// Find location from last status message for each device
-			$sql2 = "
-			SELECT smsStatus.latitude, smsStatus.longitude 
-			FROM smsStatus 
-			WHERE ((latitude IS NOT NULL AND longitude IS NOT NULL) AND (deviceId = {$row['deviceId']})) 
-			ORDER BY smsStatusId DESC LIMIT 1;
-			";
-			
-			$result2 = mysqli_query($conn, $sql2);
-			$resultCheck = mysqli_num_rows($result2);
-			
-			if ($resultCheck > 0) {
-				while ($row2 = mysqli_fetch_assoc($result2)) {
-					$row += $row2;
-				}
-			}
-
 			// Find the number of alarms triggered for each device
 			$sqlAlarms = "
 				SELECT COUNT(triggerId) AS alarmsTriggered FROM alarmTriggers WHERE deviceId = {$row['deviceId']} AND isTriggered = 1;
