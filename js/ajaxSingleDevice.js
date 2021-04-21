@@ -1319,11 +1319,11 @@ $(document).ready(function () {
 				for (i = 0; i < data.length; i++) {
 					allUsersDivOutput += `
 						<!-- User -->
-						<div class="h-10 pl-4 md:pl-0 flex justify-start md:justify-center max-w-xl mx-auto items-center text-sm text-gray-700 font-medium border bg-gray-100 relative overflow-ellipsis overflow-hidden">
+						<div class="h-10 pl-4 md:pl-0 flex justify-start md:justify-center max-w-xl mx-auto items-center text-xs sm:text-sm text-gray-700 font-medium border bg-gray-100 relative overflow-ellipsis overflow-hidden">
 							`+data[i].fullName+` <span class="hidden md:block text-xs text-gray-400 font-normal md:ml-2 "> &lt;`+data[i].email+`&gt; </span>
 	
 							<div id="addRecipient" data-id="`+data[i].userId+`" class="flex items-center bg-lightblue-500 shadow text-white py-1 rounded px-2 cursor-pointer hover:bg-lightblue-600 absolute right-2" title="Add recipient">
-								<svg class="w-5 h-5 md:pr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"></path></svg>
+								<svg class="w-4 sm:w-5 h-4 sm:h-5 md:pr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"></path></svg>
 								<p class="hidden md:block pl-1 border-l-2 border-lightblue-600 text-xs">Select</p>
 							</div>
 						</div>
@@ -1342,11 +1342,11 @@ $(document).ready(function () {
 				for (i = 0; i < data.length; i++) {
 					recipientsDivOutput += `
 						<!-- User -->
-						<div class="h-10 pl-4 md:pl-0 flex justify-start md:justify-center max-w-xl mx-auto items-center text-sm text-gray-700 font-medium border bg-gray-100 relative overflow-ellipsis overflow-hidden">
+						<div class="text-xs sm:text-sm h-10 pl-4 md:pl-0 flex justify-start md:justify-center max-w-xl mx-auto items-center text-gray-700 font-medium border bg-gray-100 relative overflow-ellipsis overflow-hidden">
 							`+data[i].fullName+` <span class="hidden md:block text-xs text-gray-400 font-normal md:ml-2 "> &lt;`+data[i].email+`&gt; </span>
 	
 							<div id="deleteRecipient" data-id="`+data[i].alarmRecipientId+`" class="flex items-center bg-red-500 shadow text-white py-1 rounded px-2 cursor-pointer hover:bg-red-600 absolute right-2" title="Add recipient">
-								<svg class="w-5 h-5 md:pr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg>
+								<svg class="w-4 sm:w-5 h-4 sm:h-5 md:pr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg>
 								<p class="hidden md:block pl-1 border-l-2 border-red-600 text-xs">Remove</p>
 							</div>
 						</div>
@@ -1391,11 +1391,11 @@ $(document).ready(function () {
 		output = `
 		<div class="grid grid-cols-2">
 			<!-- Card -->
-			<div class="col-span-2 shadow-lg bg-gray-50 rounded-xl grid grid-cols-2">
+			<div class="col-span-2 shadow-lg rounded-xl grid grid-cols-2">
 				<!-- Left card -->
 				<div class="flex flex-col" style="height: 36rem;">
 					<!-- Card header -->
-					<div class="card-header">
+					<div class="card-header rounded-r-none">
 						<div class="card-header-icon bg-red-100 text-red-500">
 							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
 						</div>
@@ -1405,7 +1405,7 @@ $(document).ready(function () {
 					</div>
 
 					<!-- Left body -->
-					<div id="recipientsDiv" class="p-4 space-y-2 h-full overflow-y-auto bg-white">
+					<div id="recipientsDiv" class="p-4 space-y-2 h-full rounded-bl-xl overflow-y-auto bg-white">
 						<!-- Filled via js -->
 					</div>
 					<!-- End of left body -->
@@ -1416,7 +1416,7 @@ $(document).ready(function () {
 				<!-- Right card -->
 				<div class="flex flex-col border-l relative" style="height: 36rem;">
 					<!-- Card header -->
-					<div class="card-header">
+					<div class="card-header rounded-l-none">
 						<div class="card-header-icon bg-lightblue-100 text-lightblue-500">
 							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M8 2a1 1 0 000 2h2a1 1 0 100-2H8z"></path><path d="M3 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v6h-4.586l1.293-1.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L10.414 13H15v3a2 2 0 01-2 2H5a2 2 0 01-2-2V5zM15 11h2a1 1 0 110 2h-2v-2z"></path></svg>
 						</div>
@@ -1426,12 +1426,12 @@ $(document).ready(function () {
 					</div>
 					
 					<!-- Right body -->
-					<div class="py-4 px-2 md:p-4 overflow-y-auto space-y-4 text-center bg-white">
-						<input type="text" id="userSearchBar" placeholder="Search..." spellcheck="false" autocomplete="none" class="outline-none h-10 w-full max-w-xl px-4 text-sm font-semibold text-gray-800 bg-gray-100 transition-all focus:bg-white border rounded">
+					<div class="py-4 px-2 md:p-4 overflow-y-auto space-y-4 text-center h-full rounded-br-xl bg-white">
+						<input type="text" id="userSearchBar" placeholder="Search..." spellcheck="false" autocomplete="none" class="outline-none h-10 w-full max-w-xl px-4 text-sm font-semibold text-gray-800 bg-gray-100 transition-all focus:bg-gray-50 border rounded">
 						
 						<div class="border-b"></div>
 
-						<div id="allUsersDiv" class="h-full space-y-2">
+						<div id="allUsersDiv" class="space-y-2">
 						
 						</div>
 						<!-- Filled via js -->
