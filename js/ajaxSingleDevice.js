@@ -114,17 +114,20 @@ $(document).ready(function () {
 			<!-- End of card -->
 
 			<!-- Card -->
-			<div id="latestMeasurementsCard" class="col-span-1 card-wrapper bg-gray-50">
+			<div id="latestMeasurementsCard" class="col-span-1 card-wrapper bg-gray-50 border border-lightblue-400">
 				<div class="card-header">
-					<div class="card-header-icon bg-lightblue-100 text-lightblue-500">
-						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5.5 16a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 16h-8z"></path></svg>
+					<div class="card-header-icon bg-lightblue-100 text-lightblue-500 lg:hidden xl:block">
+						<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" class="bi bi-thermometer-half" viewBox="0 0 16 16">
+							<path d="M9.5 12.5a1.5 1.5 0 1 1-2-1.415V6.5a.5.5 0 0 1 1 0v4.585a1.5 1.5 0 0 1 1 1.415z"/>
+							<path d="M5.5 2.5a2.5 2.5 0 0 1 5 0v7.55a3.5 3.5 0 1 1-5 0V2.5zM8 1a1.5 1.5 0 0 0-1.5 1.5v7.987l-.167.15a2.5 2.5 0 1 0 3.333 0l-.166-.15V2.5A1.5 1.5 0 0 0 8 1z"/>
+						</svg>
 					</div>
 					<div class="card-header-title text-lightblue-800 bg-lightblue-100">
 						Last reading	
 					</div>
 				</div>
-				<div id="latestMeasurements_body">
-					<p class="text-center italic mt-4">No channels found...</p>
+				<div id="latestMeasurements_body" class="flex flex-col justify-center items-center">
+					<p class="italic mt-4">No channels found...</p>
 				</div>
 			</div>
 			<!-- End of card -->
@@ -151,9 +154,10 @@ $(document).ready(function () {
 							<div data-id="1d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">1d</div>
 							<div data-id="7d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">7d</div>
 							<div data-id="30d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">30d</div>
+							<!--
 							<div data-id="CAL" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">
 								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-							</div>
+							</div> -->
 						</div>
 					</div>
 				</div>
@@ -283,71 +287,23 @@ $(document).ready(function () {
 			//#region
 			if (readingsData.numberOfAI == 1) {
 				var latestMeasurementsCard = `
-					<div class="col-span-1 flex flex-col justify-center items-center bg-white shadow-md rounded-xl text-center space-y-2 relative h-36 lg:h-44">
-						<div class="hidden md:block lg:hidden xl:block absolute top-2 left-2 bg-blue-100 text-blue-500 rounded-full p-2">
-							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
-							<svg class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
-						</div>
-						<div class="flex flex-row justify-center items-center">
-							<p class="uppercase text-xs font-medium text-blue-500 bg-blue-50 rounded-xl px-2 py-1">`+readingsData.latestMeasurements[0].channelName+`</p>
-						</div>
-						<div class="space-y-2">
-							<p class="font-medium text-gray-800"><span class="text-5xl tracking-tighter">`+readingsData.latestMeasurements[0].measurement+`</span> <span class="">&#176;C</span></p>
-							<p class="text-xs text-gray-400">`+readingsData.latestMeasurements[0].measurementTime+`</p>
-						</div>
-					</div>
+					<div><p class="mt-2 mb-1 text-sm font-medium text-gray-600 border-b  py-1">`+readingsData.latestMeasurements[0].channelName+`</p></div>
+					<div><span class="text-5xl font-bold text-gray-800">`+readingsData.latestMeasurements[0].measurement+`</span><span class="">&#176;C</span></div>
+					<div><p class="text-xs text-gray-400 italic mt-1">`+readingsData.latestMeasurements[0].measurementTime.slice(0,-3)+`</p></div>
 				`;
 			}
-			if (readingsData.numberOfAI == 2) {
-				var latestMeasurementsCard = `
-					<div id="chan1Div" class="col-span-1 flex flex-col justify-center items-center bg-white shadow-md rounded-xl text-center space-y-2 relative h-36 lg:h-44">
-						<div class="hidden md:block lg:hidden xl:block absolute top-2 left-2 bg-blue-100 text-blue-500 rounded-full p-2">
-							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
-							<svg class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
-						</div>
-						<div class="flex flex-row justify-center items-center">
-							<p id="chan1" class="uppercase text-xs font-medium text-blue-500 bg-blue-50 rounded-xl px-2 py-1 cursor-default">`+readingsData.latestMeasurements[1].channelName+`</p>
-							<p id="chan2" class="uppercase text-xs text-gray-400 rounded-xl px-2 py-1 hover:text-black cursor-pointer">`+readingsData.latestMeasurements[0].channelName+`</p>
-						</div>
-						<div class="space-y-2">
-							<p class="font-medium text-gray-800"><span class="text-5xl tracking-tighter">`+readingsData.latestMeasurements[1].measurement+`</span> <span class="">&#176;C</span></p>
-							<p class="text-xs text-gray-400">`+readingsData.latestMeasurements[0].measurementTime+`</p>
-						</div>
-					</div>
-					<div id="chan2Div" class="col-span-1 flex flex-col justify-center items-center bg-white shadow-md rounded-xl text-center space-y-2 relative h-36 lg:h-44">
-						<div class="hidden md:block lg:hidden xl:block absolute top-2 left-2 bg-blue-100 text-blue-500 rounded-full p-2">
-							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
-							<svg class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
-						</div>
-						<div class="flex flex-row justify-center items-center">
-							<p id="chan1" class="uppercase text-xs text-gray-400 rounded-xl px-2 py-1 hover:text-black cursor-pointer">`+readingsData.latestMeasurements[1].channelName+`</p>
-							<p id="chan2" class="uppercase text-xs font-medium text-blue-500 bg-blue-50 rounded-xl px-2 py-1 cursor-default">`+readingsData.latestMeasurements[0].channelName+`</p>
-						</div>
-						<div class="space-y-2">
-							<p class="font-medium text-gray-800"><span class="text-5xl tracking-tighter">`+readingsData.latestMeasurements[0].measurement+`</span> <span class="">&#176;C</span></p>
-							<p class="text-xs text-gray-400">`+readingsData.latestMeasurements[0].measurementTime+`</p>
-						</div>
-					</div>
-				`
-			}
-			$('#latestMeasurementsCard').html(latestMeasurementsCard);
-
-			// Switching between channels functionality
-			$('#chan2Div').hide();
-			$('#chan1, #chan2').on('click', function() {
-				var parentDiv = $('#'+$(this).attr('id')+'Div');
-				if ( parentDiv.is(':hidden') ) {
-					parentDiv.show();
-					parentDiv.siblings('#chan1Div, #chan2Div').hide();
-				}
-			})
+			$('#latestMeasurements_body').html(latestMeasurementsCard);
 			//#endregion
 			
 			// * Total alarms widget card
-			//#region 
+			//#region
+			var timestampDisplay = '';
+			if (readingsData.latestAlarmSent != '') {
+				timestampDisplay = 'Latest: '+readingsData.latestAlarmSent.slice(0,-3);
+			}
 			var totalAlarmsCard = `
 			<div class="card-header">
-				<div class="card-header-icon bg-purple-100 text-purple-500">
+				<div class="card-header-icon bg-purple-100 text-purple-500 lg:hidden xl:block">
 					<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd"></path></svg>
 				</div>
 				<div class="card-header-title text-purple-800 bg-purple-100">
@@ -357,7 +313,7 @@ $(document).ready(function () {
 
 			<div class="flex-auto flex flex-col justify-center items-center space-y-2 py-4">
 				<p class="font-medium text-gray-800"><span class="text-5xl tracking-tighter">`+readingsData.numberOfTriggeredAlarms+`</span></p>
-				<p class="text-xs text-gray-400">`+readingsData.latestAlarmSent+`</p>
+				<p class="text-xs text-gray-400 italic">`+timestampDisplay+`</p>
 			</div>
 		`
 		$('#totalAlarmsCard').html(totalAlarmsCard);
@@ -370,7 +326,7 @@ $(document).ready(function () {
 			//#region 
 			var latestTempCard = `
 				<div class="card-header">
-					<div class="card-header-icon bg-yellow-100 text-yellow-500">
+					<div class="card-header-icon bg-yellow-100 text-yellow-500 lg:hidden xl:block">
 						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path></svg>
 					</div>
 					<div class="card-header-title text-yellow-800 bg-yellow-100">
