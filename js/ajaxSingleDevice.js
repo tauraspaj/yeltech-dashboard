@@ -23,8 +23,8 @@ $(document).ready(function () {
 			case 'rtmu_dashboard':
 				display_rtmu_dashboard();
 				break;
-			case 'deviceData':
-				display_deviceData();
+			case 'rtmu_controlPanel':
+				display_rtmu_controlPanel();
 				break;
 			case 'alarms':
 				display_alarms();
@@ -45,7 +45,7 @@ $(document).ready(function () {
 	var subNavbar = {
 		rtmu: [
 			{ title: 'Dashboard', component:'rtmu_dashboard' },
-			{ title: 'Device Info', component:'deviceData' },
+			{ title: 'Control Panel', component:'rtmu_controlPanel' },
 			{ title: 'Alarms', component:'alarms' },
 			{ title: 'Recipients', component:'recipients' },
 			{ title: 'Log', component:'log' }
@@ -229,8 +229,8 @@ $(document).ready(function () {
 			if (readingsData.deviceStatus == 1) {
 				var deviceStatus = 'ON';
 				var statusColor = 'green';
-				var statusIcon = '<svg class="w-6 h-6 text-'+statusColor+'-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.05 3.636a1 1 0 010 1.414 7 7 0 000 9.9 1 1 0 11-1.414 1.414 9 9 0 010-12.728 1 1 0 011.414 0zm9.9 0a1 1 0 011.414 0 9 9 0 010 12.728 1 1 0 11-1.414-1.414 7 7 0 000-9.9 1 1 0 010-1.414zM7.879 6.464a1 1 0 010 1.414 3 3 0 000 4.243 1 1 0 11-1.415 1.414 5 5 0 010-7.07 1 1 0 011.415 0zm4.242 0a1 1 0 011.415 0 5 5 0 010 7.072 1 1 0 01-1.415-1.415 3 3 0 000-4.242 1 1 0 010-1.415zM10 9a1 1 0 011 1v.01a1 1 0 11-2 0V10a1 1 0 011-1z" clip-rule="evenodd"></path></svg>'
-
+				var statusIcon = '<svg class="w-6 h-6 text-'+statusColor+'-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.05 3.636a1 1 0 010 1.414 7 7 0 000 9.9 1 1 0 11-1.414 1.414 9 9 0 010-12.728 1 1 0 011.414 0zm9.9 0a1 1 0 011.414 0 9 9 0 010 12.728 1 1 0 11-1.414-1.414 7 7 0 000-9.9 1 1 0 010-1.414zM7.879 6.464a1 1 0 010 1.414 3 3 0 000 4.243 1 1 0 11-1.415 1.414 5 5 0 010-7.07 1 1 0 011.415 0zm4.242 0a1 1 0 011.415 0 5 5 0 010 7.072 1 1 0 01-1.415-1.415 3 3 0 000-4.242 1 1 0 010-1.415zM10 9a1 1 0 011 1v.01a1 1 0 11-2 0V10a1 1 0 011-1z" clip-rule="evenodd"></path></svg>';
+				
 				var probeStatus = 'ON TRACK';
 			} else {
 				var deviceStatus = 'OFF';
@@ -243,15 +243,6 @@ $(document).ready(function () {
 			// This is not used. Defined to overcome Tailwind Purge feature
 			var unused1 = 'bg-green-500';
 			var unused2 = 'bg-red-500';
-
-			// Process probe status
-			// if (readingsData.probeStatus.smsAlarmHeader == 'PROBE ON TRACK') {
-			// 	var probeStatus = 'ON';
-			// 	var probeColor = 'green';
-			// } else {
-			// 	var probeStatus = 'OFF';
-			// 	var probeColor = 'red';
-			// }
 
 			var statusAndProbeCards = `
 				<div class="col-span-1 flex flex-col space-y-4">
@@ -287,9 +278,9 @@ $(document).ready(function () {
 			//#region
 			if (readingsData.numberOfAI == 1) {
 				var latestMeasurementsCard = `
-					<div><p class="mt-2 mb-1 text-sm font-medium text-gray-600 border-b  py-1">`+readingsData.latestMeasurements[0].channelName+`</p></div>
-					<div><span class="text-5xl font-bold text-gray-800">`+readingsData.latestMeasurements[0].measurement+`</span><span class="">&#176;C</span></div>
-					<div><p class="text-xs text-gray-400 italic mt-1">`+readingsData.latestMeasurements[0].measurementTime.slice(0,-3)+`</p></div>
+					<div><p class="mt-2 mb-1 text-sm font-medium text-gray-600 border-b lg:py-1">`+readingsData.latestMeasurements[0].channelName+`</p></div>
+					<div><span class="text-3xl lg:text-5xl font-medium text-gray-800">`+readingsData.latestMeasurements[0].measurement+`</span><span class="">&#176;C</span></div>
+					<div><p class="text-xs text-gray-400 italic mt-1 mb-2">`+readingsData.latestMeasurements[0].measurementTime.slice(0,-3)+`</p></div>
 				`;
 			}
 			$('#latestMeasurements_body').html(latestMeasurementsCard);
@@ -370,11 +361,11 @@ $(document).ready(function () {
 					<div class="hidden xl:block flex-1 whitespace-nowrap mx-2 text-xs italic">
 						ACTIVE ALARM!
 					</div>
-					<div class="flex-1 whitespace-nowrap mx-2">
+					<div class="flex-1 whitespace-nowrap">
 						<span class="text-xs uppercase text-red-400 mr-1">Channel:</span> `+triggeredAlarms[i].channelName+`
 					</div>
-					<div class="flex-1 whitespace-nowrap mx-2 text-center">
-						<span class="text-xs uppercase text-red-400 mr-1">Trigger:</span> `+triggeredAlarms[i].operator+` `+triggeredAlarms[i].thresholdValue+`
+					<div class="flex-1 whitespace-nowrap text-center">
+						<span class="text-xs uppercase text-red-400 mr-1">Trigger:</span> `+triggeredAlarms[i].operator+` `+triggeredAlarms[i].thresholdValue+` `+triggeredAlarms[i].unitName+`
 					</div>
 				</div>
 				<!-- End of alarm -->
@@ -465,7 +456,7 @@ $(document).ready(function () {
 	}		
 	
 	// ! SHOW COMPONENT: Display device data
-	function display_deviceData() {
+	function display_rtmu_controlPanel() {
 		var output = `
 		<div class="grid grid-cols-2 gap-4 md:grid-cols-2 md:gap-4 lg:grid-cols-4 lg:gap-6">
 			<!-- Card -->
@@ -1239,7 +1230,7 @@ $(document).ready(function () {
 						<span class="text-xs uppercase text-red-400 mr-1">Channel:</span> `+triggeredAlarms[i].channelName+`
 					</div>
 					<div class="flex-1 whitespace-nowrap mx-2 text-center">
-						<span class="text-xs uppercase text-red-400 mr-1">Trigger:</span> `+triggeredAlarms[i].operator+` `+triggeredAlarms[i].thresholdValue+`
+						<span class="text-xs uppercase text-red-400 mr-1">Trigger:</span> `+triggeredAlarms[i].operator+` `+triggeredAlarms[i].thresholdValue+` `+triggeredAlarms[i].unitName+`
 					</div>
 				</div>
 				<!-- End of alarm -->
@@ -1690,7 +1681,7 @@ $(document).ready(function () {
 					if (alarms['alarmHistory'][i]['msg2'] == null) {alarms['alarmHistory'][i]['msg2'] = '';}
 
 					if (alarms['alarmHistory'][i]['type'] == 'triggeredHistory') {
-						alarmDisplay = '<span class="font-semibold">('+alarms['alarmHistory'][i]['msg1'] + ' ' + alarms['alarmHistory'][i]['msg2'] + ')</span> TRIGGER';
+						alarmDisplay = '<span class="font-semibold">('+alarms['alarmHistory'][i]['msg1'] + ' ' + alarms['alarmHistory'][i]['msg2'] + ' ' + alarms['alarmHistory'][i]['unit'] + ')</span> TRIGGER';
 					} else if (alarms['alarmHistory'][i]['type'] == 'smsAlarm' || alarms['alarmHistory'][i]['type'] == 'smsStatus') {
 						alarmDisplay = alarms['alarmHistory'][i]['msg1'] + ' ' + alarms['alarmHistory'][i]['msg2'];
 					}

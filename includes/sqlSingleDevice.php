@@ -126,9 +126,10 @@ switch ($_POST['function']) {
 		$return = array();
 
 		$sql = "
-			SELECT channels.channelName, alarmTriggers.operator, alarmTriggers.thresholdValue, alarmTriggers.triggerId
+			SELECT channels.channelName, alarmTriggers.operator, alarmTriggers.thresholdValue, alarmTriggers.triggerId, units.unitName
 			FROM alarmTriggers
 			LEFT JOIN channels ON alarmTriggers.channelId = channels.channelId
+			LEFT JOIN units ON channels.unitId = units.unitId
 			WHERE alarmTriggers.deviceId = $deviceId AND alarmTriggers.isTriggered = 1;
 		";
 		
@@ -179,22 +180,23 @@ switch ($_POST['function']) {
 		$return = array();
 		
 		$sql = "
-			SELECT 'smsAlarm' AS type, channels.channelName AS channelName, smsAlarms.smsAlarmHeader AS msg1, smsAlarms.smsAlarmReading AS msg2, smsAlarms.smsAlarmTime AS timestampCol
+			SELECT 'smsAlarm' AS type, channels.channelName AS channelName, smsAlarms.smsAlarmHeader AS msg1, smsAlarms.smsAlarmReading AS msg2, null AS unit, smsAlarms.smsAlarmTime AS timestampCol
 			FROM smsAlarms
 			LEFT JOIN channels ON smsAlarms.channelId = channels.channelId
 			WHERE smsAlarms.deviceId = $deviceId
 
 			UNION
 
-			SELECT 'triggeredHistory' AS type, channels.channelName AS channelName, alarmTriggers.operator AS msg1, alarmTriggers.thresholdValue AS msg2, triggeredAlarmsHistory.clearedAt AS timestampCol
+			SELECT 'triggeredHistory' AS type, channels.channelName AS channelName, alarmTriggers.operator AS msg1, alarmTriggers.thresholdValue AS msg2, units.unitName AS unit,triggeredAlarmsHistory.clearedAt AS timestampCol
 			FROM triggeredAlarmsHistory
 			LEFT JOIN alarmTriggers ON triggeredAlarmsHistory.triggerId = alarmTriggers.triggerId
 			LEFT JOIN channels ON alarmTriggers.channelId = channels.channelId
+			LEFT JOIN units ON channels.unitId = units.unitId
 			WHERE alarmTriggers.deviceId = $deviceId
 
 			UNION
 
-			SELECT 'smsStatus' AS type, 'DEVICE' AS channelName, smsStatus.smsStatus AS msg1, null AS msg2, smsStatus.smsStatusTime AS timestampCol
+			SELECT 'smsStatus' AS type, 'DEVICE' AS channelName, smsStatus.smsStatus AS msg1, null AS msg2, null AS unit, smsStatus.smsStatusTime AS timestampCol
 			FROM smsStatus
 			WHERE smsStatus.deviceId = $deviceId
 
