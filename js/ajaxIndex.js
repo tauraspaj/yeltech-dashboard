@@ -18,9 +18,9 @@ $(document).ready(function () {
         },
         success: function (data) {
             var devices = JSON.parse(data);
+
             var output = '';
-            console.log(devices.length);
-            if (devices.length > 0) {
+            if (devices.length > 0 && devices[0].nAlarmsTriggered != 0) {
                 for (i = 0; i < devices.length; i++) {
                     // Display custom alias
                     var display1 = devices[i].deviceName;
