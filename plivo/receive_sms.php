@@ -77,14 +77,25 @@ $deviceName = $data[0];
 $message_type = $data[1];
 
 // Find device Id
-$sql = "SELECT deviceId FROM devices WHERE devicePhone = $from";
+$sql = "SELECT deviceId, deviceStatus FROM devices WHERE devicePhone = $from";
 $result = mysqli_query($conn, $sql);
 if (mysqli_num_rows($result) > 0) {
     while ($row = mysqli_fetch_assoc($result)) {
         $deviceId = $row['deviceId'];
+		$deviceStatus = $row['deviceStatus'];
     }
 }
 
+// Since we have just received a message to this device, it must be active
+if ($deviceStatus == 0) {
+	$sql = "UPDATE devices SET deviceStatus=1 WHERE deviceId = $deviceId";
+
+	if (mysqli_query($conn, $sql)) {
+	echo "Record updated successfully";
+	} else {
+	echo "Error updating record: " . mysqli_error($conn);
+	}
+}
 
 // Bsc devices record channels in the order ai1, ai2, cnt -> aiN, aiN+1, cnt
 $sql = "SELECT channelId FROM channels WHERE (channelType = 'AI' OR channelType = 'COUNTER') AND deviceId = $deviceId
@@ -196,7 +207,7 @@ switch ($message_type) {
 							mysqli_query($conn, $sqlUpdateTrigger);
 
 							// Add to triggersHistory
-							$sqlUpdateTrigger = "INSERT INTO triggeredAlarmsHistory (triggerId, clearedBy) VALUES ({$alarmTriggers[$k]['triggerId']}, 1)";
+							$sqlUpdateTrigger = "INSERT INTO triggeredAlarmsHistory (triggerId) VALUES ({$alarmTriggers[$k]['triggerId']})";
 							mysqli_query($conn, $sqlUpdateTrigger);
 
 							$alarmTriggers[$k]['isTriggered'] = 0;
@@ -308,7 +319,7 @@ switch ($message_type) {
 							mysqli_query($conn, $sqlUpdateTrigger);
 
 							// Add to triggersHistory
-							$sqlUpdateTrigger = "INSERT INTO triggeredAlarmsHistory (triggerId, clearedBy) VALUES ({$alarmTriggers[$k]['triggerId']}, 1)";
+							$sqlUpdateTrigger = "INSERT INTO triggeredAlarmsHistory (triggerId) VALUES ({$alarmTriggers[$k]['triggerId']})";
 							mysqli_query($conn, $sqlUpdateTrigger);
 
 							$alarmTriggers[$k]['isTriggered'] = 0;
