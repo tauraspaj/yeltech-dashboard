@@ -24,7 +24,7 @@ if ($function == 'checkIfExists') {
 
     $groupId = $_POST['groupId'];
     $allChannels = json_decode($_POST['submitChannels'], true);
-    $createdBy = $_SESSION["userId"];
+    $createdBy = $_SESSION['fullName'];
 
     $sql = "INSERT INTO devices (deviceName, deviceTypeId, productId, devicePhone, groupId, createdBy, lastCalibration, nextCalibrationDue) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
     $stmt = mysqli_stmt_init($conn);

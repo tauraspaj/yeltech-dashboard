@@ -88,7 +88,7 @@ if ($_POST['function'] == 'showGroups') {
 	exit();
 } elseif ($_POST['function'] == 'register') {
 	$groupName = $_POST['groupName'];
-	$createdBy = $_SESSION["userId"];
+	$createdBy = $_SESSION['fullName'];
 	$dashAccess = $_POST['dashAccess'];
 	$appAccess = $_POST['appAccess'];
 	

@@ -41,12 +41,11 @@ CREATE TABLE users (
     sendingId INT UNSIGNED NOT NULL DEFAULT 1,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-    createdBy INT UNSIGNED NOT NULL,
+    createdBy VARCHAR(128) DEFAULT NULL,
     PRIMARY KEY (userId),
     FOREIGN KEY (groupId) REFERENCES `groups`(groupId) ON DELETE CASCADE,
 	FOREIGN KEY (sendingId) REFERENCES sendingType(sendingId),
-    FOREIGN KEY (roleId) REFERENCES roles(roleId),
-    FOREIGN KEY (createdBy) REFERENCES users(userId)
+    FOREIGN KEY (roleId) REFERENCES roles(roleId)
 ) ENGINE=InnoDB;
 INSERT INTO users (roleId, fullname, groupId, email, pwd, createdBy, phoneNumber) 
 VALUES (1, 'Harry Potter', 1, 'staduser@gmail.com', '$2y$10$/MayYegaOu/N59kAQwvq.uZOORbfVsBJTY8SfkoyCU5g.R1ab6KGG', 0, '07716494122'),
@@ -80,11 +79,10 @@ CREATE TABLE `groups` (
     groupName VARCHAR(128) NOT NULL UNIQUE,
     latitude DECIMAL(9,6),
     longitude DECIMAL(8,6),
-    createdBy INT UNSIGNED NOT NULL,
+    createdBy VARCHAR(128),
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (groupId),
-    FOREIGN KEY (createdBy) REFERENCES users(userId)
+    PRIMARY KEY (groupId)
 ) ENGINE=InnoDB;
 INSERT INTO `groups`
 	(groupName, latitude, longitude, createdBy)
@@ -148,15 +146,14 @@ CREATE TABLE devices (
     groupId INT UNSIGNED,
 	createdAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    createdBy INT UNSIGNED NOT NULL,
+    createdBy VARCHAR(128),
     lastCalibration DATE,
     nextCalibrationDue DATE,
     deviceStatus TINYINT NOT NULL DEFAULT 0,
     PRIMARY KEY (deviceId),
     FOREIGN KEY (productId) REFERENCES products(productId),
     FOREIGN KEY (groupId) REFERENCES `groups`(groupId) ON DELETE SET NULL,
-    FOREIGN KEY (deviceTypeId) REFERENCES deviceTypes(deviceTypeId),
-    FOREIGN KEY (createdBy) REFERENCES users(userId)
+    FOREIGN KEY (deviceTypeId) REFERENCES deviceTypes(deviceTypeId)
 ) ENGINE=InnoDB;
 
 

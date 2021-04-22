@@ -73,7 +73,7 @@ if ($phoneNumber == '') {
 }
 
 // Created by is the id of creator's session
-$createdBy = $_SESSION["userId"];
+$createdBy = $_SESSION['fullName'];
 $hashedPwd = password_hash($password, PASSWORD_DEFAULT);
 mysqli_stmt_bind_param($stmt, "sssssss", $roleId, $fullName, $groupId, $email, $phoneNumber, $hashedPwd, $createdBy);
 mysqli_stmt_execute($stmt);
