@@ -43,7 +43,7 @@ CREATE TABLE users (
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     createdBy INT UNSIGNED NOT NULL,
     PRIMARY KEY (userId),
-    FOREIGN KEY (groupId) REFERENCES `groups`(groupId),
+    FOREIGN KEY (groupId) REFERENCES `groups`(groupId) ON DELETE CASCADE,
 	FOREIGN KEY (sendingId) REFERENCES sendingType(sendingId),
     FOREIGN KEY (roleId) REFERENCES roles(roleId),
     FOREIGN KEY (createdBy) REFERENCES users(userId)
@@ -105,7 +105,7 @@ CREATE TABLE auth_tokens (
     activeFrom DATETIME NOT NULL,
     activeTo DATETIME NOT NULL,
     PRIMARY KEY (authId),
-    FOREIGN KEY (userId) REFERENCES users(userId)
+    FOREIGN KEY (userId) REFERENCES users(userId) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 
@@ -115,7 +115,7 @@ CREATE TABLE subscriptions(
 	subStart DATE,
     subFinish DATE,
     PRIMARY KEY (subscriptionId),
-    FOREIGN KEY (deviceId) REFERENCES devices(deviceId)
+    FOREIGN KEY (deviceId) REFERENCES devices(deviceId) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 
@@ -144,8 +144,8 @@ CREATE TABLE devices (
     longitude DECIMAL(8,6),
     devicePhone VARCHAR(64) UNIQUE NOT NULL,
     deviceTypeId INT UNSIGNED NOT NULL,
-    productId INT UNSIGNED  NOT NULL,
-    groupId INT UNSIGNED NOT NULL,
+    productId INT UNSIGNED NOT NULL,
+    groupId INT UNSIGNED,
 	createdAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     createdBy INT UNSIGNED NOT NULL,
@@ -154,7 +154,7 @@ CREATE TABLE devices (
     deviceStatus TINYINT NOT NULL DEFAULT 0,
     PRIMARY KEY (deviceId),
     FOREIGN KEY (productId) REFERENCES products(productId),
-    FOREIGN KEY (groupId) REFERENCES `groups`(groupId),
+    FOREIGN KEY (groupId) REFERENCES `groups`(groupId) ON DELETE SET NULL,
     FOREIGN KEY (deviceTypeId) REFERENCES deviceTypes(deviceTypeId),
     FOREIGN KEY (createdBy) REFERENCES users(userId)
 ) ENGINE=InnoDB;
@@ -167,8 +167,8 @@ CREATE TABLE channels(
     deviceId INT UNSIGNED NOT NULL,
     channelType ENUM('DI', 'AI', 'COUNTER') NOT NULL,
     PRIMARY KEY (channelId),
-    FOREIGN KEY (unitId) REFERENCES units(unitId),
-    FOREIGN KEY (deviceId) REFERENCES devices(deviceId)
+    FOREIGN KEY (unitId) REFERENCES units(unitId) ON DELETE SET NULL,
+    FOREIGN KEY (deviceId) REFERENCES devices(deviceId) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 
@@ -187,8 +187,8 @@ CREATE TABLE measurements(
     measurement VARCHAR(64),
     measurementTime DATETIME,
     PRIMARY KEY (measurementId),
-    FOREIGN KEY (deviceId) REFERENCES devices(deviceId),
-    FOREIGN KEY (channelId) REFERENCES channels(channelId)
+    FOREIGN KEY (deviceId) REFERENCES devices(deviceId) ON DELETE CASCADE,
+    FOREIGN KEY (channelId) REFERENCES channels(channelId) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 
@@ -199,10 +199,9 @@ CREATE TABLE smsAlarms(
     smsAlarmHeader VARCHAR(64),
     smsAlarmReading VARCHAR(64),
     smsAlarmTime DATETIME DEFAULT CURRENT_TIMESTAMP,
-    isAcknowledged TINYINT NOT NULL DEFAULT 0,
     PRIMARY KEY (smsAlarmId),
-    FOREIGN KEY (channelId) REFERENCES channels(channelId),
-    FOREIGN KEY (deviceId) REFERENCES devices(deviceId)
+    FOREIGN KEY (channelId) REFERENCES channels(channelId) ON DELETE CASCADE,
+    FOREIGN KEY (deviceId) REFERENCES devices(deviceId) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 
@@ -215,7 +214,7 @@ CREATE TABLE smsStatus(
     longitude DECIMAL(8,6),
     smsStatusTime DATETIME DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (smsStatusId),
-    FOREIGN KEY (deviceId) REFERENCES devices(deviceId)
+    FOREIGN KEY (deviceId) REFERENCES devices(deviceId) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 
@@ -228,8 +227,8 @@ CREATE TABLE alarmTriggers(
     isTriggered TINYINT NOT NULL DEFAULT 0,
     timeCreated DATETIME DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (triggerId),
-    FOREIGN KEY (channelId) REFERENCES channels(channelId),
-    FOREIGN KEY (deviceId) REFERENCES devices(deviceId)
+    FOREIGN KEY (channelId) REFERENCES channels(channelId) ON DELETE CASCADE,
+    FOREIGN KEY (deviceId) REFERENCES devices(deviceId) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 
@@ -238,7 +237,7 @@ CREATE TABLE triggeredAlarmsHistory (
     triggerId INT UNSIGNED NOT NULL,
     clearedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (historyId),
-    FOREIGN KEY (triggerId) REFERENCES alarmTriggers(triggerId)
+    FOREIGN KEY (triggerId) REFERENCES alarmTriggers(triggerId) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 
@@ -247,8 +246,8 @@ CREATE TABLE alarmRecipients(
     deviceId INT UNSIGNED NOT NULL,
     userId INT UNSIGNED NOT NULL,
     PRIMARY KEY (alarmRecipientId),
-    FOREIGN KEY (userId) REFERENCES users(userId),
-    FOREIGN KEY (deviceId) REFERENCES devices(deviceId)
+    FOREIGN KEY (userId) REFERENCES users(userId) ON DELETE CASCADE,
+    FOREIGN KEY (deviceId) REFERENCES devices(deviceId) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 
