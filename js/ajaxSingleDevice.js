@@ -277,11 +277,17 @@ $(document).ready(function () {
 			// * latestMeasurementsCard
 			//#region
 			if (readingsData.numberOfAI == 1) {
-				var latestMeasurementsCard = `
+				if (readingsData.latestMeasurements == 'Undefined') {
+					var latestMeasurementsCard = `
+						<p class="italic mt-4">No readings found...</p>
+					`;
+				} else {
+					var latestMeasurementsCard = `
 					<div><p class="mt-2 mb-1 text-sm font-medium text-gray-600 border-b lg:py-1">`+readingsData.latestMeasurements[0].channelName+`</p></div>
 					<div><span class="text-3xl lg:text-5xl font-medium text-gray-800">`+readingsData.latestMeasurements[0].measurement+`</span><span class="">&#176;C</span></div>
 					<div><p class="text-xs text-gray-400 italic mt-1 mb-2">`+readingsData.latestMeasurements[0].measurementTime.slice(0,-3)+`</p></div>
-				`;
+					`;
+				}
 			}
 			$('#latestMeasurements_body').html(latestMeasurementsCard);
 			//#endregion
@@ -289,6 +295,7 @@ $(document).ready(function () {
 			// * Total alarms widget card
 			//#region
 			var timestampDisplay = '';
+			console.log(readingsData.latestAlarmSent);
 			if (readingsData.latestAlarmSent != '') {
 				timestampDisplay = 'Latest: '+readingsData.latestAlarmSent.slice(0,-3);
 			}
@@ -376,17 +383,6 @@ $(document).ready(function () {
 		// Display triggered alarms
 		getTriggeredAlarms().then( function(triggeredAlarms) {
 			displayTriggeredAlarms(triggeredAlarms);
-		})
-		// Listen for clicks to clear alarms
-		$('#alarmsCardBody').delegate('#clearAlarm', 'click', function() {
-			var triggerId = $(this).attr('data-id');
-			alert();
-			clearAlarm(triggerId).then( function() {
-				// Display triggered alarms
-				getTriggeredAlarms().then( function(triggeredAlarms) {
-					displayTriggeredAlarms(triggeredAlarms);
-				})
-			})
 		})
 		//#endregion
 
@@ -1242,16 +1238,6 @@ $(document).ready(function () {
 		getTriggeredAlarms().then( function(triggeredAlarms) {
 			displayTriggeredAlarms(triggeredAlarms);
 		})
-		// Listen for clicks to clear alarms
-		$('#alarmsCardBody').delegate('#clearAlarm', 'click', function() {
-			var triggerId = $(this).attr('data-id');
-			clearAlarm(triggerId).then(function() {
-				// Display triggered alarms
-				getTriggeredAlarms().then( function(triggeredAlarms) {
-					displayTriggeredAlarms(triggeredAlarms);
-				})
-			})
-		})
 		//#endregion
 		
 	}
@@ -1550,7 +1536,6 @@ $(document).ready(function () {
 				},
 				success: function (data) {
 					data = JSON.parse(data);
-					console.log(data);
 					resolve(data);
 				}
 			})
@@ -1599,7 +1584,6 @@ $(document).ready(function () {
 				},
 				success: function (data) {
 					data = JSON.parse(data);
-					// console.log(data);
 					resolve(data);
 				}
 			})
@@ -1659,7 +1643,6 @@ $(document).ready(function () {
 			success: function (data) {
 				$('#loadingOverlay_alarms').hide();
 				var alarms = JSON.parse(data);
-				console.log(alarms);
 
 				totalCount = alarms['totalCount'];
 				returnedCount = alarms['alarmHistory'].length;
