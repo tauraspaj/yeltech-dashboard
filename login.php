@@ -33,6 +33,7 @@ if (isset($_SESSION["userId"])) {
 	<!-- jQuery -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
+	<link rel="shortcut icon" type="image/jpg" href="img/favicon.png"/>
 	<title>YelCloud - Manage Your Devices</title>
 
 </head>

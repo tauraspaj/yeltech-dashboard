@@ -100,6 +100,7 @@ if ($resultCheck > 0) {
 
 	<link rel="stylesheet" href="css/dist.css">
 
+	<link rel="shortcut icon" type="image/jpg" href="img/favicon.png"/>
 	<title>YelCloud - Manage Your Devices</title>
 
 </head>
