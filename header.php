@@ -272,9 +272,9 @@ if ($resultCheck > 0) {
 								$triggeredDevices[] = $row;
 							}
 						}
-
+						
 						$devicesCount = count($triggeredDevices);
-						if ($devicesCount == 0) {
+						if ($devicesCount == 0 || $triggeredDevices[0]['nAlarmsTriggered'] == 0) {
 							echo '
 							<div id="devicesNotification" class="hidden absolute bottom-100 bg-gray-50 w-64 top-16 right-12 md:right-20 rounded-b border border-t-0 shadow-md border-gray-300">
 								<p class="flex justify-center items-center border-t text-sm uppercase h-16 font-medium text-black cursor-default"> 
