@@ -44,8 +44,8 @@ $(document).ready(function () {
 	// ! Data about each device
 	var subNavbar = {
 		rtmu: [
-			{ title: 'Control Panel', component:'rtmu_controlPanel' },
 			{ title: 'Dashboard', component:'rtmu_dashboard' },
+			{ title: 'Control Panel', component:'rtmu_controlPanel' },
 			{ title: 'Alarms', component:'alarms' },
 			{ title: 'Recipients', component:'recipients' },
 			{ title: 'Log', component:'log' }
@@ -241,8 +241,8 @@ $(document).ready(function () {
 			}
 
 			// This is not used. Defined to overcome Tailwind Purge feature
-			var unused1 = 'bg-green-500';
-			var unused2 = 'bg-red-500';
+			var unused1 = 'bg-green-50';
+			var unused2 = 'bg-red-50';
 
 			var statusAndProbeCards = `
 				<div class="col-span-1 flex flex-col space-y-4">
@@ -1415,7 +1415,7 @@ $(document).ready(function () {
 				</div>
 
 				<!-- Table -->
-				<div class="flex-auto py-2 px-4 bg-gray-50">
+				<div class="flex-auto py-2 px-4 bg-gray-50 rounded-b-xl">
 					<div class="flex overflow-x-auto">
 						<table class="table-fixed min-w-full">
 							<thead class="uppercase text-xs bg-bluegray-50 border-b border-gray-200 text-bluegray-900">
