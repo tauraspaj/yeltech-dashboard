@@ -98,10 +98,15 @@ $(document).ready(function () {
 						<td class="text-center py-2 px-4 cursor-default">`+ role + `</td>
 						<td class="text-center py-2 px-4 text-sm text-gray-600">`+ phoneNumber + `</td>
 						<td class="text-center py-2 px-4 text-sm text-gray-600">`+ users[i].sendingType + `</td>
-						<td class="text-center" id="select" data-id="`+ users[i].userId + `">
-							<button class="focus:outline-none text-xs text-gray-600 uppercase bg-gray-50 border border-gray-300 rounded font-medium p-1 hover:bg-gray-200">
-								Actions
+						<td class="text-center relative px-2">
+							<button id="userButton" data-id="`+ users[i].userId + `" class="mx-auto focus:outline-none text-xs text-gray-600 uppercase bg-gray-50 border border-gray-300 rounded font-medium py-1 px-2 hover:bg-gray-200 flex justify-center items-center space-x-1">
+								<p>Options</p>
+								<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
 							</button>
+							<div id="userMenu" class="hidden absolute right-2 w-28 sm:w-52 rounded-md shadow-lg bg-white py-1 mt-1 ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+								<p id="viewUser" class="hover:bg-gray-100 cursor-pointer text-gray-700 py-1">View</p>
+								<p id="deleteUser" class="hover:bg-gray-100 cursor-pointer text-gray-700 py-1">Delete</p>
+							</div>
 						</td>
 					</tr>
 					`;
@@ -110,7 +115,7 @@ $(document).ready(function () {
 			}
 		})
 	}
-
+	
 	function showLatestUsers() {
 		$.ajax({
 			url: './includes/sqlUsersTable.php',
@@ -157,8 +162,13 @@ $(document).ready(function () {
 	showLatestUsers();
 
 	// Start listening for clicks on any users
-	usersTable.delegate('#select', 'click', function () {
-		alert($(this).attr('data-id'));
+	usersTable.delegate('#userButton', 'click', function () {
+		var userId = $(this).attr('data-id');
+		$(this).siblings('#userMenu').toggleClass('hidden');
+		// alert($(this).attr('data-id'));
+		$(this).siblings('#userMenu').children().on('click', function() {
+			console.log($(this).attr('id')+' '+userId);
+		})
 	})
 
 	// ! Slide down content functionality

@@ -44,8 +44,8 @@ $(document).ready(function () {
 	// ! Data about each device
 	var subNavbar = {
 		rtmu: [
-			{ title: 'Dashboard', component:'rtmu_dashboard' },
 			{ title: 'Control Panel', component:'rtmu_controlPanel' },
+			{ title: 'Dashboard', component:'rtmu_dashboard' },
 			{ title: 'Alarms', component:'alarms' },
 			{ title: 'Recipients', component:'recipients' },
 			{ title: 'Log', component:'log' }
@@ -456,7 +456,7 @@ $(document).ready(function () {
 		var output = `
 		<div class="grid grid-cols-2 gap-4 md:grid-cols-2 md:gap-4 lg:grid-cols-4 lg:gap-6">
 			<!-- Card -->
-			<div id="deviceInfoCard" class="col-span-1 card-wrapper">
+			<div id="deviceInfoCard" class="col-span-1 card-wrapper bg-gray-50">
 				<!-- Card header -->
 				<div class="card-header">
 					<div class="card-header-icon bg-lightblue-100 text-lightblue-500">
@@ -517,7 +517,7 @@ $(document).ready(function () {
 							<p>Edit</p>
 						</button>
 						<button id="saveCustoms" class="hidden flex justify-center items-center focus:outline-none space-x-2 text-sm uppercase font-medium bg-green-200 rounded px-4 py-1 text-green-900 duration-200 hover:bg-green-400">
-							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z"></path></svg>
+							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
 							<p>Save</p>
 						</button>
 						<button id="cancelCustoms" class="hidden flex justify-center items-center focus:outline-none space-x-2 text-sm uppercase font-medium bg-white rounded px-4 py-1 border border-red-500 text-red-900 duration-200 hover:bg-red-300">
@@ -559,7 +559,7 @@ $(document).ready(function () {
 							<p>Edit</p>
 						</button>
 						<button id="saveSubs" class="hidden flex justify-center items-center focus:outline-none space-x-2 text-sm uppercase font-medium bg-green-200 rounded px-4 py-1 text-green-900 duration-200 hover:bg-green-400">
-							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z"></path></svg>
+							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
 							<p>Save</p>
 						</button>
 						<button id="cancelSubs" class="hidden flex justify-center items-center focus:outline-none space-x-2 text-sm uppercase font-medium bg-white rounded px-4 py-1 border border-red-500 text-red-900 duration-200 hover:bg-red-300">
@@ -601,7 +601,7 @@ $(document).ready(function () {
 							<p>Edit</p>
 						</button>
 						<button id="saveCalib" class="hidden flex justify-center items-center focus:outline-none space-x-2 text-sm uppercase font-medium bg-green-200 rounded px-4 py-1 text-green-900 duration-200 hover:bg-green-400">
-							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z"></path></svg>
+							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
 							<p>Save</p>
 						</button>
 						<button id="cancelCalib" class="hidden flex justify-center items-center focus:outline-none space-x-2 text-sm uppercase font-medium bg-white rounded px-4 py-1 border border-red-500 text-red-900 duration-200 hover:bg-red-300">

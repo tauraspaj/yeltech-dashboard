@@ -542,8 +542,14 @@ switch ($_POST['function']) {
 	case 'updateDeviceAlias':
 		$deviceId = $_POST['deviceId'];
 		$deviceAlias = $_POST['alias'];
+		if ($deviceAlias == '') {
+			$deviceAlias = 'null';
+		} else {
+			$deviceAlias = "'$deviceAlias'";
+		}
+
 		$sql = "
-		UPDATE devices SET deviceAlias = '$deviceAlias' WHERE deviceId = $deviceId
+		UPDATE devices SET deviceAlias = $deviceAlias WHERE deviceId = $deviceId
 		";
 		if ( mysqli_query($conn, $sql) ) {
 			echo 'SUCCESS';
@@ -557,8 +563,13 @@ switch ($_POST['function']) {
 	case 'updateCustomLocation':
 		$deviceId = $_POST['deviceId'];
 		$customLocation = $_POST['location'];
+		if ($customLocation == '') {
+			$customLocation = 'null';
+		} else {
+			$customLocation = "'$customLocation'";
+		}
 		$sql = "
-		UPDATE devices SET customLocation = '$customLocation' WHERE deviceId = $deviceId
+		UPDATE devices SET customLocation = $customLocation WHERE deviceId = $deviceId
 		";
 		if ( mysqli_query($conn, $sql) ) {
 			echo 'SUCCESS';
