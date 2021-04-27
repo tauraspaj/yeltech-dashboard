@@ -79,6 +79,8 @@ CREATE TABLE `groups` (
     groupName VARCHAR(128) NOT NULL UNIQUE,
     latitude DECIMAL(9,6),
     longitude DECIMAL(8,6),
+    dashAccess TINYINT NOT NULL DEFAULT 1,
+    appAccess TINYINT NOT NULL DEFAULT 1,
     createdBy VARCHAR(128),
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
