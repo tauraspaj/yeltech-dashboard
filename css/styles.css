@@ -50,11 +50,11 @@
 	}
 
 	.card-header-icon {
-		@apply absolute hidden md:block rounded-full p-2 mx-4;
+		@apply absolute rounded-full p-2 mx-2 xl:mx-4 bg-lightblue-100 text-lightblue-500;
 	}
 
 	.card-header-title {
-		@apply font-medium text-sm rounded-lg py-1 px-4 mx-auto;
+		@apply font-medium text-sm text-lightblue-900 bg-lightblue-100 rounded-lg py-1 px-4 mx-auto;
 	}
 }
 
