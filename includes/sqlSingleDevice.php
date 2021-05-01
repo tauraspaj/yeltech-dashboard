@@ -519,7 +519,7 @@ switch ($_POST['function']) {
 		$return = array();
 		$deviceId = $_POST['deviceId'];
 		$sql = "
-		SELECT devices.deviceId, devices.deviceName, devices.deviceAlias, devices.customLocation, devices.devicePhone, devices.createdAt, devices.lastCalibration, devices.nextCalibrationDue, deviceTypes.deviceTypeName, products.productName, subscriptions.subStart, subscriptions.subFinish, `groups`.groupName
+		SELECT devices.deviceId, devices.deviceName, devices.deviceStatus, devices.deviceAlias, devices.customLocation, devices.devicePhone, devices.createdAt, devices.lastCalibration, devices.nextCalibrationDue, devices.latitude, devices.longitude, deviceTypes.deviceTypeName, products.productName, subscriptions.subStart, subscriptions.subFinish, `groups`.groupName
 		FROM devices
 		LEFT JOIN deviceTypes ON devices.deviceTypeId = deviceTypes.deviceTypeId
 		LEFT JOIN products ON devices.productId = products.productId
@@ -532,24 +532,32 @@ switch ($_POST['function']) {
 		$result = mysqli_query($conn, $sql);
 		if ( mysqli_num_rows($result) > 0 ) {
 			while ($row = mysqli_fetch_assoc($result)) {
+				$deviceChannels = array();
+				$sql2 = "
+				SELECT channels.channelId, channels.channelName
+				FROM channels
+				WHERE channels.deviceId = $deviceId
+				";
+				$result2 = mysqli_query($conn, $sql2);
+				if ( mysqli_num_rows($result2) > 0 ) {
+					while ($row2 = mysqli_fetch_assoc($result2)) {
+						$deviceChannels[] = $row2;
+					}
+				}
+				$row['channels'] = $deviceChannels;
 				echo json_encode($row);
 			}
 		}
 		exit();
 	// ! End of device data
-
-	// ! Update device alias
-	case 'updateDeviceAlias':
+	
+	// ! Update device status
+	case 'updateDeviceStatus':
 		$deviceId = $_POST['deviceId'];
-		$deviceAlias = $_POST['alias'];
-		if ($deviceAlias == '') {
-			$deviceAlias = 'null';
-		} else {
-			$deviceAlias = "'$deviceAlias'";
-		}
+		$newStatus = $_POST['newStatus'];
 
 		$sql = "
-		UPDATE devices SET deviceAlias = $deviceAlias WHERE deviceId = $deviceId
+		UPDATE devices SET deviceStatus = $newStatus WHERE deviceId = $deviceId
 		";
 		if ( mysqli_query($conn, $sql) ) {
 			echo 'SUCCESS';
@@ -557,101 +565,111 @@ switch ($_POST['function']) {
 			echo 'ERROR';
 		}
 		break;
-	// ! End of device alias
+	// ! End of device status
 
-	// ! Update device custom location
-	case 'updateCustomLocation':
+	// ! Update device customs
+	case 'updateCustoms':
 		$deviceId = $_POST['deviceId'];
-		$customLocation = $_POST['location'];
-		if ($customLocation == '') {
-			$customLocation = 'null';
+		$deviceAlias = $_POST['deviceAlias'];
+		$customLocation = $_POST['customLocation'];
+		$latitude = $_POST['latitude'];
+		$longitude = $_POST['longitude'];
+
+		if ($deviceAlias == '') { $deviceAlias = null; }
+		if ($customLocation == '') { $customLocation = null; }
+		
+		if (preg_match('/^[0-9.]+$/', $latitude) && preg_match('/^[0-9.]+$/', $longitude)) {
+			if ($latitude == '' || $longitude == '') {
+				$latitude = null;
+				$longitude = null;
+			} else {
+				$latitude = floatval($latitude);
+				$longitude = floatval($longitude);
+
+				if ( $latitude < -90 || $latitude > 90 || $longitude < -180 || $longitude > 180 ) {
+					$response['status'] = 'Error';
+					$response['message'] = 'Invalid coordinates';
+					echo json_encode($response);
+					break;
+				}
+			}
 		} else {
-			$customLocation = "'$customLocation'";
+			$response['status'] = 'Error';
+			$response['message'] = 'Invalid coordinates';
+			echo json_encode($response);
+			break;
 		}
-		$sql = "
-		UPDATE devices SET customLocation = $customLocation WHERE deviceId = $deviceId
-		";
-		if ( mysqli_query($conn, $sql) ) {
-			echo 'SUCCESS';
+
+		$response = array();
+		
+		$sql = "UPDATE devices SET deviceAlias=?, customLocation=?, latitude=?, longitude=? WHERE deviceId=?";
+		$stmt = mysqli_stmt_init($conn);
+		mysqli_stmt_prepare($stmt, $sql);
+		mysqli_stmt_bind_param($stmt, "sssss", $deviceAlias, $customLocation, $latitude, $longitude, $deviceId);
+		mysqli_stmt_execute($stmt);
+		if (mysqli_stmt_error($stmt)) {
+			$response['status'] = 'Error';
+			$response['message'] = mysqli_stmt_error($stmt);
 		} else {
-			echo 'ERROR';
+			$response['status'] = 'OK';
 		}
+        mysqli_stmt_close($stmt);
+
+		echo json_encode($response);
 		break;
-	// ! End of device custom location
+	// ! End of device customs
+
+	// ! Update device customs
+	case 'updateMaintainDates':
+		$deviceId = $_POST['deviceId'];
+		$subStart = $_POST['subStart'];
+		$subFinish = $_POST['subFinish'];
+		$lastCalibration = $_POST['lastCal'];
+		$nextCalibrationDue = $_POST['nextCal'];
+
+		if ($subStart == '0000-00-00' || $subStart == '') { $subStart = null; }
+		if ($subFinish == '0000-00-00' || $subFinish == '') { $subFinish = null; }
+		if ($lastCalibration == '0000-00-00' || $lastCalibration == '') { $lastCalibration = null; }
+		if ($nextCalibrationDue == '0000-00-00' || $nextCalibrationDue == '') { $nextCalibrationDue = null; }
+
+		$response = array();
+		
+		$sql = "UPDATE subscriptions SET subStart=?, subFinish=? WHERE deviceId=?";
+		$stmt = mysqli_stmt_init($conn);
+		mysqli_stmt_prepare($stmt, $sql);
+		mysqli_stmt_bind_param($stmt, "sss", $subStart, $subFinish, $deviceId);
+		mysqli_stmt_execute($stmt);
+		if (mysqli_stmt_error($stmt)) {
+			$response['status'] = 'Error';
+			$response['message'] = mysqli_stmt_error($stmt);
+		} else {
+			$response['status'] = 'OK';
+		}
+
+		$sql = "UPDATE devices SET lastCalibration=?, nextCalibrationDue=? WHERE deviceId=?";
+		$stmt = mysqli_stmt_init($conn);
+		mysqli_stmt_prepare($stmt, $sql);
+		mysqli_stmt_bind_param($stmt, "sss", $lastCalibration, $nextCalibrationDue, $deviceId);
+		mysqli_stmt_execute($stmt);
+		if (mysqli_stmt_error($stmt)) {
+			$response['status'] = 'Error';
+			$response['message'] = mysqli_stmt_error($stmt);
+		} else {
+			$response['status'] = 'OK';
+		}
+
+
+        mysqli_stmt_close($stmt);
+
+		echo json_encode($response);
+		break;
+	// ! End of device customs
 
 	// ! Return session role id
 	case 'getRoleId':
 		echo $_SESSION['roleId'];
 		break;
 	// ! End of session role id
-	
-	// ! Update subscriptions
-	case 'updateSubscription':
-		$deviceId = $_POST['deviceId'];
-		$date = $_POST['date'];
-
-		switch ($_POST['startOrFinish']) {
-			case 'subStart':
-				if ($date == '0000-00-00' OR $date == '') {
-					$sql = "UPDATE subscriptions SET subStart = null WHERE deviceId = $deviceId;";
-				} else {
-					$sql = "UPDATE subscriptions SET subStart = '$date' WHERE deviceId = $deviceId;";
-				}
-
-				break;
-			case 'subFinish':
-				if ($date == '0000-00-00' OR $date == '') {
-					$sql = "UPDATE subscriptions SET subFinish = null WHERE deviceId = $deviceId;";
-				} else {
-					$sql = "UPDATE subscriptions SET subFinish = '$date' WHERE deviceId = $deviceId;";
-				}
-
-				break;
-			default: break;
-		}
-
-		if ( mysqli_query($conn, $sql) ) {
-			echo 'SUCCESS';
-		} else {
-			echo 'ERROR';
-		}
-
-		break;
-	// ! End of subscription updates
-	
-	// ! Update calibrations
-	case 'updateCalibration':
-		$deviceId = $_POST['deviceId'];
-		$date = $_POST['date'];
-
-		switch ($_POST['lastOrNext']) {
-			case 'nextCalibrationDue':
-				if ($date == '0000-00-00' OR $date == '') {
-					$sql = "UPDATE devices SET nextCalibrationDue = null WHERE deviceId = $deviceId;";
-				} else {
-					$sql = "UPDATE devices SET nextCalibrationDue = '$date' WHERE deviceId = $deviceId;";
-				}
-
-				break;
-			case 'lastCalibration':
-				if ($date == '0000-00-00' OR $date == '') {
-					$sql = "UPDATE devices SET lastCalibration = null WHERE deviceId = $deviceId;";
-				} else {
-					$sql = "UPDATE devices SET lastCalibration = '$date' WHERE deviceId = $deviceId;";
-				}
-
-				break;
-			default: break;
-		}
-
-		if ( mysqli_query($conn, $sql) ) {
-			echo 'SUCCESS';
-		} else {
-			echo 'ERROR';
-		}
-
-		break;
-	// ! End of calibration updates
 
 	default: break;
 		// 

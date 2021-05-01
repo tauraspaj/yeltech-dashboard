@@ -451,170 +451,173 @@ $(document).ready(function () {
 		
 	}		
 	
-	// ! SHOW COMPONENT: Display device data
+	// ! SHOW COMPONENT: Display control panel
 	function display_rtmu_controlPanel() {
 		var output = `
+		<div id="controlpanel-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center hidden">
+			<div id="modal-box" class="border border-gray-300 shadow-xl bg-gray-200 w-full mx-4 max-w-sm sm:max-w-md md:max-w-2xl overflow-hidden flex flex-col rounded p-4">
+			</div>
+		</div>
+
 		<div class="grid grid-cols-2 gap-4 md:grid-cols-2 md:gap-4 lg:grid-cols-4 lg:gap-6">
 			<!-- Card -->
-			<div id="deviceInfoCard" class="col-span-1 card-wrapper bg-gray-50">
+			<div class="col-span-2 md:col-span-1 lg:col-span-2 xl:col-span-1 card-wrapper bg-gray-50">
 				<!-- Card header -->
 				<div class="card-header">
-					<div class="card-header-icon bg-lightblue-100 text-lightblue-500">
+					<div class="card-header-icon">
 						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
 					</div>
-					<div class="card-header-title text-lightblue-800 bg-lightblue-100">
+					<div class="card-header-title">
 						Device
 					</div>
 				</div>
 
 				<!-- Card body -->
-				<div class="flex-auto flex flex-col p-2 justify-center items-center">
-					<table class="w-full">
-						<tr class="border-b border-gray-100">
-							<th class="font-normal text-xs uppercase text-gray-400 py-2 w-1/3">Name</th>
-							<td id="deviceName" class="font-semibold text-gray-800 text-xs sm:text-sm whitespace-nowrap"></td>
-						</tr>
-						<tr class="border-b border-gray-100">
-							<th class="font-normal text-xs uppercase text-gray-400 py-2 w-1/3">Product</th>
-							<td id="productName" class="font-semibold text-gray-800 text-xs sm:text-sm whitespace-nowrap"></td>
-						</tr>
-						<tr class="">
-							<th class="font-normal text-xs uppercase text-gray-400 py-2 w-1/3">Group</th>
-							<td id="groupName" class="font-semibold text-gray-800 text-xs sm:text-sm whitespace-nowrap"></td>
-						</tr>
-					</table>
-				</div>
-			</div>
-			<!-- End of card -->
-
-			<!-- Card -->
-			<div id="customisationCard" class="col-span-1 card-wrapper">
-				<!-- Card header -->
-				<div class="card-header">
-					<div class="card-header-icon bg-purple-100 text-purple-500">
-						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path></svg>
+				<div class="flex-auto flex flex-col p-2 divide-y divide-gray-200">
+					<div class="flex py-2">
+						<div class="flex-none w-16 text-xs uppercase text-gray-500 pl-1 whitespace-nowrap">Name</div>
+						<div class="flex-auto text-center whitespace-nowrap truncate text-sm font-semibold text-gray-800"><span id="device-name"></span></div>
 					</div>
-					<div class="card-header-title text-purple-800 bg-purple-100">
-						Customise
+					<div class="flex py-2">
+						<div class="flex-none w-16 text-xs uppercase text-gray-500 pl-1 whitespace-nowrap">Product</div>
+						<div class="flex-auto text-center whitespace-nowrap truncate text-sm font-semibold text-gray-800"><span id="device-product"></span></div>
 					</div>
-				</div>
-
-				<!-- Card body -->
-				<div class="flex-auto flex flex-col p-2 justify-center items-center">
-					<table class="w-full">
-						<tr class="border-b border-gray-100">
-							<th class="font-normal text-xs uppercase text-gray-400 py-2 w-1/3">Device Alias</th>
-							<td id="deviceAlias" class="font-semibold text-gray-800 text-sm text-center"></td>
-						</tr>
-						<tr class="">
-							<th class="font-normal text-xs uppercase text-gray-400 py-2 w-1/3">Custom Location</th>
-							<td id="customLocation" class="font-semibold text-gray-800 text-sm text-center"></td>
-						</tr>
-					</table>
-					<div class="flex justify-center items-center py-1 space-x-2">
-						<button id="editCustoms" class="flex justify-center items-center focus:outline-none space-x-2 text-sm uppercase font-medium bg-purple-200 rounded px-4 py-1 text-purple-900 duration-200 hover:bg-purple-400">
-							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path></svg>
-							<p>Edit</p>
-						</button>
-						<button id="saveCustoms" class="hidden flex justify-center items-center focus:outline-none space-x-2 text-sm uppercase font-medium bg-green-200 rounded px-4 py-1 text-green-900 duration-200 hover:bg-green-400">
-							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-							<p>Save</p>
-						</button>
-						<button id="cancelCustoms" class="hidden flex justify-center items-center focus:outline-none space-x-2 text-sm uppercase font-medium bg-white rounded px-4 py-1 border border-red-500 text-red-900 duration-200 hover:bg-red-300">
-							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>							
-							<p>Cancel</p>
-						</button>
+					<div class="flex py-2">
+						<div class="flex-none w-16 text-xs uppercase text-gray-500 pl-1 whitespace-nowrap">Group</div>
+						<div class="flex-auto text-center whitespace-nowrap truncate text-sm font-semibold text-gray-800"><span id="device-group"></span></div>
+					</div>
+					<div class="flex py-2">
+						<div class="flex-none w-16 text-xs uppercase text-gray-500 pl-1 whitespace-nowrap">SIM</div>
+						<div class="flex-auto text-center whitespace-nowrap truncate text-sm font-semibold text-gray-800"><span id="device-phone"></span></div>
+					</div>
+					<div class="flex py-2">
+						<div class="flex-none w-16 text-xs uppercase text-gray-500 pl-1 whitespace-nowrap">Channels</div>
+						<div id="device-channels" class="flex-auto text-center whitespace-nowrap truncate text-sm font-semibold text-gray-800 space-y-1">
+							
+						</div>
 					</div>
 				</div>
 			</div>
 			<!-- End of card -->
 
 			<!-- Card -->
-			<div id="subscriptionCard" class="col-span-1 card-wrapper">
+			<div class="col-span-2 md:col-span-1 lg:col-span-2 xl:col-span-1 card-wrapper bg-gray-50">
 				<!-- Card header -->
 				<div class="card-header">
-					<div class="card-header-icon bg-pink-100 text-pink-500">
+					<div class="card-header-icon">
 						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path></svg>
 					</div>
-					<div class="card-header-title text-pink-800 bg-pink-100">
-						Subscription
+					<div class="card-header-title">
+						State
 					</div>
 				</div>
 
 				<!-- Card body -->
-				<div class="flex-auto flex flex-col p-2 justify-center items-center">
-					<table class="w-full">
-						<tr class="border-b border-gray-100">
-							<th class="font-normal text-xs uppercase text-gray-400 py-2 w-1/3">Start</th>
-							<td id="subStart" class="font-semibold text-gray-800 text-sm text-center"></td>
-						</tr>
-						<tr class="">
-							<th class="font-normal text-xs uppercase text-gray-400 py-2 w-1/3">Finish</th>
-							<td id="subFinish" class="font-semibold text-gray-800 text-sm text-center"></td>
-						</tr>
-					</table>
-					<div class="flex justify-center items-center py-1 space-x-2">
-						<button id="editSubs" class="hidden flex justify-center items-center focus:outline-none space-x-2 text-sm uppercase font-medium bg-pink-200 rounded px-4 py-1 text-pink-900 duration-200 hover:bg-pink-400">
-							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path></svg>
-							<p>Edit</p>
-						</button>
-						<button id="saveSubs" class="hidden flex justify-center items-center focus:outline-none space-x-2 text-sm uppercase font-medium bg-green-200 rounded px-4 py-1 text-green-900 duration-200 hover:bg-green-400">
-							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-							<p>Save</p>
-						</button>
-						<button id="cancelSubs" class="hidden flex justify-center items-center focus:outline-none space-x-2 text-sm uppercase font-medium bg-white rounded px-4 py-1 border border-red-500 text-red-900 duration-200 hover:bg-red-300">
-							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>							
-							<p>Cancel</p>
-						</button>
+				<div class="flex-auto flex flex-col p-2 space-y-4">
+
+					<div class="border h-28 p-2 rounded-xl flex justify-between">
+						<div class="flex justify-center items-center uppercase text-sm font-semibold text-gray-800 w-24">
+							STATUS
+						</div>
+
+						<div id="statusButton" class="w-36 md:w-48 lg:w-36 flex flex-col">
+							
+						</div>
 					</div>
 				</div>
 			</div>
 			<!-- End of card -->
 
 			<!-- Card -->
-			<div id="calibrationCard" class="col-span-1 card-wrapper">
+			<div class="col-span-2 md:col-span-1 lg:col-span-2 xl:col-span-1 card-wrapper bg-gray-50">
 				<!-- Card header -->
-				<div class="card-header">
-					<div class="card-header-icon bg-gray-100 text-gray-500">
-						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z"></path></svg>
+				<div class="card-header relative">
+					<div class="card-header-icon">
+						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path></svg>
 					</div>
-					<div class="card-header-title text-gray-800 bg-gray-100">
-						Calibration
+
+					<!-- Edit button -->
+					<button id="editMaintain" class="card-header-icon rounded focus:outline-none bg-green-200 border border-green-300 text-green-600 transition duration-200 hover:bg-green-300 hover:shadow-lg cursor-pointer absolute right-0" title="Edit">
+						<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path></svg>
+					</button>
+
+					<div class="card-header-title">
+						Maintain
 					</div>
 				</div>
 
 				<!-- Card body -->
-				<div class="flex-auto flex flex-col p-2 justify-center items-center">
-					<table class="w-full">
-						<tr class="border-b border-gray-100">
-							<th class="font-normal text-xs uppercase text-gray-400 py-2 w-1/3">Last</th>
-							<td id="lastCalibration" class="font-semibold text-gray-800 text-sm text-center"></td>
-						</tr>
-						<tr class="">
-							<th class="font-normal text-xs uppercase text-gray-400 py-2 w-1/3">Next</th>
-							<td id="nextCalibrationDue" class="font-semibold text-gray-800 text-sm text-center"></td>
-						</tr>
-					</table>
-					<div class="flex justify-center items-center py-1 space-x-2">
-						<button id="editCalib" class="hidden flex justify-center items-center focus:outline-none space-x-2 text-sm uppercase font-medium bg-gray-200 rounded px-4 py-1 text-gray-900 duration-200 hover:bg-gray-400">
-							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path></svg>
-							<p>Edit</p>
-						</button>
-						<button id="saveCalib" class="hidden flex justify-center items-center focus:outline-none space-x-2 text-sm uppercase font-medium bg-green-200 rounded px-4 py-1 text-green-900 duration-200 hover:bg-green-400">
-							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-							<p>Save</p>
-						</button>
-						<button id="cancelCalib" class="hidden flex justify-center items-center focus:outline-none space-x-2 text-sm uppercase font-medium bg-white rounded px-4 py-1 border border-red-500 text-red-900 duration-200 hover:bg-red-300">
-							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>							
-							<p>Cancel</p>
-						</button>
+				<div class="flex-auto flex flex-col p-2">
+					<div class="flex items-center py-2">
+						<div class="flex-auto text-xs uppercase text-gray-500 text-center whitespace-nowrap underline">Subscription</div>
+					</div>
+					<div class="flex items-center h-10 border-b">
+						<div class="flex-none w-16 text-xs uppercase text-gray-500 pl-1 whitespace-nowrap">Start</div>
+						<div class="flex-auto text-center whitespace-nowrap truncate text-sm font-semibold text-gray-800"><span id="maintain-subStart"></span></div>
+					</div>
+					<div class="flex items-center h-10">
+						<div class="flex-none w-16 text-xs uppercase text-gray-500 pl-1 whitespace-nowrap">Finish</div>
+						<div class="flex-auto text-center whitespace-nowrap truncate text-sm font-semibold text-gray-800"><span id="maintain-subFinish"></span></div>
+					</div>
+
+					<div class="flex items-center py-2">
+						<div class="flex-auto text-xs uppercase text-gray-500 text-center whitespace-nowrap underline">Calibration</div>
+					</div>
+					<div class="flex items-center h-10 border-b">
+						<div class="flex-none w-16 text-xs uppercase text-gray-500 pl-1 whitespace-nowrap">Last</div>
+						<div class="flex-auto text-center whitespace-nowrap truncate text-sm font-semibold text-gray-800"><span id="maintain-lastCal"></span></div>
+					</div>
+					<div class="flex items-center h-10">
+						<div class="flex-none w-16 text-xs uppercase text-gray-500 pl-1 whitespace-nowrap">Next</div>
+						<div class="flex-auto text-center whitespace-nowrap truncate text-sm font-semibold text-gray-800"><span id="maintain-nextCal"></span></div>
 					</div>
 				</div>
 			</div>
 			<!-- End of card -->
 
 			<!-- Card -->
-			<div id="mapCard" class="col-span-2 lg:col-span-4 card-wrapper">
+			<div class="col-span-2 md:col-span-1 lg:col-span-2 xl:col-span-1 card-wrapper bg-gray-50">
+				<!-- Card header -->
+				<div class="card-header relative">
+					<div class="card-header-icon">
+						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path></svg>
+					</div>
+
+					<!-- Edit button -->
+					<button id="editCustom" class="card-header-icon focus:outline-none rounded bg-green-200 border border-green-300 text-green-600 transition duration-200 hover:bg-green-300 hover:shadow-lg cursor-pointer absolute right-0" title="Edit">
+						<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path></svg>
+					</button>
+
+					<div class="card-header-title">
+						Custom
+					</div>
+				</div>
+
+				<!-- Card body -->
+				<div class="flex-auto flex flex-col p-2">					
+					<div class="flex items-center h-10 border-b">
+						<div class="flex-none w-16 text-xs uppercase text-gray-500 pl-1 whitespace-nowrap">Alias</div>
+						<div class="flex-auto text-center whitespace-nowrap truncate text-sm font-semibold text-gray-800"><span id="custom-alias"></span></div>
+					</div>
+					<div class="flex items-center h-10 border-b">
+						<div class="flex-none w-16 text-xs uppercase text-gray-500 pl-1 whitespace-nowrap">Location</div>
+						<div class="flex-auto text-center whitespace-nowrap truncate text-sm font-semibold text-gray-800"><span id="custom-location"></span></div>
+					</div>
+					<div class="flex items-center h-10 border-b">
+						<div class="flex-none w-16 text-xs uppercase text-gray-500 pl-1 whitespace-nowrap">Latitude</div>
+						<div class="flex-auto text-center whitespace-nowrap truncate text-sm font-semibold text-gray-800"><span id="custom-latitude"></span></div>
+					</div>
+					<div class="flex items-center h-10">
+						<div class="flex-none w-16 text-xs uppercase text-gray-500 pl-1 whitespace-nowrap">Longitude</div>
+						<div class="flex-auto text-center whitespace-nowrap truncate text-sm font-semibold text-gray-800"><span id="custom-longitude"></span></div>
+					</div>
+					
+				</div>
+			</div>
+			<!-- End of card -->
+
+			<!-- Card -->
+			<div id="mapCard" class="col-span-2 lg:col-span-4 bg-gray-50 card-wrapper">
 				<!-- Card header -->
 				<div class="card-header">
 					<div class="card-header-icon bg-red-100 text-red-500">
@@ -626,8 +629,8 @@ $(document).ready(function () {
 				</div>
 
 				<!-- Card body -->
-				<div class="flex-auto p-2 h-96">
-					<div id="map" class="w-full h-full"></div>
+				<div class="flex-auto p-2" style="height: 26rem;">
+					<div id="map" class="w-full h-full rounded"></div>
 				</div>
 			</div>
 			<!-- End of card -->
@@ -638,234 +641,295 @@ $(document).ready(function () {
 		// * Setup info cards
 		getDeviceData().then( function(data) {
 			// Device info card
-			$('#deviceName').html(data.deviceName);
-			$('#productName').html(data.productName);
-			$('#groupName').html(data.groupName);
+			$('#device-name').html(data.deviceName);
+			$('#device-product').html(data.productName);
+			$('#device-group').html(data.groupName);
+			$('#device-phone').html(data.devicePhone);
 
-			function displayDeviceAlias(alias) {
-				if (alias == null || alias == '') {
-					alias = '';
-					$('#deviceAlias').html('<span class="text-gray-400 font-normal">-</span>')
+			for (var i = 0; i < data.channels.length; i++) {
+				$('#device-channels').append('<p>'+data.channels[i].channelName+'</p>');
+			}
+
+			// Status button
+			function displayStatusButton(state) {
+				if (state == 1) {
+					$('#statusButton').html(`
+					<div id="forceOn" class="h-1/2 bg-green-100 border-2 border-green-400 rounded-t-2xl flex justify-center items-center">
+						<p class="text-green-600 font-medium uppercase text-sm">On</p>
+					</div>
+					<div id="forceOff" class="h-1/2 flex border-2 border-t-0 rounded-b-xl justify-center items-center text-gray-400 cursor-pointer">
+						<p class="text-gray-400 font-medium uppercase text-sm">Off</p>
+					</div>`)
 				} else {
-					$('#deviceAlias').html(alias);
+					$('#statusButton').html(`
+					<div id="forceOn" class="h-1/2 border-2 border-b-0 rounded-t-2xl flex justify-center items-center cursor-pointer">
+						<p class="text-gray-400 font-medium uppercase text-sm">On</p>
+					</div>
+					<div id="forceOff" class="h-1/2 flex border-2 border-red-500 bg-red-100 rounded-b-xl justify-center items-center text-gray-400">
+						<p class="text-red-600 font-medium uppercase text-sm">Off</p>
+					</div>`)
 				}
 			}
-			function displayCustomLocation(location) {
-				if (location == null || location == '') {
-					location = '';
-					$('#customLocation').html('<span class="text-gray-400 font-normal">-</span>')
-				} else {
-					$('#customLocation').html(location);
+			displayStatusButton(data.deviceStatus);
+			$('#statusButton').delegate('#forceOn', 'click', function() {
+				if(data.deviceStatus == 0) {
+					data.deviceStatus = 1;
+					updateDeviceStatus(data.deviceStatus);
+					displayStatusButton(data.deviceStatus);
 				}
-			}
-			function displaySubStart(subStart) {
-				if(subStart == null || subStart == '') {
-					$('#subStart').html('<span class="">-</span>')
-				} else {
-					$('#subStart').html(subStart);
+			})
+			$('#statusButton').delegate('#forceOff', 'click', function() {
+				if(data.deviceStatus == 1) {
+					data.deviceStatus = 0;
+					updateDeviceStatus(data.deviceStatus);
+					displayStatusButton(data.deviceStatus);
 				}
-			}
-			function displaySubFinish(subFinish) {
-				if(subFinish == null || subFinish == '') {
-					$('#subFinish').html('<span class="">-</span>')
-				} else {
-					$('#subFinish').html(subFinish);
-				}
-			}
-			function displayLastCalibration(lastCalibration) {
-				if(lastCalibration == null || lastCalibration == '') {
-					$('#lastCalibration').html('<span class="">-</span>')
-				} else {
-					$('#lastCalibration').html(lastCalibration);
-				}
-			}
-			function displayNextCalibrationDue(nextCalibrationDue) {
-				if(nextCalibrationDue == null || nextCalibrationDue == '') {
-					$('#nextCalibrationDue').html('<span class="">-</span>')
-				} else {
-					$('#nextCalibrationDue').html(nextCalibrationDue);
-				}
-			}
-		
-
-			var deviceAlias = data.deviceAlias
-			var customLocation = data.customLocation;
-
-			if(data.subStart == null) {data.subStart = '';}
-			var subStart = data.subStart;
-			if(data.subFinish == null) {data.subFinish = '';}
-			var subFinish = data.subFinish;
-
-			if(data.lastCalibration == null) { data.lastCalibration = ''; }
-			var lastCalibration = data.lastCalibration;
-			if(data.nextCalibrationDue == null) { data.nextCalibrationDue = ''; }
-			var nextCalibrationDue = data.nextCalibrationDue;
-
-			displayDeviceAlias(deviceAlias);
-			displayCustomLocation(customLocation);
-			displaySubStart(subStart);
-			displaySubFinish(subFinish);
-			displayLastCalibration(lastCalibration);
-			displayNextCalibrationDue(nextCalibrationDue);
-
-			$('#editCustoms').on('click', function() {
-				$('#editCustoms').toggleClass('hidden');
-				$('#saveCustoms').toggleClass('hidden');
-				$('#cancelCustoms').toggleClass('hidden');
-
-				var aliasVal = '';
-				if (deviceAlias != null && deviceAlias != '') { aliasVal = deviceAlias; }
-				var locationVal = '';
-				if (customLocation != null && customLocation != '') { locationVal = customLocation;	}
-
-				$('#deviceAlias').html('<input type="text" class="border focus:outline-none font-semibold px-2 py-1 mb-1 placeholder-gray-300 focus:border-gray-400 text-xs" placeholder="Alias" value="'+aliasVal+'">')
-				$('#customLocation').html('<input type="text" class="border focus:outline-none font-semibold px-2 py-1 mt-1 mb-2 placeholder-gray-300 focus:border-gray-400 text-xs" placeholder="Location" value="'+locationVal+'">')
 			})
 
-			$('#saveCustoms').on('click', function() {
-				$('#editCustoms').toggleClass('hidden');
-				$('#saveCustoms').toggleClass('hidden');
-				$('#cancelCustoms').toggleClass('hidden');
+			// Buttons and modal box
+			function showModalBox(id) {
+				var modalBody = '';
+				if (id == 'editCustom') {
+					modalBody = `
+					<!-- Title/close btn -->
+					<div class="flex justify-between items-center border-b pb-1 border-gray-300">
+						<p class="uppercase text-gray-800 font-extrabold text-sm mx-2">Edit Custom Data</p>
+						<svg id="close-modal" class="w-6 h-6 text-gray-400 hover:text-gray-600 cursor-pointer" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+					</div>
+					<div class="w-full">
+						<div class="flex flex-col">
+							<!-- Row -->
+							<div class="flex flex-col md:flex-row md:space-x-6 flex-auto">
+								<div class="flex flex-col flex-1 mt-2">
+									<p class="form-field-title">Alias</p>
+									<input id="modal-alias" type="text" value="`+ $.trim(data.deviceAlias) +`" class="border border-gray-300">
+								</div>
+			
+								<div class="flex flex-col flex-1 mt-2">
+									<p class="form-field-title">Custom Location</p>
+									<input id="modal-location" type="text" value="`+ $.trim(data.customLocation) +`" class="border border-gray-300">
+								</div>
+							</div>
+							<!-- End of row -->
 
-				var newAlias = $('#deviceAlias > input').val();
-				var newLocation = $('#customLocation > input').val();
-				
-				if (newAlias != deviceAlias) { deviceAlias = newAlias; }
-				if (newLocation != customLocation) { customLocation = newLocation; }
+							<!-- Row -->
+							<div class="flex flex-col md:flex-row md:space-x-6 flex-auto">
+								<div class="flex flex-col flex-1 mt-2">
+									<p class="form-field-title">Latitude</p>
+									<input id="modal-latitude" type="text" value="`+ $.trim(data.latitude) +`" class="border border-gray-300">
+								</div>
+			
+								<div class="flex flex-col flex-1 mt-2">
+									<p class="form-field-title">Longitude</p>
+									<input id="modal-longitude" type="text" value="`+ $.trim(data.longitude) +`" class="border border-gray-300">
+								</div>
+							</div>
+							<!-- End of row -->
 
-				if (newAlias != data.deviceAlias) {
-					data.deviceAlias = newAlias;
-					updateDeviceAlias(deviceAlias);
+							<div class="flex justify-end items-center mt-4 space-x-4">
+								<button id="cancelBtn" class="h-10 border-0 hover:border-0 px-4 rounded text-gray-800 hover:bg-red-500 hover:text-white transition-all focus:bg-red-500 focus:text-white">Cancel</button>
+								<button id="saveCustom" class="h-10 bg-green-500 border-0 hover:border-0 px-4 rounded text-white hover:bg-green-700 transition-all focus:bg-green-700 focus:text-white">Save</button>
+							</div>
+						</div>
+					</div>
+					`;
 				}
-				if (newLocation != data.customLocation) {
-					data.customLocation = newLocation;
-					updateCustomLocation(customLocation);
+
+				if (id == 'editMaintain') {
+					modalBody = `
+					<!-- Title/close btn -->
+					<div class="flex justify-between items-center border-b pb-1 border-gray-300">
+						<p class="uppercase text-gray-800 font-extrabold text-sm mx-2">Edit Maintain Data</p>
+						<svg id="close-modal" class="w-6 h-6 text-gray-400 hover:text-gray-600 cursor-pointer" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+					</div>
+					<div class="w-full">
+						<div class="flex flex-col">
+
+							<div class="flex flex-auto justify-center mt-4">
+								<p class="text-sm uppercase font-semibold text-gray-800">Subscription</p>
+							</div>
+
+							<!-- Row -->
+							<div class="flex flex-col md:flex-row md:space-x-6 flex-auto">
+								<div class="flex flex-col flex-1 mt-2">
+									<p class="form-field-title">Start</p>
+									<input id="modal-subStart" value="`+ data.subStart +`" type="date" class="border border-gray-300">
+								</div>
+			
+								<div class="flex flex-col flex-1 mt-2">
+									<p class="form-field-title">Finish</p>
+									<input id="modal-subFinish" value="`+ data.subFinish +`" type="date" class="border border-gray-300">
+								</div>
+							</div>
+							<!-- End of row -->
+							
+							<div class="flex flex-auto justify-center mt-8">
+								<p class="text-sm uppercase font-semibold text-gray-800">Calibration</p>
+							</div>
+
+							<!-- Row -->
+							<div class="flex flex-col md:flex-row md:space-x-6 flex-auto">
+								<div class="flex flex-col flex-1 mt-2">
+									<p class="form-field-title">Last</p>
+									<input id="modal-lastCal" value="`+ data.lastCalibration +`" type="date" class="border border-gray-300">
+								</div>
+			
+								<div class="flex flex-col flex-1 mt-2">
+									<p class="form-field-title">Next</p>
+									<input id="modal-nextCal" value="`+ data.nextCalibrationDue +`" type="date" class="border border-gray-300">
+								</div>
+							</div>
+							<!-- End of row -->
+
+							<div class="flex justify-end items-center mt-4 space-x-4">
+								<button id="cancelBtn" class="h-10 border-0 hover:border-0 px-4 rounded text-gray-800 hover:bg-red-500 hover:text-white transition-all focus:bg-red-500 focus:text-white">Cancel</button>
+								<button id="saveMaintain" class="h-10 bg-green-500 border-0 hover:border-0 px-4 rounded text-white hover:bg-green-700 transition-all focus:bg-green-700 focus:text-white">Save</button>
+							</div>
+						</div>
+					</div>
+					`;
 				}
 
-				displayDeviceAlias(deviceAlias);
-				displayCustomLocation(customLocation);
-			})
+				$('#controlpanel-modal > #modal-box').html(modalBody);
+				$('#controlpanel-modal').removeClass('hidden')
+			}
+			$('#editMaintain').hide();
 
-			$('#cancelCustoms').on('click', function() {
-				$('#editCustoms').toggleClass('hidden');
-				$('#saveCustoms').toggleClass('hidden');
-				$('#cancelCustoms').toggleClass('hidden');
+			function toggleControlPanelModal() {
+				$('#controlpanel-modal').toggleClass('hidden');
+			}
 
-				displayDeviceAlias(deviceAlias);
-				displayCustomLocation(customLocation);
-			})
+			// Listen for cancel buttons
+			$('#controlpanel-modal').delegate('#close-modal, #cancelBtn', 'click', function() {
+				toggleControlPanelModal();
+			});
+
+			// Listen for save button
+			$('#controlpanel-modal').delegate('#saveMaintain, #saveCustom', 'click', function() {
+				id = $(this).attr('id');
+				if (id == 'saveMaintain') {
+					updateMaintainDates( $('#modal-subStart').val(), $('#modal-subFinish').val(), $('#modal-lastCal').val(), $('#modal-nextCal').val() ).then( function(response) {
+						if (response.status == 'OK') {
+							data.subStart = $.trim($('#modal-subStart').val());
+							data.subFinish = $.trim($('#modal-subFinish').val());
+							data.lastCalibration = $.trim($('#modal-lastCal').val());
+							data.nextCalibrationDue = $.trim($('#modal-nextCal').val());
+							displayMaintainCard();
+
+							alert('Updated successfully!');
+						}
+						if (response.status == 'Error') {
+							alert(response.message);
+						}
+					})
+				}
+
+				if (id == 'saveCustom') {
+					updateCustoms( $.trim($('#modal-alias').val()), $.trim($('#modal-location').val()), $.trim($('#modal-latitude').val()), $.trim($('#modal-longitude').val()) ).then( function(response) {
+						if (response.status == 'OK') {
+							data.deviceAlias = $.trim($('#modal-alias').val());
+							data.customLocation = $.trim($('#modal-location').val());
+							data.latitude = $.trim($('#modal-latitude').val());
+							data.longitude = $.trim($('#modal-longitude').val());
+							displayCustomCard();
+
+							// Update map
+							if (data.latitude == null || data.latitude == '' || data.longitude == null || data.longitude == '') {
+								$('#mapCard').hide();
+							} else {
+								setupMap(data.longitude, data.latitude, 'map');
+							}
+
+							alert('Updated successfully!');
+						}
+						if (response.status == 'Error') {
+							alert(response.message);
+						}
+					});
+				}
+			});
 
 			getRoleId().then( function(roleId) {
-				var roleId = roleId;
 				if(roleId == 1 || roleId == 2) {
-					$('#editSubs').removeClass('hidden');
-					$('#editCalib').removeClass('hidden');
-					
-					$('#editSubs').on('click', function() {
-						$('#editSubs').toggleClass('hidden');
-						$('#saveSubs').toggleClass('hidden');
-						$('#cancelSubs').toggleClass('hidden');
-		
-						var subStartVal = null;
-						if (subStart != null && subStart != '') { subStartVal = subStart; }
-						var subFinishVal = null;
-						if (subFinish != null && subFinish != '') { subFinishVal = subFinish; }
-		
-						$('#subStart').html('<input type="date" class="border focus:outline-none font-semibold px-2 py-1 mb-1 placeholder-gray-300 focus:border-gray-400 text-xs" placeholder="Alias" value="'+subStartVal+'">')
-						$('#subFinish').html('<input type="date" class="border focus:outline-none font-semibold px-2 py-1 mt-1 mb-2 placeholder-gray-300 focus:border-gray-400 text-xs" placeholder="Location" value="'+subFinishVal+'">')
-					})
-
-					$('#saveSubs').on('click', function() {
-						$('#editSubs').toggleClass('hidden');
-						$('#saveSubs').toggleClass('hidden');
-						$('#cancelSubs').toggleClass('hidden');
-
-						var newSubStart = $('#subStart > input').val();
-						var newSubFinish = $('#subFinish > input').val();
-						
-						if (newSubStart != subStart) { subStart = newSubStart; }
-						if (newSubFinish != subFinish) { subFinish = newSubFinish; }
-
-						if (newSubStart != data.subStart) {
-							data.subStart = newSubStart;
-							updateSubscription('subStart', data.subStart )
-						}
-						if (newSubFinish != data.subFinish) {
-							data.subFinish = newSubFinish;
-							updateSubscription('subFinish', data.subFinish )
-						}
-
-						displaySubStart(data.subStart);
-						displaySubFinish(data.subFinish);
-					})
-
-					$('#cancelSubs').on('click', function() {
-						$('#editSubs').toggleClass('hidden');
-						$('#saveSubs').toggleClass('hidden');
-						$('#cancelSubs').toggleClass('hidden');
-		
-						displaySubStart(subStart);
-						displaySubFinish(subFinish);
-					})
-
-					$('#editCalib').on('click', function() {
-						$('#editCalib').toggleClass('hidden');
-						$('#saveCalib').toggleClass('hidden');
-						$('#cancelCalib').toggleClass('hidden');
-		
-						var lastCalibrationValue = null;
-						if (lastCalibration != null && lastCalibration != '') { lastCalibrationValue = lastCalibration; }
-						var nextCalibrationValue = null;
-						if (nextCalibrationDue != null && nextCalibrationDue != '') { nextCalibrationValue = nextCalibrationDue; }
-		
-						$('#lastCalibration').html('<input type="date" class="border focus:outline-none font-semibold px-2 py-1 mb-1 placeholder-gray-300 focus:border-gray-400 text-xs" placeholder="Alias" value="'+lastCalibrationValue+'">')
-						$('#nextCalibrationDue').html('<input type="date" class="border focus:outline-none font-semibold px-2 py-1 mt-1 mb-2 placeholder-gray-300 focus:border-gray-400 text-xs" placeholder="Location" value="'+nextCalibrationValue+'">')
-					})
-
-					$('#saveCalib').on('click', function() {
-						$('#editCalib').toggleClass('hidden');
-						$('#saveCalib').toggleClass('hidden');
-						$('#cancelCalib').toggleClass('hidden');
-
-						var newLastCalibration = $('#lastCalibration > input').val();
-						var newNextCalibrationDue = $('#nextCalibrationDue > input').val();
-						
-						if (newLastCalibration != lastCalibration) { lastCalibration = newLastCalibration; }
-						if (newNextCalibrationDue != nextCalibrationDue) { nextCalibrationDue = newNextCalibrationDue; }
-
-						if (newLastCalibration != data.lastCalibration) {
-							data.lastCalibration = newLastCalibration;
-							updateCalibration('lastCalibration', data.lastCalibration )
-						}
-						if (newNextCalibrationDue != data.nextCalibrationDue) {
-							data.nextCalibrationDue = newNextCalibrationDue;
-							updateCalibration('nextCalibrationDue', data.nextCalibrationDue )
-						}
-
-						displayLastCalibration(data.lastCalibration);
-						displayNextCalibrationDue(data.nextCalibrationDue);
-					})
-
-					$('#cancelCalib').on('click', function() {
-						$('#editCalib').toggleClass('hidden');
-						$('#saveCalib').toggleClass('hidden');
-						$('#cancelCalib').toggleClass('hidden');
-		
-						displayLastCalibration(data.lastCalibration);
-						displayNextCalibrationDue(data.nextCalibrationDue);
-					})
+					$('#editMaintain').show();
 				}
 			})
-		})
 
-		// * Setup map
-		getDeviceCoordinates().then( function(data) {
-			if (data.latitude == null && data.longitude == null) {
+			$('#editMaintain, #editCustom').on('click', function() {
+				var id = $(this).attr('id');
+				showModalBox(id);
+			})
+
+			function formatDate(date) {
+				let dateParts = date.split("-");
+				let jsDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2].substr(0,2));
+
+				let d = new Date(jsDate);
+				let ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d);
+				let mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d);
+				let da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
+
+				let formattedDate = da+' '+mo+', '+ye;
+				return formattedDate;
+			}
+			// Functions to display card values
+			function displayMaintainCard() {
+				if (data.subStart != null && data.subStart != '') {
+					$('#maintain-subStart').html( formatDate(data.subStart) );
+				} else {
+					$('#maintain-subStart').html('-');
+				}
+				if (data.subFinish != null && data.subFinish != '') {
+					$('#maintain-subFinish').html(formatDate(data.subFinish) );
+				} else {
+					$('#maintain-subFinish').html('-');
+				}
+				if (data.lastCalibration != null && data.lastCalibration != '') {
+					$('#maintain-lastCal').html( formatDate(data.lastCalibration) );
+				} else {
+					$('#maintain-lastCal').html('-');
+				}
+				if (data.nextCalibrationDue != null && data.nextCalibrationDue != '') {
+					$('#maintain-nextCal').html( formatDate(data.nextCalibrationDue) );
+				} else {
+					$('#maintain-nextCal').html('-');
+				}
+			}
+			displayMaintainCard();
+
+			function displayCustomCard() {
+				if (data.deviceAlias != null && data.deviceAlias != '') {
+					$('#custom-alias').html(data.deviceAlias);
+				} else {
+					$('#custom-alias').html('-');
+				}
+				if (data.customLocation != null && data.customLocation != '') {
+					$('#custom-location').html(data.customLocation);
+				} else {
+					$('#custom-location').html('-');
+				}
+				if (data.latitude != null && data.latitude != '') {
+					$('#custom-latitude').html(data.latitude);
+				} else {
+					$('#custom-latitude').html('-');
+				}
+				if (data.longitude != null && data.longitude != '') {
+					$('#custom-longitude').html(data.longitude);
+				} else {
+					$('#custom-longitude').html('-');
+				}
+			}
+			displayCustomCard();
+
+			// * Setup map
+			if (data.latitude == null || data.latitude == '' || data.longitude == null || data.longitude == '') {
 				$('#mapCard').hide();
 			} else {
 				setupMap(data.longitude, data.latitude, 'map');
 			}
 		})
+
+
 	}
 
 	// ! SHOW COMPONENT: Display alarms
@@ -886,7 +950,7 @@ $(document).ready(function () {
 				</div>
 
 				<!-- Card body -->
-				<div class="flex-auto flex bg-gray-50">
+				<div class="flex-auto flex bg-gray-50 rounded-b-xl">
 					<!-- Side nav -->
 					<div id="alarmsNav" class="flex-none flex flex-col w-14 md:w-20">
 
@@ -936,7 +1000,7 @@ $(document).ready(function () {
 				</div>
 
 				<!-- Table -->
-				<div id="alarmsCardBody" class="flex-auto py-2 px-4 bg-gray-50">
+				<div id="alarmsCardBody" class="flex-auto py-2 px-4 bg-gray-50 rounded-b-xl">
 					<div id="triggeredAlarms">
 					
 					</div>
@@ -1949,6 +2013,63 @@ $(document).ready(function () {
 				deviceId: deviceId,
 				location: location,
 				function: 'updateCustomLocation'
+			},
+			success: function (data) {
+
+			}
+		})
+	}
+
+	function updateCustoms(alias, location, latitude, longitude) {
+		return new Promise(function (resolve, reject) {
+			$.ajax({
+				url: './includes/sqlSingleDevice.php',
+				type: 'POST',
+				data: {
+					deviceId: deviceId,
+					deviceAlias: alias,
+					customLocation: location,
+					latitude: latitude,
+					longitude: longitude,
+					function: 'updateCustoms'
+				},
+				success: function (data) {
+					data = JSON.parse(data);
+					resolve(data);
+				}
+			})
+		})
+	}
+
+	function updateMaintainDates(subStart, subFinish, lastCal, nextCal) {
+		return new Promise(function (resolve, reject) {
+			$.ajax({
+				url: './includes/sqlSingleDevice.php',
+				type: 'POST',
+				data: {
+					deviceId: deviceId,
+					subStart: subStart,
+					subFinish: subFinish,
+					lastCal: lastCal,
+					nextCal: nextCal,
+					function: 'updateMaintainDates'
+				},
+				success: function (data) {
+					data = JSON.parse(data);
+					resolve(data);
+				}
+			})
+		})
+	}
+
+	function updateDeviceStatus(newStatus) {
+		$.ajax({
+			url: './includes/sqlSingleDevice.php',
+			type: 'POST',
+			data: {
+				deviceId: deviceId,
+				newStatus: newStatus,
+				function: 'updateDeviceStatus'
 			},
 			success: function (data) {
 
