@@ -179,6 +179,11 @@ if ($function == 'showUsers') {
 			$groupId = $row['groupId'];
 		}
 	}
+
+	if ($_SESSION['userId'] == $userId) {
+		echo 'Cannot delete own profile!';
+		exit();
+	}
 	
 	if ($_SESSION['roleId'] <= $roleId) {
 		if ($_SESSION['roleId'] == 1 || $_SESSION['roleId'] == 2) {
@@ -190,14 +195,8 @@ if ($function == 'showUsers') {
 			$sql = "DELETE FROM users WHERE userId = $userId AND groupId = $groupId;";
 		}
 		mysqli_query($conn, $sql);
-	} else {
-		echo 'cant delete';
+		echo 'User has been deleted!';
 	}
-
-	// $sql = "
-	// 	DELETE FROM users WHERE userId = $userId
-	// ";
-	// mysqli_query($conn, $sql);
 	exit();
 }
 

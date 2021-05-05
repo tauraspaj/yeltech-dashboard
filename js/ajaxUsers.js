@@ -35,7 +35,6 @@ $(document).ready(function () {
 		}
 	}
 
-
 	function showUsers(perPage, pageNumber) {
 		$.ajax({
 			url: './includes/sqlUsersTable.php',
@@ -151,7 +150,7 @@ $(document).ready(function () {
 			},
 			success: function (data) {
 				// console.log(data);
-				alert("User has been deleted");
+				alert(data);
 				toggleModal('viewuser-modal');
 				usersPageNumber = 1;
 				showUsers(usersPerPage, usersPageNumber);
