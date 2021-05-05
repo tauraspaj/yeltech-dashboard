@@ -99,14 +99,9 @@ $(document).ready(function () {
 						<td class="text-center py-2 px-4 text-sm text-gray-600">`+ phoneNumber + `</td>
 						<td class="text-center py-2 px-4 text-sm text-gray-600">`+ users[i].sendingType + `</td>
 						<td class="text-center relative px-2">
-							<button id="userButton" data-id="`+ users[i].userId + `" class="mx-auto focus:outline-none text-xs text-gray-600 uppercase bg-gray-50 border border-gray-300 rounded font-medium py-1 px-2 hover:bg-gray-200 flex justify-center items-center space-x-1">
-								<p>Options</p>
-								<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+							<button id="viewUser" data-id="`+ users[i].userId + `" class="mx-auto focus:outline-none text-xs text-gray-600 uppercase bg-gray-50 border border-gray-300 rounded font-medium py-1 px-4 hover:bg-gray-200 flex justify-center items-center space-x-1">
+								<p>View</p>
 							</button>
-							<div id="userMenu" class="hidden absolute right-2 w-28 sm:w-52 rounded-md shadow-lg bg-white py-1 mt-1 ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
-								<p id="viewUser" class="hover:bg-gray-100 cursor-pointer text-gray-700 py-1">View</p>
-								<p id="deleteUser" class="hover:bg-gray-100 cursor-pointer text-gray-700 py-1">Delete</p>
-							</div>
 						</td>
 					</tr>
 					`;
@@ -115,6 +110,90 @@ $(document).ready(function () {
 			}
 		})
 	}
+
+	function findUser(userId) {
+		$.ajax({
+			url: './includes/sqlUsersTable.php',
+			type: 'POST',
+			data: {
+				userId: userId,
+				function: 'findUser'
+			},
+			success: function (data) {
+				user = JSON.parse(data);
+				showUserProfile(user);
+			}
+		})
+	}
+
+	function getRoleId() {
+		return new Promise(function (resolve, reject) {
+			$.ajax({
+				url: './includes/sqlSingleDevice.php',
+				type: 'POST',
+				data: {
+					function: 'getRoleId'
+				},
+				success: function (data) {
+					resolve(data);
+				}
+			})
+		})
+	}
+
+	function deleteUser(userId) {
+		$.ajax({
+			url: './includes/sqlUsersTable.php',
+			type: 'POST',
+			data: {
+				userId: userId,
+				function: 'deleteUser'
+			},
+			success: function (data) {
+				// console.log(data);
+				alert("User has been deleted");
+				toggleModal('viewuser-modal');
+				usersPageNumber = 1;
+				showUsers(usersPerPage, usersPageNumber);
+			}
+		})
+	}
+
+	function showUserProfile(user) {
+		if ($('#viewuser-modal').hasClass('hidden')) {
+			$('#viewuser-modal').removeClass('hidden');
+		}
+
+		getRoleId().then( function(session_roleId) {
+			if(session_roleId > user.roleId) {
+				$('#deleteUser').hide();
+			} else {
+				$('#deleteUser').show();
+				if ( $('#deleteUser').length) {
+					$('#deleteUser').prop('data-id', user.userId)
+				}
+			}
+		})
+
+		
+		$('#profile-fullName').html(user.fullName);
+		$('#profile-groupName').html(user.groupName);
+		$('#profile-roleName').html(user.roleName);
+		$('#profile-email').html(user.email);
+		$('#profile-phone').html(user.phoneNumber);
+		$('#profile-sendingType').html(user.sendingType);
+
+		var createdAtDate = new Date( user.createdAt );
+		createdAtDate = createdAtDate.toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+		$('#profile-createdAt').html(createdAtDate);
+	}
+
+	$('#viewuser-buttons').delegate('#deleteUser', 'click', function() {
+		var userId = $(this).prop('data-id');
+		if( confirm("Are you sure you want to delete this user?") ) {
+			deleteUser(userId);
+		}
+	})
 	
 	function showLatestUsers() {
 		$.ajax({
@@ -162,18 +241,13 @@ $(document).ready(function () {
 	showLatestUsers();
 
 	// Start listening for clicks on any users
-	usersTable.delegate('#userButton', 'click', function () {
+	usersTable.delegate('#viewUser', 'click', function () {
 		var userId = $(this).attr('data-id');
-		$(this).siblings('#userMenu').toggleClass('hidden');
-		// alert($(this).attr('data-id'));
-		$(this).siblings('#userMenu').children().on('click', function() {
-			console.log($(this).attr('id')+' '+userId);
-		})
+		findUser(userId);
 	})
 
 	// ! Slide down content functionality
 	$('#groupsTitle, #rolesTitle, #sendingTypeTitle').on('click', function() {
-		// $(this).siblings().last().slideToggle('fast');
 		var icons = $(this).children('#icons');
 		var body = $(this).siblings().last()
 		if (body.is(':hidden')) {
@@ -251,16 +325,23 @@ $(document).ready(function () {
 	})
 
 	// Modal functionality
-	function toggleNewUserModal() {
-		$('#newuser-modal').toggleClass('hidden');
+	function toggleModal(modalId) {
+		$('#'+modalId).toggleClass('hidden');
 	}
 	$('#open-newuser-modal, #close-newuser-modal, #cancelBtn').on('click', function() {
-		toggleNewUserModal();
+		toggleModal('newuser-modal');
 	});
+	$('#close-viewuser-modal, #closeBtn').on('click', function() {
+		toggleModal('viewuser-modal');
+	});
+
 
 	$(document).keydown(function(e) {
 		if (e.keyCode == 27 && !$('#newuser-modal').hasClass('hidden')) {
-			toggleNewUserModal();
+			toggleModal('newuser-modal');
+		}
+		if (e.keyCode == 27 && !$('#viewuser-modal').hasClass('hidden')) {
+			toggleModal('viewuser-modal');
 		}
 	})
 

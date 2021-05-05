@@ -105,6 +105,61 @@ include_once('header.php');
 	</div>
 </div>
 
+<!-- View user modal -->
+<div id="viewuser-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center hidden">
+	<div id="modal-box" class="border border-gray-300 shadow-xl bg-gray-200 w-full mx-4 max-w-sm sm:max-w-md md:max-w-2xl overflow-hidden flex flex-col rounded p-4">
+		<!-- Title/close btn -->
+		<div class="flex justify-between items-center border-b pb-1 border-gray-300">
+			<p class="uppercase text-gray-800 font-extrabold text-sm mx-2">User profile</p>
+			<svg id="close-viewuser-modal" class="w-6 h-6 text-gray-400 hover:text-gray-600 cursor-pointer" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+		</div>
+
+		<!-- Content -->
+		<div id="userprofile-content" class="w-full flex flex-col pt-4 divide-y divide-gray-300">
+			<div class="flex h-10 items-center">
+				<div class="flex-1 text-center text-sm">Name</div>
+				<div id="profile-fullName" class="flex-1 text-center font-semibold text-sm whitespace-nowrap truncate"></div>
+			</div>
+			<div class="flex h-10 items-center">
+				<div class="flex-1 text-center text-sm">Group</div>
+				<div id="profile-groupName" class="flex-1 text-center font-semibold text-sm whitespace-nowrap truncate"></div>
+			</div>
+			<div class="flex h-10 items-center">
+				<div class="flex-1 text-center text-sm">Role</div>
+				<div id="profile-roleName" class="flex-1 text-center font-semibold text-sm whitespace-nowrap truncate"></div>
+			</div>
+			<div class="flex h-10 items-center">
+				<div class="flex-1 text-center text-sm">Email</div>
+				<div id="profile-email" class="flex-1 text-center font-semibold text-sm whitespace-nowrap truncate"></div>
+			</div>
+			<div class="flex h-10 items-center">
+				<div class="flex-1 text-center text-sm">Phone</div>
+				<div id="profile-phone" class="flex-1 text-center font-semibold text-sm whitespace-nowrap truncate"></div>
+			</div>
+			<div class="flex h-10 items-center">
+				<div class="flex-1 text-center text-sm">Sending Type</div>
+				<div id="profile-sendingType" class="flex-1 text-center font-semibold text-sm whitespace-nowrap truncate"></div>
+			</div>
+			<div class="flex h-10 items-center">
+				<div class="flex-1 text-center text-sm">Created At</div>
+				<div id="profile-createdAt" class="flex-1 text-center font-semibold text-sm whitespace-nowrap truncate"></div>
+			</div>
+		</div>
+
+		<!-- Buttons -->
+		<div id="viewuser-buttons" class="flex justify-end items-center mt-4 space-x-4">
+			<?php
+				// Only admins can access delete button
+				if ($_SESSION['roleId'] == 1 || $_SESSION['roleId'] == 2 || $_SESSION['roleId'] == 3) {
+					echo '<button id="deleteUser" class="h-10 border-0 hover:border-0 px-4 rounded text-gray-800 hover:bg-red-500 hover:text-white transition-all focus:bg-red-500 focus:text-white">Delete</button>';
+				}
+			?>
+			
+			<button id="closeBtn" class="h-10 border-0 hover:border-0 px-4 rounded text-white bg-lightblue-500 hover:bg-lightblue-600 transition-all focus:bg-lightblue-600 focus:text-white">Close</button>
+		</div>
+	</div>
+</div>
+
 <!-- Bottom right dashboard window -->
 <div class="flex-auto flex-col lg:flex-row bg-gray-100 flex">
 	<!-- Filters subnav -->

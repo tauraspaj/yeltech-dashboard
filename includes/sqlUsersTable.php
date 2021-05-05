@@ -146,6 +146,59 @@ if ($function == 'showUsers') {
 	
 	echo json_encode($data);
 	exit();
+} elseif ($function == 'findUser') {
+	$userId = $_POST['userId'];
+	$response = array();
+
+	$sql = "
+	SELECT users.userId, users.fullName, `groups`.groupName, users.roleId, roles.roleName, users.email, users.phoneNumber, sendingType.sendingType, users.createdAt
+	FROM users
+	LEFT JOIN `groups` ON users.groupId = `groups`.groupId
+	LEFT JOIN roles ON users.roleId = roles.roleId
+	LEFT JOIN sendingType ON users.sendingId = sendingType.sendingId
+	WHERE users.userId = $userId
+	LIMIT 1
+	";
+	$result = mysqli_query($conn, $sql);
+	if ( mysqli_num_rows($result) > 0 ) {
+		while ($row = mysqli_fetch_assoc($result)) {
+			echo json_encode($row);
+		}
+	}
+	exit();
+} elseif ($function == 'deleteUser') {
+	$userId = $_POST['userId'];
+	// Check the role and group id of the user that needs to be deleted
+	$sql = "
+	SELECT roleId, groupId FROM users WHERE userId = $userId
+	";
+	$result = mysqli_query($conn, $sql);
+	if ( mysqli_num_rows($result) > 0 ) {
+		while ($row = mysqli_fetch_assoc($result)) {
+			$roleId = $row['roleId'];
+			$groupId = $row['groupId'];
+		}
+	}
+	
+	if ($_SESSION['roleId'] <= $roleId) {
+		if ($_SESSION['roleId'] == 1 || $_SESSION['roleId'] == 2) {
+			$sql = "DELETE FROM users WHERE userId = $userId;";
+		}
+	
+		// Group admin can only delete users in the same group
+		if ($_SESSION['roleId'] == 3 && $_SESSION['groupId'] == $groupId) {
+			$sql = "DELETE FROM users WHERE userId = $userId AND groupId = $groupId;";
+		}
+		mysqli_query($conn, $sql);
+	} else {
+		echo 'cant delete';
+	}
+
+	// $sql = "
+	// 	DELETE FROM users WHERE userId = $userId
+	// ";
+	// mysqli_query($conn, $sql);
+	exit();
 }
 
 ?>
