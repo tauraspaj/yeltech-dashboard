@@ -151,7 +151,7 @@ $(document).ready(function () {
 						<td class="text-center py-2 px-4 text-sm text-gray-600 whitespace-nowrap">`+ nextCalibrationDate + `</td>
 						<td class="text-center py-2 px-4 text-sm text-gray-600 whitespace-nowrap">`+ lastReading + `</td>
 						<td class="text-center py-2 px-4 text-sm text-gray-600 whitespace-nowrap">`+ alarm +`</td>
-						<td class="text-center px-4">
+						<td class="text-center px-8 md:px-12">
 							<button id="select" data-id="`+ devices[i].deviceId + `" class="focus:outline-none text-xs text-gray-600 uppercase bg-gray-50 border border-gray-300 rounded font-medium py-1 px-2 hover:bg-gray-200" title="View device">
 								View
 							</button>
