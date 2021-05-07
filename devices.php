@@ -141,6 +141,7 @@ include_once('header.php');
 							<th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Group</th>
 							<th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Location</th>
 							<th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Next Calibration</th>
+							<th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Last Reading</th>
 							<th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Alarms</th>
 							<th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap"></th>
 						</tr>

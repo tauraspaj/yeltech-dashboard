@@ -37,7 +37,7 @@ if ($function == 'showDevices') {
 	$sql = "
 	SELECT devices.deviceId, devices.deviceName, devices.deviceAlias, devices.nextCalibrationDue, devices.deviceStatus, devices.customLocation, devices.latitude, devices.longitude, `groups`.groupName as groupName
 	FROM devices
-	LEFT JOIN `groups` on devices.groupId = `groups`.groupId
+	LEFT JOIN `groups` ON devices.groupId = `groups`.groupId
 	WHERE ($productTypeSearch) AND (devices.groupId = $groupFilter) AND (devices.deviceName LIKE '%$searchString%' OR devices.deviceAlias LIKE '%$searchString%')
 	ORDER BY `groups`.groupName ASC, devices.deviceName ASC
 	LIMIT $devicesPerPage OFFSET $offset
@@ -59,6 +59,25 @@ if ($function == 'showDevices') {
 				while ($row3 = mysqli_fetch_assoc($resultAlarms)) {
 					$row +=  $row3;
 				}
+			}
+
+			$sqlReading = "
+				SELECT measurements.measurement, measurements.measurementTime, units.unitName
+				FROM measurements
+				LEFT JOIN channels ON measurements.channelId = channels.channelId
+				LEFT JOIN units ON channels.unitId = units.unitId
+				WHERE measurements.deviceId = {$row['deviceId']}
+				ORDER BY measurements.measurementTime DESC, measurements.channelId ASC
+				LIMIT 1
+			";
+			$resultReading = mysqli_query($conn, $sqlReading);
+			if ( mysqli_num_rows($resultReading) > 0 ) {
+				while ($row4 = mysqli_fetch_assoc($resultReading)) {
+					$row += $row4;
+				}
+			} else {
+				$row['measurement'] = null;
+				$row['measurementTime'] = null;
 			}
 
 			$resultArray[] = $row;

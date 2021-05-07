@@ -80,7 +80,6 @@ $(document).ready(function () {
 							display2 = devices[i].deviceName;
 						}
 					}
-					console.log(devices);
 
 					// Process location, display - if not existent. Display custom location if set
 					var location = '-';
@@ -123,6 +122,13 @@ $(document).ready(function () {
 						display1 = '<span class="text-red-500 hover:text-red-600">'+display1+'</span>';
 					}
 
+					var lastReading = '-';
+					if (devices[i].measurement != null && devices[i].measurementTime != null) {
+						var timestamp = new Date( Date.parse(devices[i].measurementTime) );
+						var timestamp = timestamp.toLocaleString('en-GB', { hour: 'numeric', minute:'numeric', day: 'numeric', month: 'long', year: 'numeric' });
+						lastReading = '<span class="font-medium">'+devices[i].measurement + ' ' + devices[i].unitName + '</span><br><span class="text-gray-400 text-xs">' + timestamp + '</span>';
+					}
+
 					// Process status
 					var status = '';
 					if (devices[i].deviceStatus == 0) {
@@ -143,6 +149,7 @@ $(document).ready(function () {
 						<td class="text-center py-2 px-4 text-sm text-gray-600 whitespace-nowrap capitalize">`+ devices[i].groupName + `</td>
 						<td class="text-center py-2 px-4 text-sm text-gray-600 whitespace-nowrap">`+ location + `</td>
 						<td class="text-center py-2 px-4 text-sm text-gray-600 whitespace-nowrap">`+ nextCalibrationDate + `</td>
+						<td class="text-center py-2 px-4 text-sm text-gray-600 whitespace-nowrap">`+ lastReading + `</td>
 						<td class="text-center py-2 px-4 text-sm text-gray-600 whitespace-nowrap">`+ alarm +`</td>
 						<td class="text-center px-4">
 							<button id="select" data-id="`+ devices[i].deviceId + `" class="focus:outline-none text-xs text-gray-600 uppercase bg-gray-50 border border-gray-300 rounded font-medium py-1 px-2 hover:bg-gray-200" title="View device">
