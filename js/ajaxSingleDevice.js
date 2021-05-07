@@ -277,25 +277,108 @@ $(document).ready(function () {
 			// * latestMeasurementsCard
 			//#region
 			if (readingsData.numberOfAI == 1) {
-				if (readingsData.latestMeasurements == 'Undefined') {
+				if (readingsData.latestMeasurements[0] == null) {
 					var latestMeasurementsCard = `
 						<p class="italic mt-4">No readings found...</p>
 					`;
 				} else {
 					var latestMeasurementsCard = `
 					<div><p class="mt-2 mb-1 text-sm font-medium text-gray-600 border-b lg:py-1">`+readingsData.latestMeasurements[0].channelName+`</p></div>
-					<div><span class="text-3xl lg:text-5xl font-medium text-gray-800">`+readingsData.latestMeasurements[0].measurement+`</span><span class="">&#176;C</span></div>
+					<div><span class="text-3xl lg:text-5xl font-medium text-gray-800">`+readingsData.latestMeasurements[0].measurement+`</span><span class="">`+readingsData.latestMeasurements[0].unitName+`</span></div>
 					<div><p class="text-xs text-gray-400 italic mt-1 mb-2">`+readingsData.latestMeasurements[0].measurementTime.slice(0,-3)+`</p></div>
 					`;
 				}
+
+				// * Latest temp card
+				getDeviceCoordinates().then( function(deviceCoordinates) {
+					// * latestTempCard
+					//#region 
+					var latestTempCard = `
+						<div class="card-header">
+							<div class="card-header-icon bg-yellow-100 text-yellow-500 lg:hidden xl:block">
+								<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path></svg>
+							</div>
+							<div class="card-header-title text-yellow-800 bg-yellow-100">
+								Current temp
+							</div>
+						</div>
+		
+						<div class="flex-auto flex flex-col justify-center items-center space-y-2 py-4">
+							<p class="font-medium text-gray-800"><span id="api_temp" class="text-5xl tracking-tighter"></span> <span class="">&#176;C</span></p>
+							<p id="api_loc" class="text-xs text-gray-400"></p>
+						</div>
+						`;
+					// Update values with latest temp
+					$('#latestTempCard').html(latestTempCard);
+					getLatestTemp(deviceCoordinates, 'api_temp', 'api_loc');
+					//#endregion
+				})
 			}
+
+			if (readingsData.numberOfAI == 2) {
+				if (readingsData.latestMeasurements[0] == null) {
+					var latestMeasurementsCard = `
+						<p class="italic mt-4">No readings found...</p>
+					`;
+				} else {
+					var latestMeasurementsCard = `
+					<div><p class="mt-2 mb-1 text-sm font-medium text-gray-600 border-b lg:py-1">`+readingsData.latestMeasurements[0].channelName+`</p></div>
+					<div><span class="text-3xl lg:text-5xl font-medium text-gray-800">`+readingsData.latestMeasurements[0].measurement+`</span> <span class="">`+readingsData.latestMeasurements[0].unitName+`</span></div>
+					<div><p class="text-xs text-gray-400 italic mt-1 mb-2">`+readingsData.latestMeasurements[0].measurementTime.slice(0,-3)+`</p></div>
+					`;
+				}
+
+				if (readingsData.latestMeasurements[1] == null) {
+					// * latestTempCard
+					//#region 
+					var latestTempCard = `
+						<div class="card-header">
+							<div class="card-header-icon bg-yellow-100 text-yellow-500 lg:hidden xl:block">
+								<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path></svg>
+							</div>
+							<div class="card-header-title text-yellow-800 bg-yellow-100">
+								Latest Temp
+							</div>
+						</div>
+		
+						<div class="flex-auto flex flex-col items-center space-y-2">
+							<p class="italic mt-4">No readings found...</p>
+						</div>
+						`;
+					// Update values with latest temp
+					$('#latestTempCard').html(latestTempCard);
+					//#endregion
+
+				} else {
+					// * latestTempCard
+					//#region 
+					var latestTempCard = `
+						<div class="card-header">
+							<div class="card-header-icon bg-yellow-100 text-yellow-500 lg:hidden xl:block">
+								<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path></svg>
+							</div>
+							<div class="card-header-title text-yellow-800 bg-yellow-100">
+								`+readingsData.latestMeasurements[1].channelName+`
+							</div>
+						</div>
+		
+						<div class="flex-auto flex flex-col justify-center items-center space-y-2 py-4">
+							<p class="font-medium text-gray-800"><span class="text-5xl tracking-tighter">`+readingsData.latestMeasurements[1].measurement+`</span> <span class="">`+readingsData.latestMeasurements[1].unitName+`</span></p>
+							<p class="text-xs text-gray-400 italic mt-1 mb-2">`+readingsData.latestMeasurements[1].measurementTime.slice(0,-3)+`</p>
+						</div>
+						`;
+					// Update values with latest temp
+					$('#latestTempCard').html(latestTempCard);
+					//#endregion
+				}
+			}
+
 			$('#latestMeasurements_body').html(latestMeasurementsCard);
 			//#endregion
 			
 			// * Total alarms widget card
 			//#region
 			var timestampDisplay = '';
-			console.log(readingsData.latestAlarmSent);
 			if (readingsData.latestAlarmSent != '') {
 				timestampDisplay = 'Latest: '+readingsData.latestAlarmSent.slice(0,-3);
 			}
@@ -318,30 +401,6 @@ $(document).ready(function () {
 		//#endregion 
 		})
 
-		// * Latest temp card
-		getDeviceCoordinates().then( function(deviceCoordinates) {
-			// * latestTempCard
-			//#region 
-			var latestTempCard = `
-				<div class="card-header">
-					<div class="card-header-icon bg-yellow-100 text-yellow-500 lg:hidden xl:block">
-						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path></svg>
-					</div>
-					<div class="card-header-title text-yellow-800 bg-yellow-100">
-						Current temp
-					</div>
-				</div>
-
-				<div class="flex-auto flex flex-col justify-center items-center space-y-2 py-4">
-					<p class="font-medium text-gray-800"><span id="api_temp" class="text-5xl tracking-tighter"></span> <span class="">&#176;C</span></p>
-					<p id="api_loc" class="text-xs text-gray-400"></p>
-				</div>
-				`;
-			// Update values with latest temp
-			$('#latestTempCard').html(latestTempCard);
-			getLatestTemp(deviceCoordinates, 'api_temp', 'api_loc');
-			//#endregion
-		})
 
 		// * Load alarms card
 		//#region 

@@ -30,14 +30,37 @@ switch ($_POST['function']) {
 		$return = array();
 
 		// Get the AI channels
-		$aiChannels = '';
-		$sql = "SELECT COUNT(*) as numberOfAI FROM channels WHERE channelType = 'AI' AND deviceId = $deviceId";
-		$result = mysqli_query($conn, $sql);		
+		$aiChannels = array();
+		$sql = "SELECT channelId, channelName, unitId FROM channels WHERE channelType = 'AI' AND deviceId = $deviceId ORDER BY channelId ASC";
+		// $sql = "SELECT COUNT(*) as numberOfAI FROM channels WHERE channelType = 'AI' AND deviceId = $deviceId";
+		$result = mysqli_query($conn, $sql);
 		if (mysqli_num_rows($result) > 0) {
+			$k = 0;		
 			while ($row = mysqli_fetch_assoc($result)) {
-				$return['numberOfAI'] = $row['numberOfAI'];
-				$numberOfAI = $row['numberOfAI'];
+				$sql3 = "
+				SELECT measurements.measurement, measurements.measurementTime, units.unitName
+				FROM measurements
+				LEFT JOIN units ON units.unitId = {$row['unitId']}
+				WHERE measurements.channelId = {$row['channelId']}
+				ORDER BY measurements.measurementTime DESC
+				LIMIT 1
+				";
+
+				$readings = array();
+
+				$result3 = mysqli_query($conn, $sql3);
+				if (mysqli_num_rows($result3) > 0) {
+					while ($row3 = mysqli_fetch_assoc($result3)) {
+						$row += $row3;
+					}
+					$return['latestMeasurements'][$k] = $row;
+				} else {
+					$return['latestMeasurements'][$k] = null;
+				}
+				$k++;
 			}
+			$numberOfAI = count($aiChannels);
+			$return['numberOfAI'] = $k;
 		}
 		
 		// Get latest message from DI channel
@@ -59,24 +82,12 @@ switch ($_POST['function']) {
 		}
 		
 		// Get latest reading from AI channels
-		$sql3 = "
-		SELECT measurements.measurement, measurements.measurementTime, channels.channelName
-		FROM measurements
-		LEFT JOIN channels ON measurements.channelId = channels.channelId
-		WHERE measurements.deviceId = $deviceId
-		ORDER BY measurements.measurementId DESC
-		LIMIT $numberOfAI;
-		";
-		$readings = array();
-		$result3 = mysqli_query($conn, $sql3);
-		if (mysqli_num_rows($result3) > 0) {
-			while ($row = mysqli_fetch_assoc($result3)) {
-				$readings[] = $row;
-			}
-			$return['latestMeasurements'] = $readings;
-		} else {
-			$return['latestMeasurements'] = 'Undefined';
-		}
+		// $return['test'] = $aiChannels[0]['channelId'];
+		// for ($i = 0; $i < $numberOfAI; $i++) {
+
+		// }
+		
+
 
 		$sql4 = "SELECT devices.deviceStatus FROM devices WHERE devices.deviceId = $deviceId";
 		$result4 = mysqli_query($conn, $sql4);
