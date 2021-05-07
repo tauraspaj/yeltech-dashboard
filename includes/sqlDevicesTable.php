@@ -67,7 +67,7 @@ if ($function == 'showDevices') {
 				LEFT JOIN channels ON measurements.channelId = channels.channelId
 				LEFT JOIN units ON channels.unitId = units.unitId
 				WHERE measurements.deviceId = {$row['deviceId']}
-				ORDER BY measurements.measurementTime DESC, measurements.channelId ASC
+				ORDER BY measurements.channelId ASC, measurements.measurementTime DESC
 				LIMIT 1
 			";
 			$resultReading = mysqli_query($conn, $sqlReading);
