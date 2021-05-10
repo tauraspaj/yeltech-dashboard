@@ -125,7 +125,7 @@ $(document).ready(function () {
 					var lastReading = '-';
 					if (devices[i].measurement != null && devices[i].measurementTime != null) {
 						var timestamp = new Date( Date.parse(devices[i].measurementTime) );
-						var timestamp = timestamp.toLocaleString('en-GB', { hour: 'numeric', minute:'numeric', day: 'numeric', month: 'long', year: 'numeric' });
+						var timestamp = timestamp.toLocaleString('en-GB', { hour: 'numeric', minute:'numeric', day: 'numeric', month: 'long' });
 						lastReading = '<span class="font-medium">'+devices[i].measurement + ' ' + devices[i].unitName + '</span><br><span class="text-gray-400 text-xs">' + timestamp + '</span>';
 					}
 
