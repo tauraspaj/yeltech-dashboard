@@ -80,14 +80,6 @@ switch ($_POST['function']) {
 		} else {
 			$return['probeStatus'] = 'Undefined';
 		}
-		
-		// Get latest reading from AI channels
-		// $return['test'] = $aiChannels[0]['channelId'];
-		// for ($i = 0; $i < $numberOfAI; $i++) {
-
-		// }
-		
-
 
 		$sql4 = "SELECT devices.deviceStatus FROM devices WHERE devices.deviceId = $deviceId";
 		$result4 = mysqli_query($conn, $sql4);
@@ -589,7 +581,7 @@ switch ($_POST['function']) {
 		if ($deviceAlias == '') { $deviceAlias = null; }
 		if ($customLocation == '') { $customLocation = null; }
 		
-		if (preg_match('/^[0-9.]+$/', $latitude) && preg_match('/^[0-9.]+$/', $longitude)) {
+		if (preg_match('/^[0-9.-]+$/', $latitude) && preg_match('/^[0-9.-]+$/', $longitude)) {
 			if ($latitude == '' || $longitude == '') {
 				$latitude = null;
 				$longitude = null;
