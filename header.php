@@ -63,7 +63,6 @@ $resultCheck = mysqli_num_rows($result);
 
 if ($resultCheck > 0) {
 	while ($row = mysqli_fetch_assoc($result)) {
-		// print_r($row);
 		$_SESSION['fullName'] = $row['fullName'];
 
 		$_SESSION['email'] = $row['email'];
@@ -105,6 +104,105 @@ if ($resultCheck > 0) {
 
 </head>
 <body class="font-display overflow-x-hidden bg-gray-100">
+	<!-- Edit profile modal -->
+	<div id="editprofile-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center hidden">
+		<div id="modal-box" class="border border-gray-300 shadow-xl bg-gray-200 w-full mx-4 max-w-sm sm:max-w-md md:max-w-2xl overflow-hidden flex flex-col rounded p-4">
+			<!-- Title/close btn -->
+			<div class="flex justify-between items-center border-b pb-1 border-gray-300">
+				<p class="uppercase text-gray-800 font-extrabold text-sm mx-2">User profile</p>
+				<svg id="close-editprofile-modal" class="w-6 h-6 text-gray-400 hover:text-gray-600 cursor-pointer" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+			</div>
+
+			<!-- Content -->
+			<div id="editprofile-content" class="w-full flex flex-col pt-4">
+				<!-- Row -->
+				<div class="flex flex-col md:flex-row md:space-x-6 flex-auto">
+					<div class="flex flex-col flex-1 mt-2">
+						<p class="form-field-title">Full name</p>
+						<input id="editprofile-fullName" type="text" value="<?php echo $_SESSION['fullName']; ?>" class="border border-gray-300">
+					</div>
+					<div class="flex flex-col flex-1 mt-2">
+						<p class="form-field-title">Receive notifications by</p>
+						<select id="editprofile-sendingId" class="border border-gray-300">
+							<?php
+								$sql = "SELECT sendingId, sendingType FROM sendingType ORDER BY sendingId ASC";
+								$result = mysqli_query($conn, $sql);
+								if (mysqli_num_rows($result) > 0) {
+									while ($row = mysqli_fetch_assoc($result)) {
+										if ($row['sendingId'] == $_SESSION['sendingId']) {
+											echo '<option data-id="'.$row['sendingId'].'" selected>'.$row['sendingType'].'</option>';
+										} else {
+											echo '<option data-id="'.$row['sendingId'].'">'.$row['sendingType'].'</option>';
+										}
+									}
+								}  
+							?>
+						</select>
+					</div>
+				</div>
+				<!-- End of row -->
+
+				<!-- Row -->
+				<div class="flex flex-col md:flex-row md:space-x-6 flex-auto">
+					<div class="flex flex-col flex-1 mt-2">
+						<p class="form-field-title">Email</p>
+						<input id="editprofile-email" type="email" value="<?php echo $_SESSION['email']; ?>" class="border border-gray-300">
+					</div>
+					<div class="flex flex-col flex-1 mt-2">
+						<p class="form-field-title">Phone Number</p>
+						<input id="editprofile-phoneNumber" type="text" value="<?php echo $_SESSION['phoneNumber']; ?>" class="border border-gray-300">
+						<p class="text-xs italic text-gray-500 ml-2 mt-1">Must start with + or be left empty</p>
+					</div>
+				</div>
+				<!-- End of row -->
+
+				<!-- Row -->
+				<div class="flex flex-col md:flex-row md:space-x-6 flex-auto">
+					<div class="flex flex-col flex-1 mt-2">
+						<p class="form-field-title">Group</p>
+						<select class="border border-gray-300" disabled>
+							<option><?php echo $_SESSION['groupName']; ?></option>
+						</select>
+					</div>
+					<div class="flex flex-col flex-1 mt-2">
+						<p class="form-field-title">Role</p>
+						<select class="border border-gray-300" disabled>
+							<option><?php echo $_SESSION['role']; ?></option>
+						</select>
+					</div>
+				</div>
+				<!-- End of row -->
+				
+				<!-- Row -->
+				<div class="flex flex-col md:flex-row md:space-x-6 flex-auto">
+					<div class="flex flex-col flex-1 mt-2">
+						<p class="form-field-title">New password</p>
+						<input id="editprofile-newpassword" type="password" class="border border-gray-300">
+						<p class="text-xs italic text-gray-500 ml-2 mt-1">Leave this empty if you do not wish to change your password</p>
+					</div>
+				</div>
+				<!-- End of row -->
+				
+				<!-- Row -->
+				<div class="flex flex-col md:flex-row md:space-x-6 flex-auto border-t border-gray-300 mt-4">
+					<div class="flex flex-col flex-1 mt-2">
+						<p class="form-field-title">Password</p>
+						<input id="editprofile-password" type="password" class="border border-gray-300">
+						<p class="text-xs italic text-gray-500 ml-2 mt-1">Enter your password to save changes</p>
+					</div>
+				</div>
+				<!-- End of row -->
+
+			</div>
+
+			<!-- Buttons -->
+			<div id="editprofile-buttons" class="flex justify-end items-center mt-4 space-x-4">
+				<button id="editprofile-save" data-id="<?php echo $_SESSION['userId']; ?>" class="h-10 border-0 hover:border-0 px-4 rounded text-white bg-green-500 hover:bg-green-600 transition-all focus:bg-green-600 focus:text-white">Save</button>
+				
+				<button id="editprofile-cancel" class="h-10 border-0 hover:border-0 px-4 rounded text-white bg-red-500 hover:bg-red-600 transition-all focus:bg-red-600 focus:text-white">Cancel</button>
+			</div>
+		</div>
+	</div>
 
 	<div class="flex bg-gray-50">
         <!-- Left sidebars-->
@@ -312,8 +410,9 @@ if ($resultCheck > 0) {
 					</button>
 
 					<!-- Profile -->
-					<button class="hidden flex-none h-16 w-12 md:w-20 flex items-center justify-center text-gray-700 hover:text-white border-r hover:bg-lightblue-400 hover:border-lightblue-400 focus:outline-none focus:bg-lightblue-400 focus:border-lightblue-400">
-						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path></svg>
+					<button id="openProfile" class="flex-none h-16 w-16 sm:w-auto flex items-center justify-center text-gray-700 hover:text-white border-r hover:bg-lightblue-400 hover:border-lightblue-400 focus:outline-none px-4">
+						<svg class="flex-none w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path></svg>
+						<p class="hidden sm:block whitespace-nowrap ml-2 text-sm"><?php echo $_SESSION['fullName'];?></p>
 					</button>
 
 					<!-- Log out icon -->

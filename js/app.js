@@ -13,6 +13,33 @@ $(document).ready(function () {
 		$('#leftSidebar_mobile, #leftSidebar_mobileInner').toggleClass('-translate-x-full');
 	})
 
+	function saveProfileChanges(userId, fullName, sendingId, email, phoneNumber, newPassword, password) {
+		$.ajax({
+			url: './includes/sqlHeader.php',
+			type: 'POST',
+			data: {
+				userId: userId,
+				fullName: fullName,
+				sendingId: sendingId,
+				email: email,
+				phoneNumber: phoneNumber,
+				newPassword: newPassword,
+				password: password,
+				function: 'saveProfileChanges'
+			},
+			success: function (data) {
+				data = JSON.parse(data);
+				if (data.status == 'OK') {
+					alert('Profile updated successfully!');
+					$('#editprofile-newpassword').val('');
+					$('#editprofile-password').val('');
+				} else {
+					alert(data.message);
+				}
+			}
+		})
+	}
+
 	function displaySearchResults(data) {
 		var output = '';
 		if (data.length > 0) {
@@ -83,12 +110,6 @@ $(document).ready(function () {
 
 		if (type == 'device') {
 			document.location.href = 'device.php?id='+id;
-		} else if (type == 'user') {
-			// Go to user profile
-		} else if (type == 'group') {
-			// Go to group profile
-		} else {
-			// 
 		}
 	}) 
 
@@ -131,5 +152,75 @@ $(document).ready(function () {
 	$('#devicesNotification > div').on('click', function() {
 		var id = $(this).attr('data-id');
 		document.location.href = 'device.php?id='+id;
+	})
+
+	// Edit profile modal
+	function toggleEditProfileModal() {
+		$('#editprofile-modal').toggleClass('hidden');
+	}
+	$('#openProfile').on('click', function() {
+		toggleEditProfileModal();
+	})
+	$('#close-editprofile-modal, #editprofile-cancel').on('click', function() {
+		toggleEditProfileModal();
+	});
+	$(document).keydown(function(e) {
+		if (e.keyCode == 27 && !$('#editprofile-modal').hasClass('hidden')) {
+			toggleEditProfileModal();
+		}
+	})
+
+	function validatePhone(field) {
+        // All numbers must start with international prefix
+        // Checks:
+        // First char must be +
+        // Length longer than 7
+        // Must not contain any letters
+        // Must not contain any spaces
+		
+		var check = false;
+		var number = field.val();
+		if ( number ) {
+			if (number[0] == '+' && number.length > 7) {
+				// Test to only contain numbers after the first +
+				var regex = /^[0-9]+$/;
+				var test = regex.test( number.substr(1,number.length) );
+	
+				if (test == true) {
+					// Means only allowed numbers exist
+					check = true;
+				} else {
+					// Contains other values than legal numbers
+					check = false;
+				}
+			} else {
+				// Does not start with +
+				check = false;
+			}
+		} else {
+			check = true;
+		}
+
+        return check;
+    }
+
+	// Save edits
+	$('#editprofile-save').on('click', function() {
+		var userId = $('#editprofile-save').attr('data-id');
+
+		if( validatePhone( $('#editprofile-phoneNumber') )) {
+			saveProfileChanges(
+				userId,  
+				$.trim($('#editprofile-fullName').val()), 
+				$('#editprofile-sendingId').find(':selected').attr('data-id'), 
+				$.trim($('#editprofile-email').val()), 
+				$.trim($('#editprofile-phoneNumber').val()), 
+				$('#editprofile-newpassword').val(), 
+				$('#editprofile-password').val() 
+			);
+
+		} else {
+			alert('Incorrect phone number');
+		}
 	})
 })
