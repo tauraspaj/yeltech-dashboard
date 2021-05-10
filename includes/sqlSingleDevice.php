@@ -580,12 +580,12 @@ switch ($_POST['function']) {
 
 		if ($deviceAlias == '') { $deviceAlias = null; }
 		if ($customLocation == '') { $customLocation = null; }
-		
-		if (preg_match('/^[0-9.-]+$/', $latitude) && preg_match('/^[0-9.-]+$/', $longitude)) {
-			if ($latitude == '' || $longitude == '') {
-				$latitude = null;
-				$longitude = null;
-			} else {
+
+		if ($latitude == '' || $longitude == '') {
+			$latitude = null;
+			$longitude = null;
+		} else {
+			if (preg_match('/^[0-9.-]+$/', $latitude) && preg_match('/^[0-9.-]+$/', $longitude)) {
 				$latitude = floatval($latitude);
 				$longitude = floatval($longitude);
 
@@ -595,13 +595,14 @@ switch ($_POST['function']) {
 					echo json_encode($response);
 					break;
 				}
+			} else {
+				$response['status'] = 'Error';
+				$response['message'] = 'Invalid coordinates';
+				echo json_encode($response);
+				break;
 			}
-		} else {
-			$response['status'] = 'Error';
-			$response['message'] = 'Invalid coordinates';
-			echo json_encode($response);
-			break;
 		}
+		
 
 		$response = array();
 		
