@@ -10,6 +10,81 @@ $_SESSION['activeUrl'] = 'managegroups.php';
 include_once('header.php');
 ?>
 
+<!-- View group modal -->
+<div id="viewgroup-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center hidden">
+	<div id="modal-box" class="border border-gray-300 shadow-xl bg-gray-200 w-full mx-4 max-w-sm sm:max-w-md md:max-w-2xl overflow-hidden flex flex-col rounded p-4">
+		<!-- Title/close btn -->
+		<div class="flex justify-between items-center border-b pb-1 border-gray-300">
+			<p class="uppercase text-gray-800 font-extrabold text-sm mx-2">Group profile</p>
+			<svg id="close-group-modal" class="w-6 h-6 text-gray-400 hover:text-gray-600 cursor-pointer" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+		</div>
+
+		<!-- Content -->
+		<div id="groupprofile-content" class="w-full flex flex-col divide-y divide-gray-300">
+			<div class="flex h-10 items-center">
+				<div class="flex-1 text-center text-sm">ID</div>
+				<div id="profile-groupId" class="flex-1 text-center font-semibold text-sm whitespace-nowrap truncate"></div>
+			</div>
+			<div class="flex h-10 items-center">
+				<div class="flex-1 text-center text-sm">Group Name</div>
+				<input id="profile-groupName" class="flex-1 h-8 border border-gray-300" type="text">
+			</div>
+			<div class="flex h-10 items-center">
+				<div class="flex-1 text-center text-sm">Latitude</div>
+				<input id="profile-latitude" class="flex-1 h-8 border border-gray-300" type="text">
+			</div>
+			<div class="flex h-10 items-center">
+				<div class="flex-1 text-center text-sm">Longitude</div>
+				<input id="profile-longitude" class="flex-1 h-8 border border-gray-300" type="text">
+			</div>
+			<div class="flex h-10 items-center">
+				<div class="flex-1 text-center text-sm">Dashboard Access</div>
+				<select id="profile-dashAccess" class="flex-1 h-8 border border-gray-300">
+					<option value="0">No</option>
+					<option value="1">Yes</option>
+				</select>
+			</div>
+			<div class="flex h-10 items-center">
+				<div class="flex-1 text-center text-sm">App Access</div>
+				<select id="profile-appAccess" class="flex-1 h-8 border border-gray-300">
+					<option value="0">No</option>
+					<option value="1">Yes</option>
+				</select>
+			</div>
+			<div class="flex h-10 items-center">
+				<div class="flex-1 text-center text-sm"># Devices</div>
+				<div id="profile-nDevices" class="flex-1 text-center font-semibold text-sm whitespace-nowrap truncate"></div>
+			</div>
+			<div class="flex h-10 items-center">
+				<div class="flex-1 text-center text-sm"># Users</div>
+				<div id="profile-nUsers" class="flex-1 text-center font-semibold text-sm whitespace-nowrap truncate"></div>
+			</div>
+			<div class="flex h-10 items-center">
+				<div class="flex-1 text-center text-sm">Created At</div>
+				<div id="profile-createdAt" class="flex-1 text-center font-semibold text-sm whitespace-nowrap truncate"></div>
+			</div>
+			<div class="flex h-10 items-center">
+				<div class="flex-1 text-center text-sm">Created By</div>
+				<div id="profile-createdBy" class="flex-1 text-center font-semibold text-sm whitespace-nowrap truncate"></div>
+			</div>
+		</div>
+
+		<!-- Buttons -->
+		<div id="groupButtons" class="flex justify-end items-center mt-4 space-x-4">
+			<?php
+				// Only admins can access delete button
+				if ($_SESSION['roleId'] == 1 || $_SESSION['roleId'] == 2) {
+					echo '<button id="deleteGroup" class="h-10 border-0 hover:border-0 px-4 rounded text-gray-800 hover:bg-red-500 hover:text-white transition-all focus:bg-red-500 focus:text-white">Delete</button>';
+
+					echo '<button id="saveGroup" class="h-10 border-0 hover:border-0 px-4 rounded text-white bg-green-500 hover:bg-green-600 transition-all focus:bg-green-600 focus:text-white">Save</button>';
+				}
+			?>
+			
+			<button id="cancelBtn" class="h-10 border-0 hover:border-0 px-4 rounded text-white bg-lightblue-500 hover:bg-lightblue-600 transition-all focus:bg-lightblue-600 focus:text-white">Cancel</button>
+		</div>
+	</div>
+</div>
+
 <!-- Bottom right dashboard window -->
 <div class="flex-auto flex-col lg:flex-row bg-gray-100 flex">
 	<!-- Filters subnav -->
@@ -17,7 +92,7 @@ include_once('header.php');
 		<div class="fixed h-full flex flex-col" style="width: inherit;">
 			<!-- Filters div -->
 			<div class="flex flex-col space-y-8 h-full pt-8 bg-gray-200 rounded-tr-3xl shadow-md">
-				<input id="pageSearchBar" type="text" class="h-10 w-40 xl:w-52 outline-none focus:outline-none bg-gray-100 rounded-full text-gray-800 font-medium flex justify-center items-center text-sm space-x-1 mx-auto px-4 border border-gray-300 transition-all focus:border-gray-500" placeholder="Filter groups...">
+				<input id="pageSearchBar" type="text" class="h-10 w-40 xl:w-52 outline-none focus:outline-none bg-gray-100 rounded-lg text-gray-800 font-medium flex justify-center items-center text-sm space-x-1 mx-auto px-4 border border-gray-300 transition-all" placeholder="Filter groups...">
 
 				<!-- Php code for groups filter -->
 				<?php
@@ -38,7 +113,7 @@ include_once('header.php');
 
 						<!-- Filter content -->
 						<div class="mt-2 hidden">
-							<select id="groupFilter" class="focus:outline-none w-full h-8 bg-gray-50 border border-gray-400 px-2 text-sm">
+							<select id="groupFilter" class="focus:outline-none w-full h-10 bg-gray-50 border border-gray-400 px-2 text-sm">
 								<option data-id="`groups`.groupId" class="font-medium text-sm bg-bluegray-50 text-bluegray-800" selected>All Groups</option>
 					';
 
@@ -70,8 +145,8 @@ include_once('header.php');
     <!-- Site content -->
     <div class="flex-auto grid grid-cols-1 p-4 gap-4 md:grid-cols-2 md:gap-4 lg:grid-cols-3 lg:gap-8 lg:p-8 auto-rows-min">
         <!-- Card -->
-        <div class="col-span-1 md:col-span-2 lg:col-span-1 lg:order-2 bg-white shadow-lg border h-64">
-            <div class="h-12 bg-gray-50 flex justify-center items-center uppercase text-xs font-semibold"> 
+        <div class="col-span-1 md:col-span-2 lg:col-span-1 lg:order-2 bg-white shadow-lg border rounded-b h-64">
+            <div class="h-12 bg-bluegray-50 flex text-gray-400 justify-center items-center uppercase text-xs font-semibold"> 
                 Register New Group
             </div>
             <div class="border-t border-gray-200">
@@ -111,7 +186,7 @@ include_once('header.php');
         </div>
 
 		<!-- Table card -->
-		<div class="col-span-1 md:col-span-2 lg:col-span-2 bg-white shadow-lg border">
+		<div class="col-span-1 md:col-span-2 lg:col-span-2 bg-white shadow-lg rounded-b border">
 			<div class="flex bg-white overflow-x-auto min-w-full">
                 <table class="table-fixed min-w-full">
 					<thead class="uppercase text-xs bg-bluegray-50 border-b border-gray-200 text-bluegray-900">
