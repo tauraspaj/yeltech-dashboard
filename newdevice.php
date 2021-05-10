@@ -174,11 +174,11 @@ include_once('header.php');
 										</div>
 										<!-- End of checkbox -->
 										<div id="calibrationFields" class="flex-auto flex-col mt-4 mx-4 lg:mx-0 hidden">
-											<p class="form-field-title">Next calibration date<span class="text-red-500">*</span></p>
-											<input type="date" id="nextCalibrationDate">
-
-											<p class="form-field-title mt-3">Last calibration date<span class="text-red-500">*</span></p>
+											<p class="form-field-title">Last calibration date<span class="text-red-500">*</span></p>
 											<input type="date" id="lastCalibrationDate">
+
+											<p class="form-field-title mt-3">Next calibration date<span class="text-red-500">*</span></p>
+											<input type="date" id="nextCalibrationDate">
 										</div>
 
 									</div>
