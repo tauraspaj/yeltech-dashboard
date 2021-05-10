@@ -6,6 +6,11 @@ $(document).ready(function () {
         document.location.href = 'devices.php';
     }
 
+	// Update title page
+	getDeviceData().then( function(data) {
+		$(document).prop('title', 'YelCloud - '+data.deviceName);
+	})
+
 	// ! List of defined components
 	/*
 		* rtmu_dashboard
@@ -2049,36 +2054,6 @@ $(document).ready(function () {
 			.addTo(map);
 	}
 
-	function updateDeviceAlias(alias) {
-		$.ajax({
-			url: './includes/sqlSingleDevice.php',
-			type: 'POST',
-			data: {
-				deviceId: deviceId,
-				alias: alias,
-				function: 'updateDeviceAlias'
-			},
-			success: function (data) {
-			
-			}
-		})
-	}
-
-	function updateCustomLocation(location) {
-		$.ajax({
-			url: './includes/sqlSingleDevice.php',
-			type: 'POST',
-			data: {
-				deviceId: deviceId,
-				location: location,
-				function: 'updateCustomLocation'
-			},
-			success: function (data) {
-
-			}
-		})
-	}
-
 	function updateCustoms(alias, location, latitude, longitude) {
 		return new Promise(function (resolve, reject) {
 			$.ajax({
@@ -2148,38 +2123,6 @@ $(document).ready(function () {
 					resolve(data);
 				}
 			})
-		})
-	}
-
-	function updateSubscription(startOrFinish, date) {
-		$.ajax({
-			url: './includes/sqlSingleDevice.php',
-			type: 'POST',
-			data: {
-				deviceId: deviceId,
-				date: date,
-				startOrFinish: startOrFinish,
-				function: 'updateSubscription'
-			},
-			success: function (data) {
-
-			}
-		})
-	}
-
-	function updateCalibration(lastOrNext, date) {
-		$.ajax({
-			url: './includes/sqlSingleDevice.php',
-			type: 'POST',
-			data: {
-				deviceId: deviceId,
-				date: date,
-				lastOrNext: lastOrNext,
-				function: 'updateCalibration'
-			},
-			success: function (data) {
-
-			}
 		})
 	}
 })
