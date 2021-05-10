@@ -120,6 +120,7 @@ $(document).ready(function () {
 					} else {
 						alarm = '<span class="text-red-500 whitespace-nowrap font-medium">'+devices[i].alarmsTriggered+' TRIGGERED</span>';
 						display1 = '<span class="text-red-500 hover:text-red-600">'+display1+'</span>';
+						display2 = '<span class="text-red-400">'+display2+'</span>';
 					}
 
 					var lastReading = '-';
