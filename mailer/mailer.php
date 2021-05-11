@@ -5,8 +5,8 @@ function sendEmail($recipients, $subject, $body) {
 	$mail->isSMTP();                      		// Set mailer to use SMTP 
 	$mail->Host = 'gator4137.hostgator.com';   	// Specify main and backup SMTP servers 
 	$mail->SMTPAuth = true;               		// Enable SMTP authentication 
-	$mail->Username = 'alarm@yeltech.com';   	// SMTP username 
-	$mail->Password = 'AZ&@+4[!Bm4L';   		// SMTP password 
+	$mail->Username = '';   	// SMTP username 
+	$mail->Password = '';   		// SMTP password 
 	$mail->SMTPSecure = 'tls';            		// Enable TLS encryption, `ssl` also accepted 
 	$mail->Port = 587;                    		// TCP port to connect to 
 	 
