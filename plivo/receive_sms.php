@@ -1,10 +1,98 @@
 <?php
+// Email sending functionality
+require './../mailer/phpmailer/PHPMailerAutoload.php';
+require './../mailer/mailer.php';
+function generateEmail($conn, $triggerId, $reading) {
+	$sql = "
+	SELECT alarmTriggers.channelId, alarmTriggers.deviceId, alarmTriggers.operator, alarmTriggers.thresholdValue, alarmTriggers.timeCreated, channels.channelName, channels.unitId, devices.deviceName, devices.deviceAlias, devices.customLocation, devices.latitude, devices.longitude, units.unitName
+	FROM alarmTriggers
+	LEFT JOIN devices ON alarmTriggers.deviceId = devices.deviceId
+	LEFT JOIN channels ON alarmTriggers.channelId = channels.channelId
+	LEFT JOIN units ON channels.unitId = units.unitId
+	WHERE alarmTriggers.triggerId = $triggerId
+	";
+	$result = mysqli_query($conn, $sql);
+	if ( mysqli_num_rows($result) > 0 ) {
+		while ($row = mysqli_fetch_assoc($result)) {
+			$operator = $row['operator'];
+			$thresholdValue = $row['thresholdValue'];
+			$timeCreated = $row['timeCreated'];
+
+			$channelName = $row['channelName'];
+
+			$deviceName = $row['deviceName'];
+			$deviceAlias = $row['deviceAlias'];
+			$customLocation = $row['customLocation'];
+			$latitude = $row['latitude'];
+			$longitude = $row['longitude'];
+
+			$unitId = $row['unitId'];
+			$unitName = $row['unitName'];
+		}
+	}
+
+	$recipients = array();
+	$sql2 = "
+	SELECT alarmTriggers.deviceId, alarmRecipients.userId, users.email
+	FROM alarmTriggers
+	LEFT JOIN alarmRecipients ON alarmTriggers.deviceId = alarmRecipients.deviceId
+	LEFT JOIN users ON alarmRecipients.userId = users.userId
+	WHERE alarmTriggers.triggerId = $triggerId;
+	";
+	$result2 = mysqli_query($conn, $sql2);
+	if ( mysqli_num_rows($result2) > 0 ) {
+		while ($row = mysqli_fetch_assoc($result2)) {
+			array_push($recipients, $row['email']);
+		}
+	}
+
+	if ($deviceAlias != null) {
+		$name1 = $deviceAlias;
+		$name2 = "($deviceName)";
+	} else {
+		$name1 = $deviceName;
+		$name2 = "";
+	}
+
+	$location = "";
+	if ($customLocation == null) {
+		if ($latitude == null || $longitude == null) {
+			// Don't display location
+		} else {
+			$location = "<br>Location: <b>$latitude, $longitude</b>";
+		}
+	} else {
+		$location = "<br>Location: <b>$customLocation</b>";
+	}
+
+	// Extra formatting for °C
+	if ($unitId == 1) {
+		$unitName = "&deg;C";
+	}
+
+	$timeCreated = date("H:i F j, Y", strtotime($timeCreated));
+
+	$subject = "ALARM! $name1 $name2 has triggered an alarm!";
+	$emailBody = "
+	Device: <b>$name1 $name2</b><br>
+	Channel: <b>$channelName</b><br>
+	Trigger: <b>($operator$thresholdValue) $unitName</b><br>
+	Reading: <b>$reading $unitName</b><br>
+	Timestamp: <b>$timeCreated</b>
+	$location
+	";
+	sendEmail($recipients, $subject, $emailBody);
+}
+
+
+// Plivo
 require 'vendor/autoload.php';
 use Plivo\RestClient;
 $auth_id = "";
 $auth_token = "";
 $client = new RestClient($auth_id, $auth_token);
 
+// Connect database
 require_once './../includes/dbh.inc.php';
 
 // Sender's phone numer
@@ -198,6 +286,9 @@ switch ($message_type) {
 							$sqlUpdateTrigger = "UPDATE alarmTriggers SET isTriggered = 1 WHERE triggerId = {$alarmTriggers[$k]['triggerId']}";
 							mysqli_query($conn, $sqlUpdateTrigger);
 
+							// Send out emails
+							generateEmail($conn, $alarmTriggers[$k]['triggerId'], $thisMeasurement);
+
 							$alarmTriggers[$k]['isTriggered'] = 1;
 						}
 					} else {
@@ -309,6 +400,9 @@ switch ($message_type) {
 							// If the alarm is not already triggered, trigger it
 							$sqlUpdateTrigger = "UPDATE alarmTriggers SET isTriggered = 1 WHERE triggerId = {$alarmTriggers[$k]['triggerId']}";
 							mysqli_query($conn, $sqlUpdateTrigger);
+
+							// Send out emails
+							generateEmail($conn, $alarmTriggers[$k]['triggerId'], $thisMeasurement);
 
 							$alarmTriggers[$k]['isTriggered'] = 1;
 						}
