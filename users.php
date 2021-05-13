@@ -367,8 +367,7 @@ include_once('header.php');
 				$sql = "
 				SELECT COUNT(historyId) as nAlarmsTriggered 
 				FROM triggeredAlarmsHistory
-				LEFT JOIN alarmTriggers ON triggeredAlarmsHistory.triggerId = alarmTriggers.triggerId
-				LEFT JOIN devices ON alarmTriggers.deviceId = devices.deviceId
+				LEFT JOIN devices ON triggeredAlarmsHistory.deviceId = devices.deviceId
 				LEFT JOIN `groups` ON devices.groupId = `groups`.groupId
 				WHERE `groups`.groupId = $groupFilter;
 				";
@@ -382,8 +381,7 @@ include_once('header.php');
 					$sql = "
 					SELECT clearedAt
 					FROM triggeredAlarmsHistory
-					LEFT JOIN alarmTriggers ON triggeredAlarmsHistory.triggerId = alarmTriggers.triggerId
-					LEFT JOIN devices ON alarmTriggers.deviceId = devices.deviceId
+					LEFT JOIN devices ON triggeredAlarmsHistory.deviceId = devices.deviceId
 					LEFT JOIN `groups` ON devices.groupId = `groups`.groupId
 					WHERE `groups`.groupId = $groupFilter
 					ORDER BY triggeredAlarmsHistory.clearedAt DESC

@@ -90,8 +90,7 @@ switch ($function) {
         $sql3 = "
             SELECT COUNT(*) as totalAlarms
             FROM triggeredAlarmsHistory
-            LEFT JOIN alarmTriggers ON triggeredAlarmsHistory.triggerId = alarmTriggers.triggerId
-            LEFT JOIN devices ON alarmTriggers.deviceId = devices.deviceId
+            LEFT JOIN devices ON triggeredAlarmsHistory.deviceId = devices.deviceId
             WHERE devices.groupId = $devicesGroup
         ";
         $result3 = mysqli_query($conn, $sql3);
