@@ -84,6 +84,36 @@ function generateEmail($conn, $triggerId, $reading) {
 	sendEmail($recipients, $subject, $emailBody);
 }
 
+function addToTriggerHistory($conn, $triggerId) {
+	$sql = "
+	SELECT alarmTriggers.operator, alarmTriggers.thresholdValue, alarmTriggers.alarmDescription, alarmTriggers.deviceId, channels.channelName, units.unitName
+	FROM alarmTriggers
+	LEFT JOIN channels ON alarmTriggers.channelId = channels.channelId
+	LEFT JOIN units ON channels.unitId = units.unitId
+	WHERE alarmTriggers.triggerId = $triggerId
+	";
+	$result = mysqli_query($conn, $sql);
+	if ( mysqli_num_rows($result) > 0 ) {
+		while ($row = mysqli_fetch_assoc($result)) {
+			$deviceId = $row['deviceId'];
+			$channelName = $row['channelName'];
+			$unitName = $row['unitName'];
+			$operator = $row['operator'];
+			$thresholdValue = $row['thresholdValue'];
+			$alarmDescription = $row['alarmDescription'];
+		}
+	}
+
+	$sql = "INSERT INTO triggeredAlarmsHistory (deviceId, channelName, unitName, operator, thresholdValue, alarmDescription) VALUES (?, ?, ?, ?, ?, ?);";
+	$stmt = mysqli_stmt_init($conn);
+	mysqli_stmt_prepare($stmt, $sql);
+	mysqli_stmt_bind_param($stmt, "ssssss", $deviceId, $channelName, $unitName, $operator, $thresholdValue, $alarmDescription);
+	if (mysqli_stmt_execute($stmt)) {
+		echo 'SUCCESS';
+	};
+	mysqli_stmt_close($stmt);
+}
+
 
 // Plivo
 require 'vendor/autoload.php';
@@ -153,11 +183,6 @@ function convert_rtc($rtc){
 	return $time_string;
 }
 
-// $string = "RTMU 2537\nDATA\n261220192046\n30,1,6.1,5.8,6.3,6.5,7.8,8.9,15.2,15.3,25.3,26.0,28.3";
-//$string = "RTMU 2671\nDATA\n151020200908\n30,2,8.6,11.1,15.7,15.2,14.7,15.9";
-//$string = "RTMU 2918\nSTATUS MESSAGE\nON\nTOTAL:1\nSQ : ERR:0, MIN:7, MAX:7, AVG:7\nBER: ERR:1, MIN:-, MAX:-, AVG:-\nSUA:0, FUA:0\n+ 51.538599,+000.083299";
-//$string = "EWB 0063\nALARM MESSAGE\nCURRENT MONITOR\nESR BOARD LIGHTS OUT\n0.0 mA";
-// $string = "TOG-RAIN GAUGE\nDWTS\n201120200353\n1,0,0.4,15,0.4,30,0.4,45,0.4,60,0.4,75,0.4,90,0.4,105,0.4,120,0.4,135,0.4,150,0.2,165,0.2,180,0.2,195,0.4,210,0.4,225,0.4";
 // Split the string into data array by line
 $data = explode("\n", $string);
 
@@ -298,8 +323,7 @@ switch ($message_type) {
 							mysqli_query($conn, $sqlUpdateTrigger);
 
 							// Add to triggersHistory
-							$sqlUpdateTrigger = "INSERT INTO triggeredAlarmsHistory (triggerId) VALUES ({$alarmTriggers[$k]['triggerId']})";
-							mysqli_query($conn, $sqlUpdateTrigger);
+							addToTriggerHistory($conn, $alarmTriggers[$k]['triggerId']);
 
 							$alarmTriggers[$k]['isTriggered'] = 0;
 						}
@@ -413,8 +437,7 @@ switch ($message_type) {
 							mysqli_query($conn, $sqlUpdateTrigger);
 
 							// Add to triggersHistory
-							$sqlUpdateTrigger = "INSERT INTO triggeredAlarmsHistory (triggerId) VALUES ({$alarmTriggers[$k]['triggerId']})";
-							mysqli_query($conn, $sqlUpdateTrigger);
+							addToTriggerHistory($conn, $alarmTriggers[$k]['triggerId']);
 
 							$alarmTriggers[$k]['isTriggered'] = 0;
 						}
@@ -429,11 +452,7 @@ switch ($message_type) {
         
         $valuesString = substr($valuesString, 0, -1);
         $sql = "INSERT INTO measurements(deviceId, channelId, measurement, measurementTime) VALUES $valuesString;";
-        if (mysqli_query($conn, $sql)) {
-            echo "New record created successfully";
-        } else {
-            echo "Error: " . $sql . "<br>" . mysqli_error($conn);
-        }
+        mysqli_query($conn, $sql);
         mysqli_close($conn);
 	break;
 
@@ -461,20 +480,12 @@ switch ($message_type) {
 
 			// Send analog/counter reading to db
 			$sql = "INSERT INTO smsAlarms(deviceId, channelId, smsAlarmHeader, smsAlarmReading) VALUES ('$deviceId', '$alarmChannel', '$input_message', '$value');";
-			if (mysqli_query($conn, $sql)) {
-				echo "New record created successfully";
-			} else {
-				echo "Error: " . $sql . "<br>" . mysqli_error($conn);
-			}
+			mysqli_query($conn, $sql);
 			mysqli_close($conn);
 		} else {
 			// Send digital reading to db
 			$sql = "INSERT INTO smsAlarms(deviceId, channelId, smsAlarmHeader) VALUES ('$deviceId', '$alarmChannel', '$input_message');";
-			if (mysqli_query($conn, $sql)) {
-				echo "New record created successfully";
-			} else {
-				echo "Error: " . $sql . "<br>" . mysqli_error($conn);
-			}
+			mysqli_query($conn, $sql);
 			mysqli_close($conn);
 		}
 	break;
@@ -499,45 +510,25 @@ switch ($message_type) {
 				$longitude = $location[1];
 
 				$sql = "INSERT INTO smsStatus(deviceId, smsStatus, samplingData, latitude, longitude) VALUES($deviceId, '$status', '$samplingData', $latitude, $longitude)";
-				if (mysqli_query($conn, $sql)) {
-					echo "New record created successfully";
-				} else {
-					echo "Error: " . $sql . "<br>" . mysqli_error($conn);
-				}
+				mysqli_query($conn, $sql);
 
 				// Also update latitude and longitude in devices table
 				$sql = "UPDATE devices SET latitude = $latitude, longitude = $longitude WHERE deviceId = $deviceId";
-				if (mysqli_query($conn, $sql)) {
-					echo "Record updated successfully";
-				} else {
-					echo "Error updating record: " . mysqli_error($conn);
-				}
+				mysqli_query($conn, $sql);
 				
 			} else {
 				$sql = "INSERT INTO smsStatus(deviceId, smsStatus, samplingData) VALUES($deviceId, '$status', '$samplingData')";
-				if (mysqli_query($conn, $sql)) {
-					echo "New record created successfully";
-				} else {
-					echo "Error: " . $sql . "<br>" . mysqli_error($conn);
-				}
+				mysqli_query($conn, $sql);
 			}
 
 			// Since status is ON, change devices.deviceStatus to ON
 			$sql = "UPDATE devices SET deviceStatus = '1' WHERE deviceId = $deviceId";
-			if (mysqli_query($conn, $sql)) {
-				echo "Record updated successfully";
-			} else {
-				echo "Error updating record: " . mysqli_error($conn);
-			}
+			mysqli_query($conn, $sql);
 
 
 		} else {
 			$sql = "INSERT INTO smsStatus(deviceId, smsStatus) VALUES($deviceId, '$status')";
-			if (mysqli_query($conn, $sql)) {
-				echo "New record created successfully";
-			} else {
-				echo "Error: " . $sql . "<br>" . mysqli_error($conn);
-			}
+			mysqli_query($conn, $sql);
 			mysqli_close($conn);
 		}
 

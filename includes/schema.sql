@@ -223,6 +223,7 @@ CREATE TABLE alarmTriggers(
     deviceId INT UNSIGNED NOT NULL,
     operator VARCHAR(8) NOT NULL,
     thresholdValue VARCHAR(16),
+    alarmDescription VARCHAR(64),
     isTriggered TINYINT NOT NULL DEFAULT 0,
     timeCreated DATETIME DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (triggerId),
@@ -233,10 +234,15 @@ CREATE TABLE alarmTriggers(
 
 CREATE TABLE triggeredAlarmsHistory (
 	historyId INT UNSIGNED AUTO_INCREMENT NOT NULL,
-    triggerId INT UNSIGNED NOT NULL,
+    deviceId INT UNSIGNED NOT NULL,
+    channelName VARCHAR(64),
+    unitName VARCHAR(8),
+    operator VARCHAR(8),
+    thresholdValue VARCHAR(16),
+    alarmDescription VARCHAR(64),
     clearedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (historyId),
-    FOREIGN KEY (triggerId) REFERENCES alarmTriggers(triggerId) ON DELETE CASCADE
+    FOREIGN KEY (deviceId) REFERENCES devices(deviceId) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 

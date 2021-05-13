@@ -92,8 +92,7 @@ switch ($_POST['function']) {
 		$sql5 = "
 			SELECT COUNT(historyId) AS numberOfTriggeredAlarms 
 			FROM triggeredAlarmsHistory 
-			LEFT JOIN alarmTriggers ON triggeredAlarmsHistory.triggerId = alarmTriggers.triggerId
-			WHERE alarmTriggers.deviceId = $deviceId
+			WHERE deviceId = $deviceId
 		";
 		$result5 = mysqli_query($conn, $sql5);
 		if ( mysqli_num_rows($result5) > 0 ) {
@@ -105,8 +104,7 @@ switch ($_POST['function']) {
 		$sql6 = "
 			SELECT clearedAt
 			FROM triggeredAlarmsHistory 
-			LEFT JOIN alarmTriggers ON triggeredAlarmsHistory.triggerId = alarmTriggers.triggerId
-			WHERE alarmTriggers.deviceId = $deviceId
+			WHERE deviceId = $deviceId
             ORDER BY clearedAt DESC 
             LIMIT 1
 		";
@@ -190,12 +188,9 @@ switch ($_POST['function']) {
 
 			UNION
 
-			SELECT 'triggeredHistory' AS type, channels.channelName AS channelName, alarmTriggers.operator AS msg1, alarmTriggers.thresholdValue AS msg2, units.unitName AS unit,triggeredAlarmsHistory.clearedAt AS timestampCol
+			SELECT 'triggeredHistory' AS type, triggeredAlarmsHistory.channelName AS channelName, triggeredAlarmsHistory.operator AS msg1, triggeredAlarmsHistory.thresholdValue AS msg2, triggeredAlarmsHistory.unitName AS unit,triggeredAlarmsHistory.clearedAt AS timestampCol
 			FROM triggeredAlarmsHistory
-			LEFT JOIN alarmTriggers ON triggeredAlarmsHistory.triggerId = alarmTriggers.triggerId
-			LEFT JOIN channels ON alarmTriggers.channelId = channels.channelId
-			LEFT JOIN units ON channels.unitId = units.unitId
-			WHERE alarmTriggers.deviceId = $deviceId
+			WHERE deviceId = $deviceId
 
 			UNION
 
@@ -230,8 +225,7 @@ switch ($_POST['function']) {
 		$totalTriggers = "
 			SELECT COUNT(*) as totalRows 
 			FROM triggeredAlarmsHistory 
-    		LEFT JOIN alarmTriggers ON triggeredAlarmsHistory.triggerId = alarmTriggers.triggerId
-   			WHERE alarmTriggers.deviceId = $deviceId
+   			WHERE deviceId = $deviceId
 		";
 		$result = mysqli_query($conn, $totalTriggers);
 		if ( mysqli_num_rows($result) > 0 ) {
@@ -356,11 +350,12 @@ switch ($_POST['function']) {
 		$channelId = $_POST['channelId'];
 		$operator = $_POST['operator'];
 		$thresholdValue = $_POST['thresholdValue'];
+		$alarmDescription = $_POST['alarmDescription'];
 
-		$sql = "INSERT INTO alarmTriggers (channelId, deviceId, operator, thresholdValue) VALUES (?, ?, ?, ?);";
+		$sql = "INSERT INTO alarmTriggers (channelId, deviceId, operator, thresholdValue, alarmDescription) VALUES (?, ?, ?, ?, ?);";
 		$stmt = mysqli_stmt_init($conn);
 		mysqli_stmt_prepare($stmt, $sql);
-		mysqli_stmt_bind_param($stmt, "ssss", $channelId, $deviceId, $operator, $thresholdValue);
+		mysqli_stmt_bind_param($stmt, "sssss", $channelId, $deviceId, $operator, $thresholdValue, $alarmDescription);
 		if (mysqli_stmt_execute($stmt)) {
 			echo 'SUCCESS';
 		};

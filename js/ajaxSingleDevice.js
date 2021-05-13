@@ -1210,7 +1210,7 @@ $(document).ready(function () {
 			// * Fill newAlarm div
 			//#region 
 			var newAlarmDivOutput = `
-			<div class="bg-bluegray-50 px-2 lg:px-4 border-r border-gray-200">
+			<div class="bg-bluegray-50 px-2 lg:px-4 border-r rounded-b-xl border-gray-200">
 				<!-- Form -->
 				<form id="alarmForm" method="post" autocomplete="off" class="flex flex-col max-w-4xl">
 					<!-- Row -->
@@ -1239,6 +1239,23 @@ $(document).ready(function () {
 
 			newAlarmDivOutput += `
 							</select>
+						</div>
+					</div>
+					<!-- End of Row -->
+
+					<!-- Row -->
+					<div class="flex flex-col lg:flex-row">
+						<div class="flex flex-col flex-1 my-1">
+							<p class="form-field-title">Description<span class="text-red-500">*</span></p>
+							<div class="flex flex-col justify-center text-sm font-medium space-y-2">
+								<div class="flex space-x-2"><input type="radio" name="radio-desc" value="CRT(W)"><p>CRT(W)</p></div>
+								<div class="flex space-x-2"><input type="radio" name="radio-desc" value="CRT(30/60)"><p>CRT(30/60)</p></div>
+								<div class="flex space-x-2"><input type="radio" name="radio-desc" value="CRT(20)"><p>CRT(20)</p></div>
+								<div class="flex items-center space-x-2">
+									<input type="radio" name="radio-desc" value="Other">
+									<input id="other-desc" type="text" class="h-8 bg-white disabled:bg-gray-100" style="max-width: 12rem;" placeholder="Other..." disabled>
+								</div>
+							</div>
 						</div>
 					</div>
 					<!-- End of Row -->
@@ -1294,6 +1311,14 @@ $(document).ready(function () {
 				}
 			})
 
+			$('input[type=radio][name=radio-desc]').on('change', function() {
+				if ( $(this).val() == 'Other' ) {
+					$('#other-desc').prop('disabled', false);
+				} else {
+					$('#other-desc').prop('disabled', true);
+				}
+			})
+
 			$('#alarmTriggersDiv').delegate('#deleteTrigger', 'click', function(e) {
 				var triggerId = $(this).attr('data-id');
 				if (confirm("Are you sure you want to delete this alarm?")) {
@@ -1311,7 +1336,12 @@ $(document).ready(function () {
 				var channelId = $('#channelSelect').find(':selected').attr('data-id');
 				var operator = $('#operatorSelect').find(':selected').attr('data-id');
 				var thresholdValue = $('#alarmValue').val();
-				if (registerNewTrigger(channelId, operator, thresholdValue)) {
+				if ($('input[type=radio][name=radio-desc]:checked').val() == 'Other') {
+					var alarmDescription = $('#other-desc').val();
+				} else {
+					var alarmDescription = $('input[type=radio][name=radio-desc]:checked').val();
+				}
+				if (registerNewTrigger(channelId, operator, thresholdValue, alarmDescription)) {
 					alert('Alert has been successfully registered!');
 					$('#alarmForm').trigger("reset");
 					// Update alarm triggers table
@@ -1868,7 +1898,7 @@ $(document).ready(function () {
 		})
 	}
 
-	function registerNewTrigger(channelId, operator, thresholdValue) {
+	function registerNewTrigger(channelId, operator, thresholdValue, alarmDescription) {
 		if (channelId == -1 || thresholdValue == "") {
 			return false;
 		}
@@ -1880,6 +1910,7 @@ $(document).ready(function () {
 				channelId: channelId,
 				operator: operator,
 				thresholdValue: thresholdValue,
+				alarmDescription: alarmDescription,
 				function: 'registerNewTrigger'
 			},
 			success: function (data) {
