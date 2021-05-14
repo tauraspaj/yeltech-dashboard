@@ -4,7 +4,7 @@ require './../mailer/phpmailer/PHPMailerAutoload.php';
 require './../mailer/mailer.php';
 function generateEmail($conn, $triggerId, $reading) {
 	$sql = "
-	SELECT alarmTriggers.channelId, alarmTriggers.deviceId, alarmTriggers.operator, alarmTriggers.thresholdValue, alarmTriggers.timeCreated, channels.channelName, channels.unitId, devices.deviceName, devices.deviceAlias, devices.customLocation, devices.latitude, devices.longitude, units.unitName
+	SELECT alarmTriggers.channelId, alarmTriggers.deviceId, alarmTriggers.operator, alarmTriggers.thresholdValue, alarmTriggers.alarmDescription, alarmTriggers.timeCreated, channels.channelName, channels.unitId, devices.deviceName, devices.deviceAlias, devices.customLocation, devices.latitude, devices.longitude, units.unitName
 	FROM alarmTriggers
 	LEFT JOIN devices ON alarmTriggers.deviceId = devices.deviceId
 	LEFT JOIN channels ON alarmTriggers.channelId = channels.channelId
@@ -16,6 +16,7 @@ function generateEmail($conn, $triggerId, $reading) {
 		while ($row = mysqli_fetch_assoc($result)) {
 			$operator = $row['operator'];
 			$thresholdValue = $row['thresholdValue'];
+			$alarmDescription = $row['alarmDescription'];
 			$timeCreated = $row['timeCreated'];
 
 			$channelName = $row['channelName'];
@@ -70,19 +71,26 @@ function generateEmail($conn, $triggerId, $reading) {
 		$unitName = "&deg;C";
 	}
 
-	$timeCreated = date("H:i F j, Y", strtotime($timeCreated));
+	$timeCreated = date("H:i F j, Y", time()+60*60);
 
-	$subject = "ALARM! $name1 $name2 has triggered an alarm!";
+	$subject = "$name1 $name2 - $alarmDescription ALARM ($channelName: $reading °C)";
 	$emailBody = "
 	Device: <b>$name1 $name2</b><br>
+	Alarm: <b>$alarmDescription</b><br><br>
+
 	Channel: <b>$channelName</b><br>
-	Trigger: <b>($operator$thresholdValue) $unitName</b><br>
 	Reading: <b>$reading $unitName</b><br>
+	Trigger: <b>$operator$thresholdValue $unitName</b><br>
 	Timestamp: <b>$timeCreated</b>
 	$location
 	";
+
 	sendEmail($recipients, $subject, $emailBody);
 }
+
+require_once './../includes/dbh.inc.php';
+generateEmail($conn, 1, '23.4');
+exit();
 
 function addToTriggerHistory($conn, $triggerId) {
 	$sql = "

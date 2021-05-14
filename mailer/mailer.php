@@ -26,9 +26,9 @@ function sendEmail($recipients, $subject, $body) {
 	$mail->Subject = $subject;
 	 
 	// Mail body content 
-	$bodyContent = 'Greetings!<br><br>';
-	$bodyContent .= $body;
-	$bodyContent .= '<br><br>Log into <a href="https://yelcloud.com/">YelCloud</a> to monitor your devices!<br>'; 
+	// $bodyContent = 'Greetings!<br><br>';
+	$bodyContent = $body;
+	$bodyContent .= '<br><br><br>Log into <a href="https://yelcloud.com/">YelCloud</a> to monitor your devices!<br>'; 
 	$bodyContent .= '<br><br>Many thanks,<br>Yeltech Team<br><br>'; 
 	$bodyContent .= '<sub>Do not respond to this message</sub><br>'; 
 	$bodyContent .= '<sub>If you have any questions, get in touch with us at <b>info@yeltech.com</b></sub>'; 
