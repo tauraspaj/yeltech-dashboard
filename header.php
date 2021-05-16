@@ -354,26 +354,38 @@ if ($resultCheck > 0) {
 						if ($_SESSION['roleId'] == 4 || $_SESSION['roleId'] == 3) {
 							$groupFilter = $_SESSION['groupId'];
 						} else {
-							$groupFilter = 'groupId';
+							$groupFilter = 'devices.groupId';
 						}
 						
 						$sql = "
-							SELECT devices.deviceId, devices.deviceName, devices.deviceAlias, COUNT(alarmTriggers.isTriggered) as nAlarmsTriggered
-							FROM devices
-							LEFT JOIN alarmTriggers ON devices.deviceId = alarmTriggers.deviceId
-							WHERE devices.groupId = $groupFilter AND alarmTriggers.isTriggered = 1
+							SELECT DISTINCT alarmTriggers.deviceId, devices.groupId, devices.deviceName, devices.deviceAlias
+							FROM alarmTriggers
+							LEFT JOIN devices ON alarmTriggers.deviceId = devices.deviceId
+							WHERE alarmTriggers.isTriggered = 1 AND devices.groupId = $groupFilter
 						";
 
 						$result = mysqli_query($conn, $sql);
 						$triggeredDevices = array();
 						if ( mysqli_num_rows($result) > 0 ) {
 							while ($row = mysqli_fetch_assoc($result)) {
+
+								// For each device, check how many active alarms it has
+								$sql2 = "
+								SELECT COUNT(triggerId) AS nAlarmsTriggered FROM alarmTriggers WHERE isTriggered = 1 AND deviceId = {$row['deviceId']};
+								";
+								$result2 = mysqli_query($conn, $sql2);
+								if ( mysqli_num_rows($result2) > 0 ) {
+									while ($row2 = mysqli_fetch_assoc($result2)) {
+										$row['nAlarmsTriggered'] = $row2['nAlarmsTriggered'];
+									}
+								}
+
 								$triggeredDevices[] = $row;
 							}
 						}
 						
 						$devicesCount = count($triggeredDevices);
-						if ($devicesCount == 0 || $triggeredDevices[0]['nAlarmsTriggered'] == 0) {
+						if ($devicesCount == 0) {
 							echo '
 							<div id="devicesNotification" class="hidden absolute bottom-100 bg-gray-50 w-64 top-16 right-12 md:right-20 rounded-b border border-t-0 shadow-md border-gray-300">
 								<p class="flex justify-center items-center border-t text-sm uppercase h-16 font-medium text-black cursor-default"> 

@@ -20,7 +20,7 @@ $(document).ready(function () {
             var devices = JSON.parse(data);
 
             var output = '';
-            if (devices.length > 0 && devices[0].nAlarmsTriggered != 0) {
+            if (devices.length > 0) {
                 for (i = 0; i < devices.length; i++) {
                     // Display custom alias
                     var display1 = devices[i].deviceName;
@@ -82,7 +82,6 @@ $(document).ready(function () {
         },
         success: function (data) {
             var data = JSON.parse(data);
-            console.log(data);
 
             if (data.length > 0) {
                 for(i = 0; i < data.length; i++) {

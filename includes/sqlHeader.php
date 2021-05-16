@@ -39,16 +39,28 @@ switch ($function) {
         }
         
         $sql = "
-            SELECT devices.deviceId, devices.deviceName, devices.deviceAlias, COUNT(alarmTriggers.isTriggered) as nAlarmsTriggered
-            FROM devices
-            LEFT JOIN alarmTriggers ON devices.deviceId = alarmTriggers.deviceId
-            WHERE devices.groupId = $groupFilter AND alarmTriggers.isTriggered = 1
+            SELECT DISTINCT alarmTriggers.deviceId, devices.groupId, devices.deviceName, devices.deviceAlias
+            FROM alarmTriggers
+            LEFT JOIN devices ON alarmTriggers.deviceId = devices.deviceId
+            WHERE alarmTriggers.isTriggered = 1 AND devices.groupId = $groupFilter
         ";
 
         $result = mysqli_query($conn, $sql);
         $triggeredDevices = array();
         if ( mysqli_num_rows($result) > 0 ) {
             while ($row = mysqli_fetch_assoc($result)) {
+
+                // For each device, check how many active alarms it has
+                $sql2 = "
+                SELECT COUNT(triggerId) AS nAlarmsTriggered FROM alarmTriggers WHERE isTriggered = 1 AND deviceId = {$row['deviceId']};
+                ";
+                $result2 = mysqli_query($conn, $sql2);
+                if ( mysqli_num_rows($result2) > 0 ) {
+                    while ($row2 = mysqli_fetch_assoc($result2)) {
+                        $row['nAlarmsTriggered'] = $row2['nAlarmsTriggered'];
+                    }
+                }
+
                 $triggeredDevices[] = $row;
             }
         }
