@@ -57,6 +57,27 @@ if ( $password != $confPassword ) {
     exit();
 }
 
+// Check for unique phone number
+if ($phoneNumber == '') {
+    $phoneNumber = null;
+} else {
+    $sql3 = "
+    SELECT COUNT(userId) as count FROM users WHERE phoneNumber = '$phoneNumber'
+    ";
+    $result3 = mysqli_query($conn, $sql3);
+    if ( mysqli_num_rows($result3) > 0 ) {
+        while ($row = mysqli_fetch_assoc($result3)) {
+            if ($row['count'] > 0 ) {
+                $response['status'] = 'Error';
+                $response['message'] = 'Phone number already exists!';
+
+                echo json_encode($response);
+                exit();
+            }
+        }
+    }
+}
+
 // Register user
 $sql = "INSERT INTO users (roleId, fullName, groupId, email, phoneNumber, pwd, createdBy) VALUES (?, ?, ?, ?, ?, ?, ?);";
 $stmt = mysqli_stmt_init($conn);
@@ -66,10 +87,6 @@ if (!mysqli_stmt_prepare($stmt, $sql)) {
 
     echo json_encode($response);
     exit();
-}
-
-if ($phoneNumber == '') {
-    $phoneNumber = null;
 }
 
 // Created by is the id of creator's session

@@ -179,7 +179,7 @@ switch ($function) {
                 SELECT COUNT(*) as emailCount FROM users WHERE email = '$email'
             ";
             $result2 = mysqli_query($conn, $sql2);
-            if ( mysqli_num_rows($result) > 0 ) {
+            if ( mysqli_num_rows($result2) > 0 ) {
                 while ($row = mysqli_fetch_assoc($result2)) {
                     $emailCount = $row['emailCount'];
                 }
@@ -187,15 +187,33 @@ switch ($function) {
 
             if ($emailCount != 0) {
                 $response['status'] = 'Error';
-                $response['message'] = 'This email already exists in the database!';
+                $response['message'] = 'This email already exists!';
                 echo json_encode($response);
                 break;
             }
         }
 
-        // If phone number is empty, set it to null
+        // Check for unique phone number
         if ($phoneNumber == '') {
             $phoneNumber = null;
+        } else {
+            if ($phoneNumber != $_SESSION['phoneNumber']) {
+                $sql3 = "
+                SELECT COUNT(userId) as count FROM users WHERE phoneNumber = '$phoneNumber'
+                ";
+                $result3 = mysqli_query($conn, $sql3);
+                if ( mysqli_num_rows($result3) > 0 ) {
+                    while ($row = mysqli_fetch_assoc($result3)) {
+                        if ($row['count'] > 0 ) {
+                            $response['status'] = 'Error';
+                            $response['message'] = 'Phone number already exists!';
+    
+                            echo json_encode($response);
+                            exit();
+                        }
+                    }
+                }
+            }
         }
 
         // If new password is not empty, update it
