@@ -115,12 +115,12 @@ include_once('header.php');
 		</div>
 
 		<!-- Content -->
-		<div id="userprofile-content" class="w-full flex flex-col pt-4 divide-y divide-gray-300">
-			<div class="flex h-10 items-center">
+		<div id="userprofile-content" class="w-full flex flex-col divide-y divide-gray-300">
+			<div class="flex h-12 items-center">
 				<div class="flex-1 text-center text-sm">Name</div>
 				<div id="profile-fullName" class="flex-1"></div>
 			</div>
-			<div class="flex h-10 items-center">
+			<div class="flex h-12 items-center">
 				<div class="flex-1 text-center text-sm">Group</div>
 				<div id="profile-groupName" class="flex-1">
 						<?php 
@@ -129,7 +129,7 @@ include_once('header.php');
 							SELECT groupId, groupName FROM `groups` ORDER BY groupName ASC;
 							";
 							$result = mysqli_query($conn, $sql);
-							echo '<select id="profile-groupSelect" class="flex-1 h-8 border border-gray-300">';
+							echo '<select id="profile-groupSelect" class="flex-1 h-9 border border-gray-300">';
 							if ( mysqli_num_rows($result) > 0 ) {
 								while ($row = mysqli_fetch_assoc($result)) {
 									echo '<option value="'.$row['groupId'].'">'.$row['groupName'].'</option>';
@@ -140,7 +140,7 @@ include_once('header.php');
 						?>
 				</div>
 			</div>
-			<div class="flex h-10 items-center">
+			<div class="flex h-12 items-center">
 				<div class="flex-1 text-center text-sm">Role</div>
 				<div id="profile-roleName" class="flex-1">
 					<?php 
@@ -149,7 +149,7 @@ include_once('header.php');
 						SELECT roleId, roleName FROM roles ORDER BY roleId ASC;
 						";
 						$result = mysqli_query($conn, $sql);
-						echo '<select id="profile-roleSelect" class="flex-1 h-8 border border-gray-300">';
+						echo '<select id="profile-roleSelect" class="flex-1 h-9 border border-gray-300">';
 						if ( mysqli_num_rows($result) > 0 ) {
 							while ($row = mysqli_fetch_assoc($result)) {
 								echo '<option value="'.$row['roleId'].'">'.$row['roleName'].'</option>';
@@ -160,15 +160,15 @@ include_once('header.php');
 					?>
 				</div>
 			</div>
-			<div class="flex h-10 items-center">
+			<div class="flex h-12 items-center">
 				<div class="flex-1 text-center text-sm">Email</div>
 				<div id="profile-email" class="flex-1"></div>
 			</div>
-			<div class="flex h-10 items-center">
+			<div class="flex h-12 items-center">
 				<div class="flex-1 text-center text-sm">Phone</div>
 				<div id="profile-phone" class="flex-1"></div>
 			</div>
-			<div class="flex h-10 items-center">
+			<div class="flex h-12 items-center">
 				<div class="flex-1 text-center text-sm">Sending Type</div>
 				<div id="profile-sendingType" class="flex-1">
 					<?php 
@@ -177,7 +177,7 @@ include_once('header.php');
 						SELECT sendingId, sendingType FROM sendingType ORDER BY sendingId ASC;
 						";
 						$result = mysqli_query($conn, $sql);
-						echo '<select id="profile-sendingSelect" class="flex-1 h-8 border border-gray-300">';
+						echo '<select id="profile-sendingSelect" class="flex-1 h-9 border border-gray-300">';
 						if ( mysqli_num_rows($result) > 0 ) {
 							while ($row = mysqli_fetch_assoc($result)) {
 								echo '<option value="'.$row['sendingId'].'">'.$row['sendingType'].'</option>';
@@ -188,7 +188,7 @@ include_once('header.php');
 					?>
 				</div>
 			</div>
-			<div class="flex h-10 items-center">
+			<div class="flex h-12 items-center">
 				<div class="flex-1 text-center text-sm">Created At</div>
 				<div id="profile-createdAt" class="flex-1"></div>
 			</div>

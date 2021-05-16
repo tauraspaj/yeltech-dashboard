@@ -213,11 +213,11 @@ $(document).ready(function () {
 
 			// Only super admins can edit data
 			if (session_roleId == 1) {
-				$('#profile-fullName').html('<input class="flex-1 h-8 border border-gray-300" type="text" value="'+user.fullName+'">');
+				$('#profile-fullName').html('<input class="flex-1 h-9 border border-gray-300" type="text" value="'+user.fullName+'">');
 				$('#profile-groupName > #profile-groupSelect').val(user.groupId);
 				$('#profile-roleName > #profile-roleSelect').val(user.roleId);
-				$('#profile-email').html('<input class="flex-1 h-8 border border-gray-300" type="text" value="'+user.email+'">');
-				$('#profile-phone').html('<input class="flex-1 h-8 border border-gray-300" type="text" value="'+user.phoneNumber+'">');
+				$('#profile-email').html('<input class="flex-1 h-9 border border-gray-300" type="text" value="'+user.email+'">');
+				$('#profile-phone').html('<input class="flex-1 h-9 border border-gray-300" type="text" value="'+user.phoneNumber+'">');
 				$('#profile-sendingType > #profile-sendingSelect').val(user.sendingId);
 				$('#saveUser').prop('data-id', user.userId)
 			} else {
