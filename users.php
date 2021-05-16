@@ -390,7 +390,9 @@ include_once('header.php');
 					$result = mysqli_query($conn, $sql);
 					if ( mysqli_num_rows($result) > 0 ) {
 						while ($row = mysqli_fetch_assoc($result)) {
-							$alarmDate = 'Latest: '. substr($row['clearedAt'], 0, -3);
+							$alarmDate = $row['clearedAt'];
+							$alarmDate = date("H:i F j, Y", strtotime($alarmDate)+60*60);
+							$alarmDate = 'Latest: '. $alarmDate;
 						}
 					}
 				} else {

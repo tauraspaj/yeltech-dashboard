@@ -287,10 +287,12 @@ $(document).ready(function () {
 						<p class="italic mt-4">No readings found...</p>
 					`;
 				} else {
+					var dateDisplay = new Date( readingsData.latestMeasurements[0].measurementTime );
+					dateDisplay = dateDisplay.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
 					var latestMeasurementsCard = `
 					<div><p class="mt-2 mb-1 text-sm font-medium text-gray-600 border-b lg:py-1">`+readingsData.latestMeasurements[0].channelName+`</p></div>
 					<div><span class="text-3xl lg:text-5xl font-medium text-gray-800">`+readingsData.latestMeasurements[0].measurement+`</span><span class="">`+readingsData.latestMeasurements[0].unitName+`</span></div>
-					<div><p class="text-xs text-gray-400 italic mt-1 mb-2">`+readingsData.latestMeasurements[0].measurementTime.slice(0,-3)+`</p></div>
+					<div><p class="text-xs text-gray-400 italic mt-1 mb-2">`+dateDisplay+`</p></div>
 					`;
 				}
 
@@ -326,10 +328,12 @@ $(document).ready(function () {
 						<p class="italic mt-4">No readings found...</p>
 					`;
 				} else {
+					var dateDisplay = new Date( readingsData.latestMeasurements[0].measurementTime );
+					dateDisplay = dateDisplay.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
 					var latestMeasurementsCard = `
 					<div><p class="mt-2 mb-1 text-sm font-medium text-gray-600 border-b lg:py-1">`+readingsData.latestMeasurements[0].channelName+`</p></div>
 					<div><span class="text-3xl lg:text-5xl font-medium text-gray-800">`+readingsData.latestMeasurements[0].measurement+`</span> <span class="">`+readingsData.latestMeasurements[0].unitName+`</span></div>
-					<div><p class="text-xs text-gray-400 italic mt-1 mb-2">`+readingsData.latestMeasurements[0].measurementTime.slice(0,-3)+`</p></div>
+					<div><p class="text-xs text-gray-400 italic mt-1 mb-2">`+dateDisplay+`</p></div>
 					`;
 				}
 
@@ -356,7 +360,9 @@ $(document).ready(function () {
 
 				} else {
 					// * latestTempCard
-					//#region 
+					//#region
+					var dateDisplay = new Date( readingsData.latestMeasurements[1].measurementTime );
+					dateDisplay = dateDisplay.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
 					var latestTempCard = `
 						<div class="card-header">
 							<div class="card-header-icon bg-yellow-100 text-yellow-500 lg:hidden xl:block">
@@ -369,7 +375,7 @@ $(document).ready(function () {
 		
 						<div class="flex-auto flex flex-col justify-center items-center space-y-2 py-4">
 							<p class="font-medium text-gray-800"><span class="text-5xl tracking-tighter">`+readingsData.latestMeasurements[1].measurement+`</span> <span class="">`+readingsData.latestMeasurements[1].unitName+`</span></p>
-							<p class="text-xs text-gray-400 italic mt-1 mb-2">`+readingsData.latestMeasurements[1].measurementTime.slice(0,-3)+`</p>
+							<p class="text-xs text-gray-400 italic mt-1 mb-2">`+dateDisplay+`</p>
 						</div>
 						`;
 					// Update values with latest temp
@@ -385,7 +391,10 @@ $(document).ready(function () {
 			//#region
 			var timestampDisplay = '';
 			if (readingsData.latestAlarmSent != '') {
-				timestampDisplay = 'Latest: '+readingsData.latestAlarmSent.slice(0,-3);
+				var dateDisplay = new Date( readingsData.latestAlarmSent );
+				dateDisplay.setHours(dateDisplay.getHours() + 1);
+				dateDisplay = dateDisplay.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
+				timestampDisplay = 'Latest: '+dateDisplay;
 			}
 			var totalAlarmsCard = `
 			<div class="card-header">
@@ -1814,7 +1823,8 @@ $(document).ready(function () {
 					} else {
 						alternatingBg = '';
 					}
-					var dateDisplay = new Date( alarms['alarmHistory'][i].timestampCol );
+					var dateDisplay = new Date( alarms['alarmHistory'][i].timestampCol);
+					dateDisplay.setHours(dateDisplay.getHours() + 1);
 					dateDisplay = dateDisplay.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
 
 					var alarmDisplay = '-';
