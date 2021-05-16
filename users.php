@@ -142,7 +142,7 @@ include_once('header.php');
 			</div>
 			<div class="flex h-10 items-center">
 				<div class="flex-1 text-center text-sm">Role</div>
-				<div id="profile-roleName" class="flex-1 text-center font-semibold text-sm whitespace-nowrap truncate">
+				<div id="profile-roleName" class="flex-1">
 					<?php 
 					if ($_SESSION['roleId'] == 1) {
 						$sql = "
