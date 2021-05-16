@@ -151,7 +151,7 @@ if ($function == 'showUsers') {
 	$response = array();
 
 	$sql = "
-	SELECT users.userId, users.fullName, `groups`.groupName, users.roleId, roles.roleName, users.email, users.phoneNumber, sendingType.sendingType, users.createdAt
+	SELECT users.userId, users.fullName, `groups`.groupName, `groups`.groupId, users.roleId, users.sendingId, roles.roleName, users.email, users.phoneNumber, sendingType.sendingType, users.createdAt
 	FROM users
 	LEFT JOIN `groups` ON users.groupId = `groups`.groupId
 	LEFT JOIN roles ON users.roleId = roles.roleId
@@ -197,6 +197,82 @@ if ($function == 'showUsers') {
 		mysqli_query($conn, $sql);
 		echo 'User has been deleted!';
 	}
+	exit();
+} elseif ($function == 'saveUser') {
+	$userId = $_POST['userId'];
+	$fullName = $_POST['fullName'];
+	$groupId = $_POST['groupId'];
+	$roleId = $_POST['roleId'];
+	$email = $_POST['email'];
+	$phoneNumber = $_POST['phoneNumber'];
+	$sendingId = $_POST['sendingId'];
+
+	if ( empty($fullName) || empty($groupId) || empty($roleId) || empty($email) || empty($sendingId)  ) {
+		echo 'Required fields must be filled in!';
+		exit();
+	}
+
+	// Find current email of the user 
+	$sql = "
+		SELECT email, phoneNumber FROM users WHERE userId = $userId
+	";
+	$result = mysqli_query($conn, $sql);
+	if ( mysqli_num_rows($result) > 0 ) {
+		while ($row = mysqli_fetch_assoc($result)) {
+			$oldEmail = $row['email'];
+			$oldPhoneNumber = $row['phoneNumber'];
+		}
+	}
+
+	// Check for uniqe email
+	if ($email != $oldEmail) {
+		$sql2 = "
+			SELECT COUNT(userId) as count FROM users WHERE email = '$email'
+		";
+		$result2 = mysqli_query($conn, $sql2);
+		if ( mysqli_num_rows($result2) > 0 ) {
+			while ($row = mysqli_fetch_assoc($result2)) {
+				if ($row['count'] > 0 ) {
+					echo 'This email already exists!';
+					exit();
+				}
+			}
+		}
+	}
+	
+	// Check for unique phone number
+	if ($phoneNumber == '') {
+		$phoneNumber = null;
+	} else {
+		if ($phoneNumber != $oldPhoneNumber) {
+			$sql3 = "
+			SELECT COUNT(userId) as count FROM users WHERE phoneNumber = '$phoneNumber'
+			";
+			$result3 = mysqli_query($conn, $sql3);
+			if ( mysqli_num_rows($result3) > 0 ) {
+				while ($row = mysqli_fetch_assoc($result3)) {
+					if ($row['count'] > 0 ) {
+						echo 'This phone number already exists!';
+						exit();
+					}
+				}
+			}
+		}
+	}
+
+	// Save user info
+	$sql = "UPDATE users SET fullName=?, groupId=?, roleId=?, email=?, phoneNumber=?, sendingId=? WHERE userId=?";
+	$stmt = mysqli_stmt_init($conn);
+	mysqli_stmt_prepare($stmt, $sql);
+	mysqli_stmt_bind_param($stmt, "sssssss", $fullName, $groupId, $roleId, $email, $phoneNumber, $sendingId, $userId);
+	mysqli_stmt_execute($stmt);
+	if (mysqli_stmt_error($stmt)) {
+		echo 'Something went wrong!';
+	} else {
+		echo 'User successfully updated!';
+	}
+	mysqli_stmt_close($stmt);
+
 	exit();
 }
 

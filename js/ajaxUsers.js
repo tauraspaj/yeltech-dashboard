@@ -140,6 +140,43 @@ $(document).ready(function () {
 		})
 	}
 
+	function saveUser(userId) {
+		fullName = $.trim($('#profile-fullName > input').val());
+		groupId = $('#profile-groupName > #profile-groupSelect').find(':selected').val();
+		roleId = $('#profile-roleName > #profile-roleSelect').find(':selected').val();
+		email = $.trim($('#profile-email > input').val());
+		phoneNumber = $.trim($('#profile-phone > input').val());
+		sendingId = $('#profile-sendingType > #profile-sendingSelect').find(':selected').val();
+		
+		if (fullName == '') {
+			alert('Name cannot be left empty!');
+		} else if (email == '') {
+			alert('Email cannot be left empty!');
+		} else if ( !validatePhone( $('#profile-phone > input') )) {
+			alert('Phone number must start with + or be left empty!')
+		} else {
+			$.ajax({
+				url: './includes/sqlUsersTable.php',
+				type: 'POST',
+				data: {
+					userId: userId,
+					fullName: fullName,
+					groupId: groupId,
+					roleId: roleId,
+					email: email,
+					phoneNumber: phoneNumber,
+					sendingId: sendingId,
+					function: 'saveUser'
+				},
+				success: function (data) {
+					alert(data);
+					usersPageNumber = 1;
+					showUsers(usersPerPage, usersPageNumber);
+				}
+			})
+		}
+	}
+
 	function deleteUser(userId) {
 		$.ajax({
 			url: './includes/sqlUsersTable.php',
@@ -149,7 +186,6 @@ $(document).ready(function () {
 				function: 'deleteUser'
 			},
 			success: function (data) {
-				// console.log(data);
 				alert(data);
 				toggleModal('viewuser-modal');
 				usersPageNumber = 1;
@@ -172,19 +208,31 @@ $(document).ready(function () {
 					$('#deleteUser').prop('data-id', user.userId)
 				}
 			}
-		})
 
-		
-		$('#profile-fullName').html(user.fullName);
-		$('#profile-groupName').html(user.groupName);
-		$('#profile-roleName').html(user.roleName);
-		$('#profile-email').html(user.email);
-		$('#profile-phone').html(user.phoneNumber);
-		$('#profile-sendingType').html(user.sendingType);
+			if (user.phoneNumber == null) { user.phoneNumber = '' };
+
+			// Only super admins can edit data
+			if (session_roleId == 1) {
+				$('#profile-fullName').html('<input class="flex-1 h-8 border border-gray-300" type="text" value="'+user.fullName+'">');
+				$('#profile-groupName > #profile-groupSelect').val(user.groupId);
+				$('#profile-roleName > #profile-roleSelect').val(user.roleId);
+				$('#profile-email').html('<input class="flex-1 h-8 border border-gray-300" type="text" value="'+user.email+'">');
+				$('#profile-phone').html('<input class="flex-1 h-8 border border-gray-300" type="text" value="'+user.phoneNumber+'">');
+				$('#profile-sendingType > #profile-sendingSelect').val(user.sendingId);
+				$('#saveUser').prop('data-id', user.userId)
+			} else {
+				$('#profile-fullName').html('<p class="text-center font-semibold text-sm whitespace-nowrap">'+user.fullName+'</p>');
+				$('#profile-groupName').html('<p class="text-center font-semibold text-sm whitespace-nowrap">'+user.groupName+'</p>');
+				$('#profile-roleName').html('<p class="text-center font-semibold text-sm whitespace-nowrap">'+user.roleName+'</p>');
+				$('#profile-email').html('<p class="text-center font-semibold text-sm whitespace-nowrap">'+user.email+'</p>');
+				$('#profile-phone').html('<p class="text-center font-semibold text-sm whitespace-nowrap">'+user.phoneNumber+'</p>');
+				$('#profile-sendingType').html('<p class="text-center font-semibold text-sm whitespace-nowrap">'+user.sendingType+'</p>');
+			}
+		})
 
 		var createdAtDate = new Date( user.createdAt );
 		createdAtDate = createdAtDate.toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-		$('#profile-createdAt').html(createdAtDate);
+		$('#profile-createdAt').html('<p class="text-center font-semibold text-sm whitespace-nowrap">'+createdAtDate+'</p>');
 	}
 
 	$('#viewuser-buttons').delegate('#deleteUser', 'click', function() {
@@ -192,6 +240,11 @@ $(document).ready(function () {
 		if( confirm("Are you sure you want to delete this user?") ) {
 			deleteUser(userId);
 		}
+	})
+
+	$('#viewuser-buttons').delegate('#saveUser', 'click', function() {
+		var userId = $(this).prop('data-id');
+		saveUser(userId);
 	})
 	
 	function showLatestUsers() {
@@ -385,6 +438,15 @@ $(document).ready(function () {
 			$(this).addClass('border-red-500');
 		}
 	})
+
+	$('#userprofile-content').delegate('#profile-phone > input', 'blur', function() {
+		if (validatePhone( $('#profile-phone > input')) ){
+			$(this).removeClass('border-red-500');
+		} else {
+			$(this).addClass('border-red-500');
+		}
+	})
+
 
 	$('form').on('submit', function (e) {
 		e.preventDefault();

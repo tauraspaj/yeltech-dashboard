@@ -118,31 +118,79 @@ include_once('header.php');
 		<div id="userprofile-content" class="w-full flex flex-col pt-4 divide-y divide-gray-300">
 			<div class="flex h-10 items-center">
 				<div class="flex-1 text-center text-sm">Name</div>
-				<div id="profile-fullName" class="flex-1 text-center font-semibold text-sm whitespace-nowrap truncate"></div>
+				<div id="profile-fullName" class="flex-1"></div>
 			</div>
 			<div class="flex h-10 items-center">
 				<div class="flex-1 text-center text-sm">Group</div>
-				<div id="profile-groupName" class="flex-1 text-center font-semibold text-sm whitespace-nowrap truncate"></div>
+				<div id="profile-groupName" class="flex-1">
+						<?php 
+						if ($_SESSION['roleId'] == 1) {
+							$sql = "
+							SELECT groupId, groupName FROM `groups` ORDER BY groupName ASC;
+							";
+							$result = mysqli_query($conn, $sql);
+							echo '<select id="profile-groupSelect" class="flex-1 h-8 border border-gray-300">';
+							if ( mysqli_num_rows($result) > 0 ) {
+								while ($row = mysqli_fetch_assoc($result)) {
+									echo '<option value="'.$row['groupId'].'">'.$row['groupName'].'</option>';
+								}
+							}
+							echo '</select>';
+						}
+						?>
+				</div>
 			</div>
 			<div class="flex h-10 items-center">
 				<div class="flex-1 text-center text-sm">Role</div>
-				<div id="profile-roleName" class="flex-1 text-center font-semibold text-sm whitespace-nowrap truncate"></div>
+				<div id="profile-roleName" class="flex-1 text-center font-semibold text-sm whitespace-nowrap truncate">
+					<?php 
+					if ($_SESSION['roleId'] == 1) {
+						$sql = "
+						SELECT roleId, roleName FROM roles ORDER BY roleId ASC;
+						";
+						$result = mysqli_query($conn, $sql);
+						echo '<select id="profile-roleSelect" class="flex-1 h-8 border border-gray-300">';
+						if ( mysqli_num_rows($result) > 0 ) {
+							while ($row = mysqli_fetch_assoc($result)) {
+								echo '<option value="'.$row['roleId'].'">'.$row['roleName'].'</option>';
+							}
+						}
+						echo '</select>';
+					}
+					?>
+				</div>
 			</div>
 			<div class="flex h-10 items-center">
 				<div class="flex-1 text-center text-sm">Email</div>
-				<div id="profile-email" class="flex-1 text-center font-semibold text-sm whitespace-nowrap truncate"></div>
+				<div id="profile-email" class="flex-1"></div>
 			</div>
 			<div class="flex h-10 items-center">
 				<div class="flex-1 text-center text-sm">Phone</div>
-				<div id="profile-phone" class="flex-1 text-center font-semibold text-sm whitespace-nowrap truncate"></div>
+				<div id="profile-phone" class="flex-1"></div>
 			</div>
 			<div class="flex h-10 items-center">
 				<div class="flex-1 text-center text-sm">Sending Type</div>
-				<div id="profile-sendingType" class="flex-1 text-center font-semibold text-sm whitespace-nowrap truncate"></div>
+				<div id="profile-sendingType" class="flex-1">
+					<?php 
+					if ($_SESSION['roleId'] == 1) {
+						$sql = "
+						SELECT sendingId, sendingType FROM sendingType ORDER BY sendingId ASC;
+						";
+						$result = mysqli_query($conn, $sql);
+						echo '<select id="profile-sendingSelect" class="flex-1 h-8 border border-gray-300">';
+						if ( mysqli_num_rows($result) > 0 ) {
+							while ($row = mysqli_fetch_assoc($result)) {
+								echo '<option value="'.$row['sendingId'].'">'.$row['sendingType'].'</option>';
+							}
+						}
+						echo '</select>';
+					}
+					?>
+				</div>
 			</div>
 			<div class="flex h-10 items-center">
 				<div class="flex-1 text-center text-sm">Created At</div>
-				<div id="profile-createdAt" class="flex-1 text-center font-semibold text-sm whitespace-nowrap truncate"></div>
+				<div id="profile-createdAt" class="flex-1"></div>
 			</div>
 		</div>
 
@@ -152,6 +200,11 @@ include_once('header.php');
 				// Only admins can access delete button
 				if ($_SESSION['roleId'] == 1 || $_SESSION['roleId'] == 2 || $_SESSION['roleId'] == 3) {
 					echo '<button id="deleteUser" class="h-10 border-0 hover:border-0 px-4 rounded text-gray-800 hover:bg-red-500 hover:text-white transition-all focus:bg-red-500 focus:text-white">Delete</button>';
+				}
+
+				// Only super admins can edit info
+				if ($_SESSION['roleId'] == 1) {
+					echo '<button id="saveUser" class="h-10 border-0 hover:border-0 px-4 rounded text-white bg-green-500 hover:bg-green-600 transition-all focus:bg-green-600 focus:text-white">Save</button>';
 				}
 			?>
 			
