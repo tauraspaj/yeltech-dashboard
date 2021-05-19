@@ -1,15 +1,66 @@
 $(document).ready(function () {
+    function getGroupCoords() {
+		return new Promise(function (resolve, reject) {
+			$.ajax({
+                url: './includes/sqlHeader.php',
+                type: 'POST',
+                data: {
+                    function: 'getGroupCoords'
+                },
+                success: function (data) {
+                    data = JSON.parse(data);
+					resolve(data);
+                }
+            })
+		})
+	}
 
-    // Setup map
-    mapboxgl.accessToken = 'pk.eyJ1IjoidGF1cmFzcCIsImEiOiJja2w2bzl6MmYyaXoyMm9xbzlld3dqaDJnIn0.dJGV_jlSPX-p51ZrQxaBew';
-    var map = new mapboxgl.Map({
-        container: 'homeMap',
-        style: 'mapbox://styles/mapbox/streets-v10',
-        center: [-0.076132, 51.508530],
-        zoom: 14
-    });
+    function getDeviceCoordinates() {
+        return new Promise(function (resolve, reject) {
+			$.ajax({
+                url: './includes/sqlHeader.php',
+                type: 'POST',
+                data: {
+                    function: 'getDeviceCoordinates'
+                },
+                success: function (data) {
+                    data = JSON.parse(data);
+					resolve(data);
+                }
+            })
+		})
+    }
+
+    // Load the map with group coordinates. If coordinates are null, center on London
+    getGroupCoords().then( function(data) {
+		if (data.latitude == null || data.longitude == null) {
+            data.latitude = 51.508530;
+            data.longitude = -0.076132
+        }
+        
+        // Setup map
+        mapboxgl.accessToken = 'pk.eyJ1IjoidGF1cmFzcCIsImEiOiJja2w2bzl6MmYyaXoyMm9xbzlld3dqaDJnIn0.dJGV_jlSPX-p51ZrQxaBew';
+        var map = new mapboxgl.Map({
+            container: 'homeMap',
+            style: 'mapbox://styles/mapbox/streets-v10',
+            center: [data.longitude, data.latitude],
+            zoom: 12
+        });
+
+        // Add devices
+        getDeviceCoordinates().then( function(data) {
+            for (i = 0; i < data.length; i++) {
+                new mapboxgl.Marker()
+                    .setLngLat([data[i].longitude, data[i].latitude])
+                    .setPopup(new mapboxgl.Popup({ offset:25 })
+                    .setHTML('<h2>'+data[i].deviceName+'</h2><br><p>'+data[i].latitude+', '+data[i].longitude+'</p>'))
+                    .addTo(map);
+            }
+        })
+	})
 
 
+    // Get alarmed devices
     $.ajax({
         url: './includes/sqlHeader.php',
         type: 'POST',
@@ -60,6 +111,7 @@ $(document).ready(function () {
         }
     })
 
+    // Get home data
     $.ajax({
         url: './includes/sqlHeader.php',
         type: 'POST',
@@ -71,36 +123,6 @@ $(document).ready(function () {
             $('#totalDevicesDisplay').html(data['totalDevices']);
             $('#totalUsersDisplay').html(data['totalUsers']);
             $('#totalAlarmsDisplay').html(data['totalAlarms']);
-        }
-    })
-
-    $.ajax({
-        url: './includes/sqlHeader.php',
-        type: 'POST',
-        data: {
-            function: 'getDeviceCoordinates'
-        },
-        success: function (data) {
-            var data = JSON.parse(data);
-
-            if (data.length > 0) {
-                for(i = 0; i < data.length; i++) {
-                    if (data[i].latitude != null && data[i].longitude != null) {
-                        // Add marker
-                        new mapboxgl.Marker()
-                            .setLngLat([data[i].longitude, data[i].latitude])
-                            .setPopup(new mapboxgl.Popup({ offset:25 })
-                                .setHTML('<h2>'+data[i].deviceName+'</h2><br><p>'+data[i].latitude+', '+data[i].longitude+'</p>'))
-                            .addTo(map);
-
-                        map.flyTo({
-                                center: [data[i].longitude, data[i].latitude]
-                            })
-                    }
-                }
-            } else {
-                // Display map with London location
-            }
         }
     })
 

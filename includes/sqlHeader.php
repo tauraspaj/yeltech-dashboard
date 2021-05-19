@@ -124,30 +124,11 @@ switch ($function) {
         $return = array();
 
         $sql = "
-            SELECT deviceId, deviceName FROM devices WHERE devices.groupId = $devicesGroup;
+            SELECT deviceId, deviceName, latitude, longitude FROM devices WHERE devices.groupId = $devicesGroup AND latitude IS NOT NULL AND longitude IS NOT NULL;
         ";
         $result = mysqli_query($conn, $sql);
         if ( mysqli_num_rows($result) > 0 ) {
             while ($row = mysqli_fetch_assoc($result)) {
-                
-                $sql2 = "
-                    SELECT smsStatus.latitude, smsStatus.longitude 
-                    FROM smsStatus 
-                    WHERE ((latitude IS NOT NULL AND longitude IS NOT NULL) AND (deviceId = {$row['deviceId']})) 
-                    ORDER BY smsStatusId DESC LIMIT 1;
-                ";
-
-                $result2 = mysqli_query($conn, $sql2);
-                if ( mysqli_num_rows($result2) > 0 ) {
-                    while ($row2 = mysqli_fetch_assoc($result2)) {
-                        $row['latitude'] = $row2['latitude'];
-                        $row['longitude'] = $row2['longitude'];
-                    }
-                } else {
-                    $row['latitude'] = null;
-                    $row['longitude'] = null;
-                }
-
                 $return[] = $row;
             }
         }
@@ -269,11 +250,26 @@ switch ($function) {
         }
 
         echo json_encode($response);
+        break;
 
+    case 'getGroupCoords':
+        $groupId = $_SESSION['groupId'];
+
+        $sql = "
+            SELECT `groups`.latitude, `groups`.longitude FROM `groups` WHERE `groups`.groupId = $groupId
+        ";
+        $result = mysqli_query($conn, $sql);
+        if ( mysqli_num_rows($result) > 0 ) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                echo json_encode($row);
+            }
+        }
         break;
 
         default:
         break;
-}
+
+
+    }
 
 ?>
