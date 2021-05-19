@@ -9,6 +9,12 @@ $(document).ready(function () {
 	// Update title page
 	getDeviceData().then( function(data) {
 		$(document).prop('title', 'YelCloud - '+data.deviceName);
+		session_roleId = $('#siteContent').attr('data-roleId');
+		session_groupId = $('#siteContent').attr('data-groupId');
+
+		if (session_roleId != 1 && session_roleId != 2 && session_groupId != data.groupId) {
+			document.location.href = 'devices.php';
+		}
 	})
 
 	// ! List of defined components

@@ -19,7 +19,7 @@ include_once('header.php');
 	<!-- End of filters subnav -->
 
 	<!-- Site content -->
-	<div id="siteContent" class="flex-auto p-4 lg:p-6">
+	<div id="siteContent" data-groupId="<?php echo $_SESSION['groupId']?>" data-roleId="<?php echo $_SESSION['roleId']?>" class="flex-auto p-4 lg:p-6">
 		<!-- Filled via js -->
 
 

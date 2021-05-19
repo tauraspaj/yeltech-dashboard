@@ -517,7 +517,7 @@ switch ($_POST['function']) {
 		$return = array();
 		$deviceId = $_POST['deviceId'];
 		$sql = "
-		SELECT devices.deviceId, devices.deviceName, devices.deviceStatus, devices.deviceAlias, devices.customLocation, devices.devicePhone, devices.createdAt, devices.lastCalibration, devices.nextCalibrationDue, devices.latitude, devices.longitude, deviceTypes.deviceTypeName, products.productName, subscriptions.subStart, subscriptions.subFinish, `groups`.groupName
+		SELECT devices.deviceId, devices.groupId, devices.deviceName, devices.deviceStatus, devices.deviceAlias, devices.customLocation, devices.devicePhone, devices.createdAt, devices.lastCalibration, devices.nextCalibrationDue, devices.latitude, devices.longitude, deviceTypes.deviceTypeName, products.productName, subscriptions.subStart, subscriptions.subFinish, `groups`.groupName
 		FROM devices
 		LEFT JOIN deviceTypes ON devices.deviceTypeId = deviceTypes.deviceTypeId
 		LEFT JOIN products ON devices.productId = products.productId
