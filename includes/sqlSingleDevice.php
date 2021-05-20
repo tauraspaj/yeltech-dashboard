@@ -273,6 +273,7 @@ switch ($_POST['function']) {
 				SELECT measurements.measurement, measurements.measurementTime
 				FROM measurements
 				WHERE (deviceId = $deviceId AND channelId = {$row['channelId']}) AND (measurements.measurementTime BETWEEN '$dateFrom' AND '$dateTo')
+				ORDER BY measurements.measurementTime ASC
 				";
 				$result2 = mysqli_query($conn, $sql2);
 				$measurementsData = array();
