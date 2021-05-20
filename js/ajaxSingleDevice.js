@@ -1878,9 +1878,24 @@ $(document).ready(function () {
 	}
 
 	function getLatestTemp(deviceCoordinates, tempSpan, locationSpan) {
-		if (deviceCoordinates != 'Error') {
-			// If we find coordinates...
-			fetch('//api.openweathermap.org/data/2.5/weather?lat='+deviceCoordinates.latitude+'&lon='+deviceCoordinates.longitude+'&units=metric&APPID=f37101538ad0f765c18ce4538d42de2e')
+		// London coordinates will be shown by default
+		var showLat = 51.508530;
+		var showLong = -0.076132;
+
+		// First check if device coordinates exist, then check for group coordinates, and if both fail, display London as default
+		if (deviceCoordinates.deviceLatitude == null || deviceCoordinates.deviceLongitude == null) {
+			if (deviceCoordinates.groupLatitude == null || deviceCoordinates.groupLongitude == null) {
+				// London will be displayed
+			} else {
+				showLat = deviceCoordinates.groupLatitude;
+				showLong = deviceCoordinates.groupLongitude;
+			}
+		} else {
+			showLat = deviceCoordinates.deviceLatitude;
+			showLong = deviceCoordinates.deviceLongitude;
+		}
+
+		fetch('//api.openweathermap.org/data/2.5/weather?lat='+showLat+'&lon='+showLong+'&units=metric&APPID=f37101538ad0f765c18ce4538d42de2e')
 			.then(response => response.json())
 			.then(data => {
 				var loc = data['name'] + ', ' + data['sys']['country'];
@@ -1888,17 +1903,6 @@ $(document).ready(function () {
 				$('#'+locationSpan).html(loc);
 				$('#'+tempSpan).html(temperature);
 			})
-		} else {
-			// Show London if we don't find coordinates...
-			fetch('//api.openweathermap.org/data/2.5/weather?q=London,uk&units=metric&APPID=f37101538ad0f765c18ce4538d42de2e')
-			.then(response => response.json())
-			.then(data => {
-				var loc = data['name'];
-				var temperature = Math.round( data['main']['temp'] * 10 ) / 10;
-				$('#'+locationSpan).html(loc);
-				$('#'+tempSpan).html(temperature);
-			})
-		}
 	}
 
 	function getAlarmTriggers() {

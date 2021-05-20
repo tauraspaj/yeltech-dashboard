@@ -152,21 +152,21 @@ switch ($_POST['function']) {
 		$return = array();
 
 		$sql = "
-		SELECT smsStatus.latitude, smsStatus.longitude 
-		FROM smsStatus 
-		WHERE ((latitude IS NOT NULL AND longitude IS NOT NULL) AND (deviceId = {$deviceId})) 
-		ORDER BY smsStatusId DESC LIMIT 1;
+		SELECT devices.latitude AS deviceLatitude, devices.longitude AS deviceLongitude, `groups`.latitude AS groupLatitude, `groups`.longitude AS groupLongitude
+		FROM devices
+		LEFT JOIN `groups` on devices.groupId = `groups`.groupId
+		WHERE deviceId = $deviceId
 		";
 		
 		$result = mysqli_query($conn, $sql);
 		
 		if (mysqli_num_rows($result) > 0) {
 			while ($row = mysqli_fetch_assoc($result)) {
-				$return['latitude'] = $row['latitude'];
-				$return['longitude'] = $row['longitude'];
+				$return['deviceLatitude'] = $row['deviceLatitude'];
+				$return['deviceLongitude'] = $row['deviceLongitude'];
+				$return['groupLatitude'] = $row['groupLatitude'];
+				$return['groupLongitude'] = $row['groupLongitude'];
 			}
-		} else {
-			$return = 'Error';
 		}
 		
 		echo json_encode($return);
