@@ -1183,14 +1183,17 @@ $(document).ready(function () {
 
 		function fillAlarmTriggerTable(data) {
 			var alarmTriggersDiv = `
-				<div class="flex h-10 text-xs font-medium text-gray-400 items-center border-b pl-4">
-					<div class="flex-1">
+				<div class="flex h-10 text-xs font-medium text-gray-400 items-center border-b sm:pl-4">
+					<div class="flex-1 mx-2">
 						CHANNEL
 					</div>
-					<div class="flex-1">
-						TRIGGER VALUE
+					<div class="flex-1 mx-2">
+						TRIGGER <span class="hidden">VALUE</span>
 					</div>
-					<div class="flex-1">
+					<div class="flex-1 mx-2">
+						ALARM
+					</div>
+					<div class="flex-1 mx-2">
 						
 					</div>
 				</div>
@@ -1200,14 +1203,17 @@ $(document).ready(function () {
 				for (i = 0; i < data.alarmTriggers.length; i++) {
 					alarmTriggersDiv += `
 						<!-- Alarm -->
-						<div class="flex h-10 text-sm text-gray-700 font-medium items-center pl-4 border bg-gray-100">
+						<div class="flex h-10 text-xs sm:text-sm text-gray-700 font-medium items-center sm:pl-4 lg:pl-0 2xl:pl-4 border bg-gray-100">
 							<div class="flex-1 whitespace-nowrap mx-2">
 								`+data.alarmTriggers[i].channelName+`
 							</div>
 							<div class="flex-1 mx-2">
-								`+data.alarmTriggers[i].operator+``+data.alarmTriggers[i].thresholdValue+`
+								`+data.alarmTriggers[i].operator+``+data.alarmTriggers[i].thresholdValue+``+data.alarmTriggers[i].unitName+`
 							</div>
-							<div class="flex-1 flex justify-center mx-2">
+							<div class="flex-1 mx-2 truncate">
+								`+data.alarmTriggers[i].alarmDescription+`
+							</div>
+							<div class="flex-1 flex justify-center sm:mx-2">
 								<div id="deleteTrigger" data-id="`+data.alarmTriggers[i].triggerId+`" class="flex items-center bg-red-500 shadow text-white py-1 rounded px-2 cursor-pointer hover:bg-red-600" title="Delete trigger">
 									<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
 									<p class="hidden sm:block lg:hidden xl:block ml-2 uppercase text-xs">Delete</p>
@@ -1839,7 +1845,7 @@ $(document).ready(function () {
 					if (alarms['alarmHistory'][i]['unit'] == null) {alarms['alarmHistory'][i]['unit'] = '';}
 
 					if (alarms['alarmHistory'][i]['type'] == 'triggeredHistory') {
-						alarmDisplay = '<span class="font-semibold">('+alarms['alarmHistory'][i]['msg1'] + ' ' + alarms['alarmHistory'][i]['msg2'] + ' ' + alarms['alarmHistory'][i]['unit'] + ')</span> TRIGGER';
+						alarmDisplay = '<span class="font-semibold underline">'+alarms['alarmHistory'][i]['msg3'] + '</span> TRIGGERED BY ('+alarms['alarmHistory'][i]['msg1'] + ' ' + alarms['alarmHistory'][i]['msg2'] + ' ' + alarms['alarmHistory'][i]['unit'] + ')';
 					} else if ( alarms['alarmHistory'][i]['type'] == 'smsAlarm' ) {
 						alarmDisplay = alarms['alarmHistory'][i]['msg1'] + ' ' + alarms['alarmHistory'][i]['msg2'] + ' ' +  alarms['alarmHistory'][i]['unit'];
 					} 

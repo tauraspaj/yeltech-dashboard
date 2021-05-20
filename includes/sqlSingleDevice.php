@@ -181,7 +181,7 @@ switch ($_POST['function']) {
 		$return = array();
 		
 		$sql = "
-			SELECT 'smsAlarm' AS type, channels.channelName AS channelName, smsAlarms.smsAlarmHeader AS msg1, smsAlarms.smsAlarmReading AS msg2, units.unitName AS unit, smsAlarms.smsAlarmTime AS timestampCol
+			SELECT 'smsAlarm' AS type, channels.channelName AS channelName, smsAlarms.smsAlarmHeader AS msg1, smsAlarms.smsAlarmReading AS msg2, null AS msg3, units.unitName AS unit, smsAlarms.smsAlarmTime AS timestampCol
 			FROM smsAlarms
 			LEFT JOIN channels ON smsAlarms.channelId = channels.channelId
 			LEFT JOIN units ON channels.unitId = units.unitId
@@ -189,13 +189,13 @@ switch ($_POST['function']) {
 
 			UNION
 
-			SELECT 'triggeredHistory' AS type, triggeredAlarmsHistory.channelName AS channelName, triggeredAlarmsHistory.operator AS msg1, triggeredAlarmsHistory.thresholdValue AS msg2, triggeredAlarmsHistory.unitName AS unit,triggeredAlarmsHistory.clearedAt AS timestampCol
+			SELECT 'triggeredHistory' AS type, triggeredAlarmsHistory.channelName AS channelName, triggeredAlarmsHistory.operator AS msg1, triggeredAlarmsHistory.thresholdValue AS msg2, triggeredAlarmsHistory.alarmDescription AS msg3, triggeredAlarmsHistory.unitName AS unit,triggeredAlarmsHistory.clearedAt AS timestampCol
 			FROM triggeredAlarmsHistory
 			WHERE deviceId = $deviceId
 
 			UNION
 
-			SELECT 'smsStatus' AS type, 'DEVICE' AS channelName, smsStatus.smsStatus AS msg1, null AS msg2, null AS unit, smsStatus.smsStatusTime AS timestampCol
+			SELECT 'smsStatus' AS type, 'DEVICE' AS channelName, smsStatus.smsStatus AS msg1, null AS msg2, null AS msg3, null AS unit, smsStatus.smsStatusTime AS timestampCol
 			FROM smsStatus
 			WHERE smsStatus.deviceId = $deviceId
 
@@ -326,9 +326,10 @@ switch ($_POST['function']) {
 		}
 
 		$sql3 = "
-		SELECT alarmTriggers.triggerId, alarmTriggers.operator, alarmTriggers.thresholdValue, channels.channelId, channels.channelName
+		SELECT alarmTriggers.triggerId, alarmTriggers.operator, alarmTriggers.thresholdValue, alarmTriggers.alarmDescription, channels.channelId, channels.channelName, units.unitName
 		FROM alarmTriggers
 		LEFT JOIN channels ON alarmTriggers.channelId = channels.channelId
+		LEFT JOIN units ON channels.unitId = units.unitId
 		WHERE alarmTriggers.deviceId = $deviceId
 		";
 
