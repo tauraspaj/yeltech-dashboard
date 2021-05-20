@@ -9,6 +9,7 @@ $(document).ready(function () {
 	// Update title page
 	getDeviceData().then( function(data) {
 		$(document).prop('title', 'YelCloud - '+data.deviceName);
+		$('#sidePanel-deviceName').html(data.deviceName);
 		session_roleId = $('#siteContent').attr('data-roleId');
 		session_groupId = $('#siteContent').attr('data-groupId');
 

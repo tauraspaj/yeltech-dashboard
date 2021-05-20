@@ -10,6 +10,9 @@ include_once('header.php');
 	<div class="block w-screen overflow-x-auto flex-none bg-gray-200 lg:h-full lg:w-44 xl:w-60 lg:rounded-tr-3xl shadow-md">
 		<div class="lg:fixed h-16 lg:h-full flex flex-row lg:flex-col" style="width: inherit;">
 			<!-- Subpage nav -->
+			<div class="bg-gray-100 h-16 shadow-md rounded-br-3xl item flex items-center justify-center">
+				<span id="sidePanel-deviceName" class="px-2 font-semibold text-gray-700 text-sm uppercase whitespace-nowrap mx-6 lg:mx-0 truncate"></span>
+			</div>
 			<div id="subPageNav" class="flex flex-row px-2 space-x-8 lg:space-x-0 lg:flex-col lg:space-y-8 h-full lg:pt-8">
 				<!-- Filled via js according to product type -->
 			</div>
