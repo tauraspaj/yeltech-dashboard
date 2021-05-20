@@ -1836,10 +1836,14 @@ $(document).ready(function () {
 					var alarmDisplay = '-';
 					if (alarms['alarmHistory'][i]['msg1'] == null) {alarms['alarmHistory'][i]['msg1'] = '';}
 					if (alarms['alarmHistory'][i]['msg2'] == null) {alarms['alarmHistory'][i]['msg2'] = '';}
+					if (alarms['alarmHistory'][i]['unit'] == null) {alarms['alarmHistory'][i]['unit'] = '';}
 
 					if (alarms['alarmHistory'][i]['type'] == 'triggeredHistory') {
 						alarmDisplay = '<span class="font-semibold">('+alarms['alarmHistory'][i]['msg1'] + ' ' + alarms['alarmHistory'][i]['msg2'] + ' ' + alarms['alarmHistory'][i]['unit'] + ')</span> TRIGGER';
-					} else if (alarms['alarmHistory'][i]['type'] == 'smsAlarm' || alarms['alarmHistory'][i]['type'] == 'smsStatus') {
+					} else if ( alarms['alarmHistory'][i]['type'] == 'smsAlarm' ) {
+						alarmDisplay = alarms['alarmHistory'][i]['msg1'] + ' ' + alarms['alarmHistory'][i]['msg2'] + ' ' +  alarms['alarmHistory'][i]['unit'];
+					} 
+					else if ( alarms['alarmHistory'][i]['type'] == 'smsStatus') {
 						alarmDisplay = alarms['alarmHistory'][i]['msg1'] + ' ' + alarms['alarmHistory'][i]['msg2'];
 					}
 

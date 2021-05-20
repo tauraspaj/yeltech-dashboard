@@ -181,9 +181,10 @@ switch ($_POST['function']) {
 		$return = array();
 		
 		$sql = "
-			SELECT 'smsAlarm' AS type, channels.channelName AS channelName, smsAlarms.smsAlarmHeader AS msg1, smsAlarms.smsAlarmReading AS msg2, null AS unit, smsAlarms.smsAlarmTime AS timestampCol
+			SELECT 'smsAlarm' AS type, channels.channelName AS channelName, smsAlarms.smsAlarmHeader AS msg1, smsAlarms.smsAlarmReading AS msg2, units.unitName AS unit, smsAlarms.smsAlarmTime AS timestampCol
 			FROM smsAlarms
 			LEFT JOIN channels ON smsAlarms.channelId = channels.channelId
+			LEFT JOIN units ON channels.unitId = units.unitId
 			WHERE smsAlarms.deviceId = $deviceId
 
 			UNION
