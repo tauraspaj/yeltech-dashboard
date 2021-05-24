@@ -155,7 +155,7 @@ $(document).ready(function () {
 			<!-- Card -->
 			<div class="col-span-2 md:col-span-2 lg:col-span-2 card-wrapper bg-gray-50">
 				<!-- Title -->
-				<div class="flex-none flex justify-between items-center h-12 bg-white rounded-t-xl border-b">
+				<div class="flex-none flex justify-between items-center h-12 bg-white rounded-t-xl border-b relative">
 					<div class="flex items-center">
 						<div class="hidden md:block bg-blue-100 text-blue-500 rounded-full p-2 ml-4 mr-2 lg:mr-4">
 							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path></svg>
@@ -166,10 +166,16 @@ $(document).ready(function () {
 							<div data-id="1d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">1d</div>
 							<div data-id="7d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">7d</div>
 							<div data-id="30d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">30d</div>
-							<!--
 							<div data-id="CAL" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">
 								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-							</div> -->
+							</div>
+							</div>
+						<div id="CALSelector" class="w-48 bg-white shadow rounded z-10 absolute left-28 top-10 border flex flex-col p-2 hidden">
+							<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">From</p>
+							<input id="chartFrom" type="date" class="bg-white text-gray-700">
+							<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">To</p>
+							<input id="chartTo" type="date" class="bg-white text-gray-700">
+							<button class="bg-gray-50 border rounded w-16 mx-auto mt-2 hover:bg-gray-100">Go</button>
 						</div>
 					</div>
 				</div>
@@ -422,7 +428,6 @@ $(document).ready(function () {
 		//#endregion 
 		})
 
-
 		// * Load alarms card
 		//#region 
 		var alarmPageNumber = 1;
@@ -525,7 +530,20 @@ $(document).ready(function () {
 				getDatasets(dataid,'NOW').then( function (data) {
 					drawChart(chart, data);
 				})
+
+				if ( !$('#CALSelector').hasClass('hidden') ) {
+					$('#CALSelector').addClass('hidden');
+				}
+				$('#chartFrom, #chartTo').val("");
+			} else {
+				$('#CALSelector').toggleClass('hidden');
 			}
+		})
+		$('#CALSelector > button').on('click', function() {
+			getDatasets($('#chartFrom').val() , $('#chartTo').val()).then( function (data) {
+				drawChart(chart, data);
+			})
+			$('#CALSelector').addClass('hidden');
 		})
 		//#endregion
 		
@@ -1725,32 +1743,32 @@ $(document).ready(function () {
 	function getDatasets(dateFrom, dateTo) {
 		if (dateTo.toUpperCase() == 'NOW') {
 			var now = new Date();
-			var formattedNow = now.getFullYear() + "-" + (now.getMonth()+1) +  "-" + now.getDate() + " " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
+			var dateTo = now.getFullYear() + "-" + (now.getMonth()+1) +  "-" + now.getDate() + " " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
+			dateFrom = dateFrom.toString();
+			var milis = 0;
+			switch (dateFrom){
+				case '3hr':
+					milis = 3*60*60*1000;
+					break;
+				case '12hr':
+					milis = 12*60*60*1000;
+					break;
+				case '1d':
+					milis = 24*60*60*1000;
+					break;
+				case '7d':
+					milis = 7*24*60*60*1000;
+					break;
+				case '30d':
+					milis = 30*24*60*60*1000;
+					break;
+				default:
+			}
+	
+			var dateFrom = new Date(Date.now() - milis);
+			var dateFrom = dateFrom.getFullYear() + "-" + (dateFrom.getMonth()+1) +  "-" + dateFrom.getDate() + " " + dateFrom.getHours() + ":" + dateFrom.getMinutes() + ":" + dateFrom.getSeconds();
 		}
 
-		dateFrom = dateFrom.toString();
-		var milis = 0;
-		switch (dateFrom){
-			case '3hr':
-				milis = 3*60*60*1000;
-				break;
-			case '12hr':
-				milis = 12*60*60*1000;
-				break;
-			case '1d':
-				milis = 24*60*60*1000;
-				break;
-			case '7d':
-				milis = 7*24*60*60*1000;
-				break;
-			case '30d':
-				milis = 30*24*60*60*1000;
-				break;
-			default:
-		}
-
-		var dateFrom = new Date(Date.now() - milis);
-		var formattedDateFrom = dateFrom.getFullYear() + "-" + (dateFrom.getMonth()+1) +  "-" + dateFrom.getDate() + " " + dateFrom.getHours() + ":" + dateFrom.getMinutes() + ":" + dateFrom.getSeconds();
 
 		return new Promise(function (resolve, reject) {
 			$.ajax({
@@ -1758,8 +1776,8 @@ $(document).ready(function () {
 				type: 'POST',
 				data: {
 					deviceId: deviceId,
-					dateTo: formattedNow,
-					dateFrom: formattedDateFrom,
+					dateTo: dateTo,
+					dateFrom: dateFrom,
 					function: 'getDatasets'
 				},
 				success: function (data) {
