@@ -92,7 +92,7 @@ $(document).ready(function () {
 
 					outputTable += `
 					<tr class="hover:bg-bluegray-100 border-b border-gray-200">
-						<td class="text-left py-2 px-4 text-sm text-lightblue-500 font-semibold whitespace-nowrap">`+ users[i].fullName + `<br><span class="font-normal text-bluegray-400">` + users[i].email + `</span</td>
+						<td class="text-left py-2 px-4 text-sm text-lightblue-500 font-semibold whitespace-nowrap">`+ users[i].fullName + `<br><span class="font-normal text-bluegray-400">` + users[i].email + `</span></td>
 						<td class="text-center py-2 px-4 text-sm text-gray-600 whitespace-nowrap">`+ users[i].groupName + `</td>
 						<td class="text-center py-2 px-4 cursor-default">`+ role + `</td>
 						<td class="text-center py-2 px-4 text-sm text-gray-600">`+ phoneNumber + `</td>
