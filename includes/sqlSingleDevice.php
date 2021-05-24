@@ -178,6 +178,19 @@ switch ($_POST['function']) {
 		$alarmsPerPage = $_POST['alarmsPerPage'];
 		$offset = $_POST['offset'];
 		$deviceId = $_POST['deviceId'];
+		$fromDate = $_POST['fromDate'];
+		$toDate = $_POST['toDate'];
+
+		if ($fromDate != null && $toDate != null) {
+			$smsAlarmBetween = "AND (smsAlarms.smsAlarmTime BETWEEN '$fromDate' AND '$toDate')";
+			$triggeredHistoryBetween = "AND (triggeredAlarmsHistory.clearedAt BETWEEN '$fromDate' AND '$toDate')";
+			$smsStatusBetween = "AND (smsStatus.smsStatusTime BETWEEN '$fromDate' AND '$toDate')";
+		} else {
+			$smsAlarmBetween = '';
+			$triggeredHistoryBetween = '';
+			$smsStatusBetween = '';
+		}
+
 		$return = array();
 		
 		$sql = "
@@ -185,19 +198,19 @@ switch ($_POST['function']) {
 			FROM smsAlarms
 			LEFT JOIN channels ON smsAlarms.channelId = channels.channelId
 			LEFT JOIN units ON channels.unitId = units.unitId
-			WHERE smsAlarms.deviceId = $deviceId
+			WHERE smsAlarms.deviceId = $deviceId $smsAlarmBetween
 
 			UNION
 
 			SELECT 'triggeredHistory' AS type, triggeredAlarmsHistory.channelName AS channelName, triggeredAlarmsHistory.operator AS msg1, triggeredAlarmsHistory.thresholdValue AS msg2, triggeredAlarmsHistory.alarmDescription AS msg3, triggeredAlarmsHistory.unitName AS unit,triggeredAlarmsHistory.clearedAt AS timestampCol
 			FROM triggeredAlarmsHistory
-			WHERE deviceId = $deviceId
+			WHERE deviceId = $deviceId $triggeredHistoryBetween
 
 			UNION
 
 			SELECT 'smsStatus' AS type, 'DEVICE' AS channelName, smsStatus.smsStatus AS msg1, null AS msg2, null AS msg3, null AS unit, smsStatus.smsStatusTime AS timestampCol
 			FROM smsStatus
-			WHERE smsStatus.deviceId = $deviceId
+			WHERE smsStatus.deviceId = $deviceId $smsStatusBetween
 
 			ORDER BY timestampCol DESC
 			LIMIT $alarmsPerPage OFFSET $offset;
@@ -214,7 +227,7 @@ switch ($_POST['function']) {
 		$return['alarmHistory'] = $alarmHistory;
 		
 		$sqlTotalSms = "
-			SELECT COUNT(*) as totalRows FROM smsAlarms WHERE smsAlarms.deviceId = $deviceId
+			SELECT COUNT(*) as totalRows FROM smsAlarms WHERE smsAlarms.deviceId = $deviceId $smsAlarmBetween
 		";
 		$result = mysqli_query($conn, $sqlTotalSms);
 		if ( mysqli_num_rows($result) > 0 ) {
@@ -226,7 +239,7 @@ switch ($_POST['function']) {
 		$totalTriggers = "
 			SELECT COUNT(*) as totalRows 
 			FROM triggeredAlarmsHistory 
-   			WHERE deviceId = $deviceId
+   			WHERE deviceId = $deviceId $triggeredHistoryBetween
 		";
 		$result = mysqli_query($conn, $totalTriggers);
 		if ( mysqli_num_rows($result) > 0 ) {
@@ -238,7 +251,7 @@ switch ($_POST['function']) {
 		$totalTriggers = "
 			SELECT COUNT(*) as totalRows 
 			FROM smsStatus 
-   			WHERE smsStatus.deviceId = $deviceId
+   			WHERE smsStatus.deviceId = $deviceId $smsStatusBetween
 		";
 		$result = mysqli_query($conn, $totalTriggers);
 		if ( mysqli_num_rows($result) > 0 ) {

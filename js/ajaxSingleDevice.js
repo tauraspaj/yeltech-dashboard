@@ -166,11 +166,11 @@ $(document).ready(function () {
 							<div data-id="1d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">1d</div>
 							<div data-id="7d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">7d</div>
 							<div data-id="30d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">30d</div>
-							<div data-id="CAL" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">
+							<div data-id="ChartCal" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">
 								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
 							</div>
-							</div>
-						<div id="CALSelector" class="w-48 bg-white shadow rounded z-10 absolute left-28 top-10 border flex flex-col p-2 hidden">
+						</div>
+						<div id="ChartCalSelector" class="w-48 bg-white shadow rounded z-10 absolute left-28 top-10 border flex flex-col p-2 hidden">
 							<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">From</p>
 							<input id="chartFrom" type="date" class="bg-white text-gray-700">
 							<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">To</p>
@@ -191,12 +191,26 @@ $(document).ready(function () {
 
 			<!-- Card -->
 			<div class="col-span-2 md:col-span-2 lg:col-span-2 card-wrapper bg-gray-50">
-				<div class="card-header">
+				<div class="card-header relative">
 					<div class="card-header-icon bg-purple-100 text-purple-500">
 						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd"></path></svg>	
 					</div>
 					<div class="card-header-title text-purple-800 bg-purple-100">
-					Alarms	
+						Alarms	
+					</div>
+
+					<div id="AlarmCal" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800 absolute right-4">
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+					</div>
+					<div id="AlarmCalSelector" class="w-48 bg-white shadow rounded z-10 absolute top-10 right-4 border flex flex-col p-2 hidden">
+						<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">From</p>
+						<input id="alarmFrom" type="date" class="bg-white text-gray-700">
+						<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">To</p>
+						<input id="alarmTo" type="date" class="bg-white text-gray-700">
+						<div class="flex justify-center items-center">
+							<button id="goAlarmCal" class="bg-gray-50 border rounded w-16 mx-auto mt-2 hover:bg-gray-100">Go</button>
+							<button id="resetAlarmCal" class="bg-gray-50 border rounded w-16 mx-auto mt-2 hover:bg-gray-100">Reset</button>
+						</div>
 					</div>
 				</div>
 
@@ -432,16 +446,38 @@ $(document).ready(function () {
 		//#region 
 		var alarmPageNumber = 1;
 		var alarmsPerPage = 5;
-		getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms');
+		var fromDate = null;
+		var toDate = null;
+		getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
 
 		// Alarm paging
 		$('#next_alarms').on('click', function () {
 			alarmPageNumber += 1;
-			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms');
+			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
 		})
 		$('#previous_alarms').on('click', function () {
 			alarmPageNumber -= 1;
-			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms');
+			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
+		})
+
+		$('#AlarmCal').on('click', function() {
+			$('#AlarmCalSelector').toggleClass('hidden');
+		})
+		$('#goAlarmCal').on('click', function() {
+			alarmPageNumber = 1;
+			fromDate = $('#alarmFrom').val();
+			toDate = $('#alarmTo').val();
+			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
+			$('#AlarmCalSelector').addClass('hidden');
+		})
+
+		$('#resetAlarmCal').on('click', function() {
+			alarmPageNumber = 1;
+			fromDate = null;
+			toDate = null;
+			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
+			$('#AlarmCalSelector').addClass('hidden');
+			$('#alarmFrom, #alarmTo').val("");
 		})
 
 		function displayTriggeredAlarms(triggeredAlarms) {
@@ -526,24 +562,24 @@ $(document).ready(function () {
 			$('#dateSelectors').children().removeClass(activeClass);
 			$(this).addClass(activeClass);
 			var dataid = $(this).attr('data-id');
-			if (dataid != 'CAL') {
+			if (dataid != 'ChartCal') {
 				getDatasets(dataid,'NOW').then( function (data) {
 					drawChart(chart, data);
 				})
 
-				if ( !$('#CALSelector').hasClass('hidden') ) {
-					$('#CALSelector').addClass('hidden');
+				if ( !$('#ChartCalSelector').hasClass('hidden') ) {
+					$('#ChartCalSelector').addClass('hidden');
 				}
 				$('#chartFrom, #chartTo').val("");
 			} else {
-				$('#CALSelector').toggleClass('hidden');
+				$('#ChartCalSelector').toggleClass('hidden');
 			}
 		})
-		$('#CALSelector > button').on('click', function() {
+		$('#ChartCalSelector > button').on('click', function() {
 			getDatasets($('#chartFrom').val() , $('#chartTo').val()).then( function (data) {
 				drawChart(chart, data);
 			})
-			$('#CALSelector').addClass('hidden');
+			$('#ChartCalSelector').addClass('hidden');
 		})
 		//#endregion
 		
@@ -1088,12 +1124,26 @@ $(document).ready(function () {
 			<!-- Card -->
 			<div class="col-span-2 md:col-span-2 lg:col-span-2 card-wrapper">
 				<!-- Card header -->
-				<div class="card-header">
+				<div class="card-header relative">
 					<div class="card-header-icon bg-purple-100 text-purple-500">
-						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd"></path></svg>
+						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd"></path></svg>	
 					</div>
 					<div class="card-header-title text-purple-800 bg-purple-100">
-					Alarms Log	
+						Alarms	
+					</div>
+
+					<div id="AlarmCal" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800 absolute right-4">
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+					</div>
+					<div id="AlarmCalSelector" class="w-48 bg-white shadow rounded z-10 absolute top-10 right-4 border flex flex-col p-2 hidden">
+						<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">From</p>
+						<input id="alarmFrom" type="date" class="bg-white text-gray-700">
+						<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">To</p>
+						<input id="alarmTo" type="date" class="bg-white text-gray-700">
+						<div class="flex justify-center items-center">
+							<button id="goAlarmCal" class="bg-gray-50 border rounded w-16 mx-auto mt-2 hover:bg-gray-100">Go</button>
+							<button id="resetAlarmCal" class="bg-gray-50 border rounded w-16 mx-auto mt-2 hover:bg-gray-100">Reset</button>
+						</div>
 					</div>
 				</div>
 
@@ -1399,16 +1449,38 @@ $(document).ready(function () {
 		//#region 
 		var alarmPageNumber = 1;
 		var alarmsPerPage = 5;
-		getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms');
+		var fromDate = null;
+		var toDate = null;
+		getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
 
 		// Alarm paging
 		$('#next_alarms').on('click', function () {
 			alarmPageNumber += 1;
-			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms');
+			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
 		})
 		$('#previous_alarms').on('click', function () {
 			alarmPageNumber -= 1;
-			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms');
+			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
+		})
+
+		$('#AlarmCal').on('click', function() {
+			$('#AlarmCalSelector').toggleClass('hidden');
+		})
+		$('#goAlarmCal').on('click', function() {
+			alarmPageNumber = 1;
+			fromDate = $('#alarmFrom').val();
+			toDate = $('#alarmTo').val();
+			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
+			$('#AlarmCalSelector').addClass('hidden');
+		})
+
+		$('#resetAlarmCal').on('click', function() {
+			alarmPageNumber = 1;
+			fromDate = null;
+			toDate = null;
+			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
+			$('#AlarmCalSelector').addClass('hidden');
+			$('#alarmFrom, #alarmTo').val("");
 		})
 
 		function displayTriggeredAlarms(triggeredAlarms) {
@@ -1825,7 +1897,7 @@ $(document).ready(function () {
 		}
 	}
 
-	function getAlarms(perPage, pageNumber, displayTableId) {
+	function getAlarms(perPage, pageNumber, displayTableId, fromDate, toDate) {
 		$.ajax({
 			url: './includes/sqlSingleDevice.php',
 			type: 'POST',
@@ -1833,6 +1905,8 @@ $(document).ready(function () {
 				alarmsPerPage: perPage,
 				offset: perPage * (pageNumber - 1),
 				deviceId: deviceId,
+				fromDate: fromDate,
+				toDate: toDate,
 				function: 'loadTable_alarms'
 			},
 			beforeSend: function () {
