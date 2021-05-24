@@ -34,6 +34,10 @@ $pages = array(
 );
 
 $adminPages = array(
+	array(	'title'	=> 'Messages',
+			'url' 	=> 'messagehistory.php',
+			'icon'	=> '<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clip-rule="evenodd"></path></svg>'),
+
 	array(	'title'	=> 'Edit groups',
 			'url' 	=> 'managegroups.php',
 			'icon'	=> '<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path></svg>'),
@@ -235,7 +239,19 @@ if ($resultCheck > 0) {
 
 					<!-- Admin pages -->
 					<div class="flex flex-col">
-						<?php 
+						<?php
+						if ($_SESSION['groupName'] == 'ELECTROMECH' && $_SESSION['email'] == 'electromech@yeltech.com') {
+							forEach ($adminPages as $adminPage) {
+								if ($adminPage['title'] == 'Messages') {
+									echo '
+									<a href="'.$adminPage['url'].'" class="flex flex-col justify-center items-center my-4 space-y-2 '.(($adminPage['url'] == $activeUrl)?'text-red-600':'text-gray-400 hover:text-gray-800').'" title="'.$adminPage['title'].'">
+										'.$adminPage['icon'].'
+										<p class="text-sm">'.$adminPage['title'].'</p>
+									</a>
+									';
+								}
+							}
+						}
 						if ($_SESSION['roleId'] == 3 || $_SESSION['roleId'] == 4) {
 							echo '';
 						} elseif ($_SESSION['roleId'] == 1 || $_SESSION['roleId'] == 2) {
@@ -290,10 +306,25 @@ if ($resultCheck > 0) {
 
 					<!-- Admin pages -->
 					<div class="flex flex-col">
-						<?php 
+						<?php
+						
+						if ($_SESSION['groupName'] == 'ELECTROMECH' && $_SESSION['email'] == 'electromech@yeltech.com') {
+							forEach ($adminPages as $adminPage) {
+								if ($adminPage['title'] == 'Messages') {
+									echo '
+									<a href="'.$adminPage['url'].'" class="flex flex-col justify-center items-center my-4 space-y-2 '.(($adminPage['url'] == $activeUrl)?'text-red-600':'text-gray-400 hover:text-gray-800').'" title="'.$adminPage['title'].'">
+										'.$adminPage['icon'].'
+										<p class="text-sm">'.$adminPage['title'].'</p>
+									</a>
+									';
+								}
+							}
+						}
+
 						if ($_SESSION['roleId'] == 3 || $_SESSION['roleId'] == 4) {
 							echo '';
 						} elseif ($_SESSION['roleId'] == 1 || $_SESSION['roleId'] == 2) {
+							// admin pages generated here
 							forEach ($adminPages as $adminPage) {
 								echo '
 								<a href="'.$adminPage['url'].'" class="flex flex-col justify-center items-center my-4 space-y-2 '.(($adminPage['url'] == $activeUrl)?'text-red-600':'text-gray-400 hover:text-gray-800').'" title="'.$adminPage['title'].'">
