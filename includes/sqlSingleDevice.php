@@ -491,6 +491,18 @@ switch ($_POST['function']) {
 		$measurementsPerPage = $_POST['measurementsPerPage'];
 		$offset = $_POST['offset'];
 		$deviceId = $_POST['deviceId'];
+		
+		$fromDate = $_POST['fromDate'];
+		$toDate = $_POST['toDate'];
+
+		if ($fromDate != null && $toDate != null) {
+			$between = "AND (measurements.measurementTime BETWEEN '$fromDate' AND '$toDate')";
+		} else {
+			$between = '';
+		}
+
+		// echo $between;
+		
 		$return = array();
 		
 		$sql = "
@@ -498,7 +510,7 @@ switch ($_POST['function']) {
 		FROM measurements
 		LEFT JOIN channels ON measurements.channelId = channels.channelId
 		LEFT JOIN units ON (measurements.deviceId = channels.deviceId AND channels.unitId = units.unitId)
-		WHERE measurements.deviceId = $deviceId
+		WHERE measurements.deviceId = $deviceId $between
 		ORDER BY measurementTime DESC, measurements.channelId ASC
 		LIMIT $measurementsPerPage OFFSET $offset
 		";
@@ -513,7 +525,7 @@ switch ($_POST['function']) {
 		
 		
 		$sqlTotal = "
-		SELECT COUNT(*) as totalRows FROM measurements WHERE measurements.deviceId = $deviceId
+		SELECT COUNT(*) as totalRows FROM measurements WHERE measurements.deviceId = $deviceId $between
 		";
 		
 		$result = mysqli_query($conn, $sqlTotal);

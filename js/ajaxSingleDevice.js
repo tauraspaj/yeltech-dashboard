@@ -1675,12 +1675,26 @@ $(document).ready(function () {
 			<!-- Card -->
 			<div class="col-span-2 lg:col-span-1 card-wrapper">
 				<!-- Card header -->
-				<div class="card-header">
+				<div class="card-header relative">
 					<div class="card-header-icon bg-lightblue-100 text-lightblue-500">
 						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5 4a3 3 0 00-3 3v6a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3H5zm-1 9v-1h5v2H5a1 1 0 01-1-1zm7 1h4a1 1 0 001-1v-1h-5v2zm0-4h5V8h-5v2zM9 8H4v2h5V8z" clip-rule="evenodd"></path></svg>
 					</div>
 					<div class="card-header-title text-lightblue-800 bg-lightblue-100">
 						Measurements log
+					</div>
+
+					<div id="logCal" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800 absolute right-4">
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+					</div>
+					<div id="logCalSelector" class="w-48 bg-white shadow rounded z-10 absolute top-10 right-4 border flex flex-col p-2 hidden">
+						<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">From</p>
+						<input id="logFrom" type="date" class="bg-white text-gray-700">
+						<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">To</p>
+						<input id="logTo" type="date" class="bg-white text-gray-700">
+						<div class="flex justify-center items-center">
+							<button id="goLogCal" class="bg-gray-50 border rounded w-16 mx-auto mt-2 hover:bg-gray-100">Go</button>
+							<button id="resetLogCal" class="bg-gray-50 border rounded w-16 mx-auto mt-2 hover:bg-gray-100">Reset</button>
+						</div>
 					</div>
 				</div>
 
@@ -1720,18 +1734,41 @@ $(document).ready(function () {
 
 		var measurementPageNumber = 1;
 		var measurementsPerPage = 10;
+
+		var measurementsFromDate = null;
+		var measurementsToDate = null;
 	
 		// Show measurements on load
-		getMeasurementsLog(measurementsPerPage, measurementPageNumber, 'table_measurements');
+		getMeasurementsLog(measurementsPerPage, measurementPageNumber, 'table_measurements', measurementsFromDate, measurementsToDate);
 	
 		$('#next_measurements').on('click', function () {
 			measurementPageNumber += 1;
-			getMeasurementsLog(measurementsPerPage, measurementPageNumber, 'table_measurements');
+			getMeasurementsLog(measurementsPerPage, measurementPageNumber, 'table_measurements', measurementsFromDate, measurementsToDate);
 		})
 	
 		$('#previous_measurements').on('click', function () {
 			measurementPageNumber -= 1;
-			getMeasurementsLog(measurementsPerPage, measurementPageNumber, 'table_measurements');
+			getMeasurementsLog(measurementsPerPage, measurementPageNumber, 'table_measurements', measurementsFromDate, measurementsToDate);
+		})
+
+		$('#logCal').on('click', function() {
+			$('#logCalSelector').toggleClass('hidden');
+		})
+		$('#goLogCal').on('click', function() {
+			measurementPageNumber = 1;
+			measurementsFromDate = $('#logFrom').val();
+			measurementsToDate = $('#logTo').val();
+			getMeasurementsLog(measurementsPerPage, measurementPageNumber, 'table_measurements', measurementsFromDate, measurementsToDate);
+			$('#logCalSelector').addClass('hidden');
+		})
+
+		$('#resetLogCal').on('click', function() {
+			measurementPageNumber = 1;
+			measurementsFromDate = null;
+			measurementsToDate = null;
+			getMeasurementsLog(measurementsPerPage, measurementPageNumber, 'table_measurements', measurementsFromDate, measurementsToDate);
+			$('#logCalSelector').addClass('hidden');
+			$('#logFrom, #logTo').val("");
 		})
 	}
 	
@@ -2132,7 +2169,7 @@ $(document).ready(function () {
 		})
 	}
 	
-	function getMeasurementsLog(perPage, pageNumber, displayTableId) {
+	function getMeasurementsLog(perPage, pageNumber, displayTableId, fromDate, toDate) {
 		$.ajax({
 			url: './includes/sqlSingleDevice.php',
 			type: 'POST',
@@ -2140,12 +2177,15 @@ $(document).ready(function () {
 				measurementsPerPage: perPage,
                 offset: perPage * (pageNumber - 1),
                 deviceId: deviceId,
+				fromDate: fromDate,
+				toDate: toDate,
 				function: 'loadTable_measurements'
 			},
 			beforeSend: function () {
 				$('#loadingOverlay_measurements').show();
 			},
 			success: function (data) {
+				console.log(data);
 				$('#loadingOverlay_measurements').hide();
 				var measurements = JSON.parse(data);
 				
