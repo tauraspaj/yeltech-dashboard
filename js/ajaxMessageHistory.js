@@ -108,9 +108,9 @@ $(document).ready(function () {
 				function: 'sendMessage'
 			},
 			success: function (data) {
-				console.log(data);
 				$('#sendDestination').val("");
 				$('#sendTextBody').val("");
+				alert('Message has been sent!');
 			}
 		})
 
