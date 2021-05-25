@@ -124,11 +124,7 @@ function addToTriggerHistory($conn, $triggerId) {
 
 
 // Plivo
-require 'vendor/autoload.php';
-use Plivo\RestClient;
-$auth_id = "";
-$auth_token = "";
-$client = new RestClient($auth_id, $auth_token);
+require 'plivo_auth.php';
 
 // Connect database
 require_once './../includes/dbh.inc.php';
