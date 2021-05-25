@@ -88,10 +88,6 @@ function generateEmail($conn, $triggerId, $reading) {
 	sendEmail($recipients, $subject, $emailBody);
 }
 
-require_once './../includes/dbh.inc.php';
-generateEmail($conn, 1, '23.4');
-exit();
-
 function addToTriggerHistory($conn, $triggerId) {
 	$sql = "
 	SELECT alarmTriggers.operator, alarmTriggers.thresholdValue, alarmTriggers.alarmDescription, alarmTriggers.deviceId, channels.channelName, units.unitName
@@ -122,13 +118,8 @@ function addToTriggerHistory($conn, $triggerId) {
 	mysqli_stmt_close($stmt);
 }
 
-
 // Plivo
-require 'vendor/autoload.php';
-use Plivo\RestClient;
-$auth_id = "";
-$auth_token = "";
-$client = new RestClient($auth_id, $auth_token);
+require 'plivo_auth.php';
 
 // Connect database
 require_once './../includes/dbh.inc.php';
