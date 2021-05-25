@@ -98,21 +98,25 @@ $(document).ready(function () {
 		var to = $('#sendDestination').val();
 		var textBody = $('#sendTextBody').val();
 
-		$.ajax({
-			url: './includes/sqlMessageHistory.php',
-			type: 'POST',
-			data: {
-				from: from,
-				to: to,
-				textBody: textBody,
-				function: 'sendMessage'
-			},
-			success: function (data) {
-				$('#sendDestination').val("");
-				$('#sendTextBody').val("");
-				alert('Message has been sent!');
-			}
-		})
+		if (to == '' || textBody == '') {
+			alert('All fields must be filled in!');
+		} else {
+			$.ajax({
+				url: './includes/sqlMessageHistory.php',
+				type: 'POST',
+				data: {
+					from: from,
+					to: to,
+					textBody: textBody,
+					function: 'sendMessage'
+				},
+				success: function (data) {
+					$('#sendDestination').val("");
+					$('#sendTextBody').val("");
+					alert('Message has been sent!');
+				}
+			})
+		}
 
 	})
 
