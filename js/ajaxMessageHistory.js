@@ -43,6 +43,7 @@ $(document).ready(function () {
                 msgPerPage: perPage,
 				offset: perPage * (pageNumber - 1),
                 searchPhone: searchPhone,
+				function: 'searchMessages'
             },
             success: function (data) {
                 var messages = JSON.parse(data);
@@ -90,6 +91,29 @@ $(document).ready(function () {
 	$('#previousMsgButton').on('click', function () {
 		msgPageNumber -= 1;
 		showMessages(msgPerPage, msgPageNumber);
+	})
+
+	$('#sendMessage').on('click', function() {
+		var from = $('#sendSource').find(':selected').attr('data-id');
+		var to = $('#sendDestination').val();
+		var textBody = $('#sendTextBody').val();
+
+		$.ajax({
+			url: './includes/sqlMessageHistory.php',
+			type: 'POST',
+			data: {
+				from: from,
+				to: to,
+				textBody: textBody,
+				function: 'sendMessage'
+			},
+			success: function (data) {
+				console.log(data);
+				$('#sendDestination').val("");
+				$('#sendTextBody').val("");
+			}
+		})
+
 	})
 
 })
