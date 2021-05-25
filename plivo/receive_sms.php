@@ -1,6 +1,5 @@
 <?php
 // Email sending functionality
-require './../mailer/phpmailer/PHPMailerAutoload.php';
 require './../mailer/mailer.php';
 function generateEmail($conn, $triggerId, $reading) {
 	$sql = "

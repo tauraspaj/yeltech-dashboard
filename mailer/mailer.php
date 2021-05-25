@@ -1,4 +1,5 @@
 <?php
+require 'phpmailer/PHPMailerAutoload.php';
 function sendEmail($recipients, $subject, $body) {
 	$mail = new PHPMailer; 
 	
