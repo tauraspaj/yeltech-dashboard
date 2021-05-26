@@ -77,7 +77,7 @@ function generateEmail($conn, $triggerId, $reading) {
 	Device: <b>$name1 $name2</b><br>
 	Alarm: <b>$alarmDescription</b><br><br>
 
-	Channel: <b>$channelName</b><br>
+	$channelName: <b>$reading $unitName</b><br>
 	Reading: <b>$reading $unitName</b><br>
 	Trigger: <b>$operator$thresholdValue $unitName</b><br>
 	Timestamp: <b>$timeCreated</b>
