@@ -16,6 +16,8 @@ function sendEmail($recipients, $subject, $body) {
 	// Add a recipient 
 	$mail->addAddress('alarm@yeltech.com', 'Yeltech Alarm');
 
+	$mail->addReplyTo('support@yeltech.com', 'Yeltech Support');
+
 	foreach ($recipients as $email) {
 		$mail->addBCC($email);
 	}
@@ -31,8 +33,7 @@ function sendEmail($recipients, $subject, $body) {
 	$bodyContent = $body;
 	$bodyContent .= '<br><br><br>Log into <a href="https://yelcloud.com/">YelCloud</a> to monitor your devices!<br>'; 
 	$bodyContent .= '<br><br>Many thanks,<br>Yeltech Team<br><br>'; 
-	$bodyContent .= '<sub>Do not respond to this message</sub><br>'; 
-	$bodyContent .= '<sub>If you have any questions, get in touch with us at <b>info@yeltech.com</b></sub>'; 
+	$bodyContent .= '<sub>If you have any questions, respond to this email or get in touch with us at support@yeltech.com</sub>'; 
 	$mail->Body    = $bodyContent; 
 	 
 	// Send email 
