@@ -7,7 +7,7 @@ include_once('header.php');
 <!-- Bottom right dashboard window -->
 <div class="flex-auto bg-gray-100 flex p-4 lg:p-8">
 	<!-- Site content -->
-	<div class="flex-auto grid grid-cols-1 lg:grid-cols-2 gap-4 auto-rows-min">
+	<div class="flex-auto grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8 auto-rows-min">
 
     <?php 
     if ($_SESSION['roleId'] == 1 || $_SESSION['roleId'] == 2) {
@@ -22,7 +22,7 @@ include_once('header.php');
                 </div>
             </div>
             <div class="flex-auto flex flex-col justify-center items-center bg-gray-50 rounded-b-xl">
-                <div class="max-w-sm w-full py-4">
+                <div class="max-w-sm w-full p-4">
                     <p class="form-field-title">Source number<span class="text-red-500">*</span></p>
                     <select id="sendSource" class="border border-gray-300">
                         <option data-id=""> - Infinite Server</option>
