@@ -54,13 +54,18 @@ $(document).ready(function () {
 
 				var outputTable = '';
 
+				
                 for (i = 0; i < messages.length - 1; i++) {
+					var dateDisplay = new Date( messages[i]['timeSent'] );
+					dateDisplay.setHours(dateDisplay.getHours() + 1);
+					dateDisplay = dateDisplay.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
+					
 					outputTable += `
 					<tr class="hover:bg-bluegray-100 border-b border-gray-200">
                         <td class="text-center py-2 px-4 text-sm text-lightblue-500 font-semibold whitespace-nowrap">`+messages[i]['fromNumber']+`</td>
                         <td class="text-center py-2 px-4 text-sm text-lightblue-500 font-semibold whitespace-nowrap">`+messages[i]['toNumber']+`</td>
                         <td class="text-left py-2 px-4 text-xs text-gray-600">`+messages[i]['textBody']+`</td>
-                        <td class="text-center py-2 px-4 text-sm text-gray-600 whitespace-nowrap">`+messages[i]['timeSent']+`</td>
+                        <td class="text-center py-2 px-4 text-sm text-gray-600 whitespace-nowrap">`+dateDisplay+`</td>
                         <td class="text-center py-2 px-4 text-sm text-gray-600">`+messages[i]['messageType']+`</td>
                     </tr>
 					`;
