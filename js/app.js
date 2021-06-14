@@ -51,10 +51,10 @@ $(document).ready(function () {
 				switch (data[i].type) {
 					case 'device':
 						output += `
-						<div id="select" data-type="device" data-id="`+data[i].id+`" class="border-t flex justify-start items-center text-lightblue-500 text-xs sm:text-sm space-x-2 py-4 px-2 hover:text-lightblue-600 hover:bg-gray-200 cursor-pointer font-medium">
+						<a href="./device.php?id=`+data[i].id+`" class="border-t flex justify-start items-center text-lightblue-500 text-xs sm:text-sm space-x-2 py-4 px-2 hover:text-lightblue-600 hover:bg-gray-200 cursor-pointer font-medium">
 							<svg class="w-4 h-4 flex-none" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13 7H7v6h6V7z"></path><path fill-rule="evenodd" d="M7 2a1 1 0 012 0v1h2V2a1 1 0 112 0v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2H2a1 1 0 110-2h1V9H2a1 1 0 010-2h1V5a2 2 0 012-2h2V2zM5 5h10v10H5V5z" clip-rule="evenodd"></path></svg>
 							<p>`+data[i].name+` `+alias+`</p>
-						</div>
+						</a>
 						`;
 						break;
 
@@ -104,15 +104,6 @@ $(document).ready(function () {
 		$('#searchResults').addClass('hidden');
 	})
 
-	$('#searchResults').delegate('#select', 'click', function() {
-		var type = $(this).attr('data-type');
-		var id = $(this).attr('data-id');
-
-		if (type == 'device') {
-			document.location.href = 'device.php?id='+id;
-		}
-	}) 
-
 	$(document).mouseup(function(e) {
 		var container = $('#searchResults');
 		if (!container.is(e.target) && container.has(e.target).length === 0) {
@@ -147,11 +138,6 @@ $(document).ready(function () {
 	$('#devicesNotification').on('mouseleave', function() {
 		$(this).addClass('hidden');
 		$('#notificationsButton').blur();
-	})
-
-	$('#devicesNotification > div').on('click', function() {
-		var id = $(this).attr('data-id');
-		document.location.href = 'device.php?id='+id;
 	})
 
 	// Edit profile modal
