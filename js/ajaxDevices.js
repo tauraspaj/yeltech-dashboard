@@ -142,10 +142,10 @@ $(document).ready(function () {
 					<tr class="`+rowFormat+` h-12">
 						<td class="text-left py-2 px-4 text-sm flex space-x-3 items-center">
 							`+ status +`
-							<div class=" flex flex-col justify-center">
-								<span id="select" data-id="`+ devices[i].deviceId + `" title="View device" class="font-semibold whitespace-nowrap text-lightblue-500 cursor-pointer hover:text-lightblue-600">`+ display1 + `</span>
+							<a href="./device.php?id=`+ devices[i].deviceId + `" class="flex flex-col justify-center">
+								<span title="View device" class="font-semibold whitespace-nowrap text-lightblue-500 cursor-pointer hover:text-lightblue-600">`+ display1 + `</span>
 								<span class="text-gray-400">`+ display2 + `</span>
-							</div>
+							</a>
 						</td>
 						<td class="text-center py-2 px-4 text-sm text-gray-600 whitespace-nowrap capitalize">`+ devices[i].groupName + `</td>
 						<td class="text-center py-2 px-4 text-sm text-gray-600 whitespace-nowrap">`+ location + `</td>
@@ -153,9 +153,11 @@ $(document).ready(function () {
 						<td class="text-center py-2 px-4 text-sm text-gray-600 whitespace-nowrap">`+ lastReading + `</td>
 						<td class="text-center py-2 px-4 text-sm text-gray-600 whitespace-nowrap">`+ alarm +`</td>
 						<td class="text-center px-8 md:px-12">
-							<button id="select" data-id="`+ devices[i].deviceId + `" class="focus:outline-none text-xs text-gray-600 uppercase bg-gray-50 border border-gray-300 rounded font-medium py-1 px-2 hover:bg-gray-200" title="View device">
-								View
-							</button>
+							<a href="./device.php?id=`+ devices[i].deviceId + `">
+								<button class="focus:outline-none text-xs text-gray-600 uppercase bg-gray-50 border border-gray-300 rounded font-medium py-1 px-2 hover:bg-gray-200" title="View device">
+									View
+								</button>
+							</a>
 						</td>
 					</tr>
 					`;
@@ -182,12 +184,6 @@ $(document).ready(function () {
 
 	// Show devices on load
 	showDevices(devicesPerPage, devicePageNumber);
-
-	// ! Start listening for clicks on any devices
-	devicesTable.delegate('#select', 'click', function () {
-		var id = $(this).attr('data-id');
-		document.location.href = 'device.php?id='+id;
-	})
 
 	// ! Listen to changes on product checkboxes
 	var products = $('#productsFilter').children().last().children().children();
