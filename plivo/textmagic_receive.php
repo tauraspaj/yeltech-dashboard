@@ -14,6 +14,7 @@ $to = '+'.$to;
 
 // The SMS text message which was received
 $textBody = $_POST["text"];
+$textBody = str_replace("\r", "\n", $textBody);
 // $textBody = "RTMU 2828\nALARM MESSAGE\nRail Temp\nRAIN START\n23.8 %";
 
 $messageuuid = $_POST["id"];
