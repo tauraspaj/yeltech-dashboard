@@ -1270,6 +1270,7 @@ $(document).ready(function () {
 				
 			if ( data.alarmTriggers != 'EMPTY') {
 				for (i = 0; i < data.alarmTriggers.length; i++) {
+					if (data.alarmTriggers[i].alarmDescription == null) { data.alarmTriggers[i].alarmDescription = '-'}
 					alarmTriggersDiv += `
 						<!-- Alarm -->
 						<div class="flex h-10 text-xs sm:text-sm text-gray-700 font-medium items-center sm:pl-4 lg:pl-0 2xl:pl-4 border bg-gray-100">
@@ -1343,7 +1344,7 @@ $(document).ready(function () {
 								<div class="flex space-x-2"><input type="radio" name="radio-desc" value="CRT(20)"><p>CRT(20)</p></div>
 								<div class="flex items-center space-x-2">
 									<input type="radio" name="radio-desc" value="Other">
-									<input id="other-desc" type="text" class="h-8 bg-white disabled:bg-gray-100" style="max-width: 12rem;" placeholder="Other..." disabled>
+									<input id="other-desc" type="text" class="h-8 bg-white disabled:bg-gray-100 px-2" style="max-width: 16rem;" placeholder="Other..." disabled>
 								</div>
 							</div>
 						</div>
@@ -1975,6 +1976,7 @@ $(document).ready(function () {
 					if (alarms['alarmHistory'][i]['unit'] == null) {alarms['alarmHistory'][i]['unit'] = '';}
 
 					if (alarms['alarmHistory'][i]['type'] == 'triggeredHistory') {
+						if (alarms['alarmHistory'][i]['msg3'] == null) { alarms['alarmHistory'][i]['msg3'] = ''}
 						alarmDisplay = '<span class="font-semibold underline">'+alarms['alarmHistory'][i]['msg3'] + '</span> TRIGGERED BY ('+alarms['alarmHistory'][i]['msg1'] + ' ' + alarms['alarmHistory'][i]['msg2'] + ' ' + alarms['alarmHistory'][i]['unit'] + ')';
 					} else if ( alarms['alarmHistory'][i]['type'] == 'smsAlarm' ) {
 						alarmDisplay = alarms['alarmHistory'][i]['msg1'] + ' ' + alarms['alarmHistory'][i]['msg2'] + ' ' +  alarms['alarmHistory'][i]['unit'];
