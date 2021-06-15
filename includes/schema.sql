@@ -10,8 +10,20 @@ CREATE TABLE messages (
     textBody VARCHAR(1024) NOT NULL,
     messageType VARCHAR(64) NOT NULL,
 	timeSent DATETIME DEFAULT CURRENT_TIMESTAMP,
+    messageuuid VARCHAR(128) UNIQUE,
     PRIMARY KEY (messageId)
 ) ENGINE=InnoDB;
+
+
+CREATE TABLE pendingMessages (
+	pendingMessageId INT UNSIGNED AUTO_INCREMENT NOT NULL,
+    fromNumber VARCHAR(64) NOT NULL,
+    toNumber VARCHAR(64) NOT NULL,
+    textBody VARCHAR(1024) NOT NULL,
+    timeSent DATETIME DEFAULT CURRENT_TIMESTAMP,
+    messageuuid VARCHAR(128) NOT NULL UNIQUE,
+	PRIMARY KEY (pendingMessageId)
+) ENGINE=InnoDB; 
 
 
 CREATE TABLE roles (
