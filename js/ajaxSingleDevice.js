@@ -949,7 +949,7 @@ $(document).ready(function () {
 							data.lastCalibration = $.trim($('#modal-lastCal').val());
 							data.nextCalibrationDue = $.trim($('#modal-nextCal').val());
 							displayMaintainCard();
-
+							toggleControlPanelModal();
 							alert('Updated successfully!');
 						}
 						if (response.status == 'Error') {
@@ -966,7 +966,7 @@ $(document).ready(function () {
 							data.latitude = $.trim($('#modal-latitude').val());
 							data.longitude = $.trim($('#modal-longitude').val());
 							displayCustomCard();
-
+							toggleControlPanelModal();
 							// Update map
 							if (data.latitude == null || data.latitude == '' || data.longitude == null || data.longitude == '') {
 								$('#mapCard').hide();
