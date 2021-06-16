@@ -36,7 +36,6 @@ if ($function == 'checkIfExists') {
     if (mysqli_stmt_affected_rows($stmt) > 0) {
         $newDeviceId = mysqli_insert_id($conn);
     }
-    // echo $newDeviceId;
 
     // Only create subscriptions and channels if device has been successfully created
     if ($newDeviceId != '') {
