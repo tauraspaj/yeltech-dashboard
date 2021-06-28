@@ -8,20 +8,18 @@ require 'plivo_auth.php';
 
 // Sender's phone numer
 $from = $_REQUEST["From"];
-// $from = '999999999';
 $from = '+'.$from;
 
 // Receiver's phone number - Plivo number
 $to = $_REQUEST["To"];
-// $to = '447716494800';
 $to = '+'.$to;
 
 // The SMS text message which was received
 $textBody = $_REQUEST["Text"];
-// $textBody = "RTMU 2828\nALARM MESSAGE\nRail Temp\nRAIN START\n23.8 %";
+$textBody = str_replace("\r", "\n", $textBody);
 
+// Message UUID
 $messageuuid = $_REQUEST["MessageUUID"];
-// $messageuuid = "332cd187-c84f-11eb-bdf7-2255312422434s3d21d1s1716";
 
 // Date of the message
 $timeSent = date('Y-m-d H:i:s');

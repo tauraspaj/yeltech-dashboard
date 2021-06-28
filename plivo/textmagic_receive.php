@@ -15,10 +15,8 @@ $to = '+'.$to;
 // The SMS text message which was received
 $textBody = $_POST["text"];
 $textBody = str_replace("\r", "\n", $textBody);
-// $textBody = "RTMU 2828\nALARM MESSAGE\nRail Temp\nRAIN START\n23.8 %";
 
 $messageuuid = $_POST["id"];
-// $messageuuid = "332cd187-c84f-11eb-bdf7-2255312422434s3d21d1s1716";
 
 // Date of the message
 $timeSent = date('Y-m-d H:i:s');
