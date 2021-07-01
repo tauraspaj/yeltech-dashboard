@@ -545,7 +545,7 @@ switch ($_POST['function']) {
 		$return = array();
 		$deviceId = $_POST['deviceId'];
 		$sql = "
-		SELECT devices.deviceId, devices.groupId, devices.deviceName, devices.deviceStatus, devices.deviceAlias, devices.customLocation, devices.devicePhone, devices.createdAt, devices.lastCalibration, devices.nextCalibrationDue, devices.latitude, devices.longitude, deviceTypes.deviceTypeName, products.productName, subscriptions.subStart, subscriptions.subFinish, `groups`.groupName
+		SELECT devices.deviceId, devices.groupId, devices.deviceName, devices.deviceStatus, devices.deviceAlias, devices.customLocation, devices.devicePhone, devices.createdAt, devices.createdBy, devices.lastCalibration, devices.nextCalibrationDue, devices.latitude, devices.longitude, devices.deviceTypeId, deviceTypes.deviceTypeName, devices.productId, products.productName, subscriptions.subStart, subscriptions.subFinish, `groups`.groupName
 		FROM devices
 		LEFT JOIN deviceTypes ON devices.deviceTypeId = deviceTypes.deviceTypeId
 		LEFT JOIN products ON devices.productId = products.productId
@@ -560,9 +560,11 @@ switch ($_POST['function']) {
 			while ($row = mysqli_fetch_assoc($result)) {
 				$deviceChannels = array();
 				$sql2 = "
-				SELECT channels.channelId, channels.channelName
+				SELECT channels.channelId, channels.channelName, channels.channelType, units.unitName
 				FROM channels
+				LEFT JOIN units ON channels.unitId = units.unitId
 				WHERE channels.deviceId = $deviceId
+				ORDER BY channelId
 				";
 				$result2 = mysqli_query($conn, $sql2);
 				if ( mysqli_num_rows($result2) > 0 ) {
@@ -574,7 +576,7 @@ switch ($_POST['function']) {
 				echo json_encode($row);
 			}
 		}
-		exit();
+		break;
 	// ! End of device data
 	
 	// ! Update device status
@@ -697,6 +699,128 @@ switch ($_POST['function']) {
 		echo $_SESSION['roleId'];
 		break;
 	// ! End of session role id
+
+	// ! Return all registered units
+	case 'getUnits':
+		$sql = "
+		SELECT unitId, unitName FROM units
+		";
+		$result = mysqli_query($conn, $sql);
+		$return = array();
+		if ( mysqli_num_rows($result) > 0 ) {
+			while ($row = mysqli_fetch_assoc($result)) {
+				$return[] = $row;
+			}
+		}
+		echo json_encode($return);
+		break;
+	// ! End of units
+
+	// ! Delete channel
+	case 'deleteChannel':
+		$channelId = $_POST['channelId'];
+		$sql = "DELETE FROM channels WHERE channelId = $channelId;";
+		mysqli_query($conn, $sql);
+		echo 'This channel has been deleted';
+		break;
+	// ! End of delete channel
+
+	// ! Create channel
+	case 'createChannel':
+		$deviceId = $_POST['deviceId'];
+		$channelType = $_POST['channelType'];
+		$channelName = $_POST['channelName'];
+		$unitId = $_POST['unitId'];
+
+		if ($channelType == 'DI') {
+			$unitId = null;
+		}
+
+		if ($channelType == null) {
+			$response['status'] = '422';
+			$response['message'] = 'Channel type cannot be empty!';
+			exit();
+		}
+
+		if ($channelName == '') {
+			$response['status'] = '422';
+			$response['message'] = 'Invalid channel name';
+			exit();
+		}	
+
+		$sql = "INSERT INTO channels (channelName, unitId, deviceId, channelType) VALUES (?, ?, ?, ?);";
+		$stmt = mysqli_stmt_init($conn);
+		mysqli_stmt_prepare($stmt, $sql);
+		mysqli_stmt_bind_param($stmt, "ssss", $channelName, $unitId, $deviceId, $channelType);
+		if (mysqli_stmt_execute($stmt)) {
+			$response['status'] = 200;
+			$response['message'] = 'Channel added succesfully!';
+		} else {
+			$response['status'] = 500;
+			$response['message'] = 'Something went wrong!';
+		}
+        mysqli_stmt_close($stmt);
+
+		echo json_encode($response);
+		break;
+	// ! End of create channel
+
+	// ! Update device data
+	case 'updateDeviceData':
+		$deviceId = $_POST['deviceId'];
+		$deviceName = $_POST['deviceName'];
+		$devicePhone = $_POST['devicePhone'];
+		$groupId = $_POST['groupId'];
+		$productId = $_POST['productId'];
+		$deviceTypeId = $_POST['deviceTypeId'];
+
+		$response = array();
+
+		if ( !preg_match('/^(\+)[0-9]+$/', $devicePhone) ) {
+			$response['status'] = 500;
+			$response['message'] = 'Invalid device number!';
+			echo json_encode($response);
+			exit();
+		}
+		
+		$sql = "UPDATE devices SET deviceName=?, devicePhone=?, groupId=?, productId=?, deviceTypeId=? WHERE deviceId=?";
+		$stmt = mysqli_stmt_init($conn);
+		mysqli_stmt_prepare($stmt, $sql);
+		mysqli_stmt_bind_param($stmt, "ssssss", $deviceName, $devicePhone, $groupId, $productId, $deviceTypeId, $deviceId);
+		mysqli_stmt_execute($stmt);
+		if (mysqli_stmt_error($stmt)) {
+			$response['status'] = 500;
+			$response['message'] = mysqli_stmt_error($stmt);
+		} else {
+			$response['status'] = 200;
+			$response['message'] = 'Device updated!';
+		}
+		
+		echo json_encode($response);
+		break;
+	// ! End of device data
+
+	// ! Delete device
+	case 'deleteDevice':
+		$sql = "
+		SELECT groupId FROM `groups` WHERE groupName = 'DELETED DEVICES'
+		";
+		$result = mysqli_query($conn, $sql);
+		if ( mysqli_num_rows($result) > 0 ) {
+			while ($row = mysqli_fetch_assoc($result)) {
+				$groupId = $row['groupId'];
+			}
+		} else {
+			$groupId = 1;
+		}
+
+		$deviceId = $_POST['deviceId'];
+		$sql = "
+		UPDATE devices SET groupId=$groupId WHERE deviceId=$deviceId
+		";
+		mysqli_query($conn, $sql);
+		break;
+	// ! End of delete device
 
 	default: break;
 		// 

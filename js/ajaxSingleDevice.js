@@ -111,6 +111,160 @@ $(document).ready(function () {
 		displayComponent(component);
 	})
 
+	function displayModalChannels(channels) {
+		// Displaying registered channels on the device
+		var channelsOutput = '';
+		for (i = 0; i < channels.length; i++) {
+			// Hide units if digital
+			var hiddenClass = '';
+			if (channels[i].unitName == null) {
+				var hiddenClass = 'hidden';
+			}
+			channelsOutput += `
+				<div class="flex space-x-2">
+					<div class="h-6 flex-auto flex bg-white rounded border border-gray-300 text-sm font-medium items-center">
+						<div class="w-8 text-center border-r border-gray-300 truncate">`+channels[i].channelType+`</div>
+						<div class="flex-auto pl-2 whitespace-nowrap truncate">`+channels[i].channelName+`</div>
+						<div class="w-8 text-center border-l border-gray-300 `+hiddenClass+`">`+channels[i].unitName+`</div>
+					</div>
+				</div>
+			`;
+		}
+		$('#deviceProfile-channels').html(channelsOutput);
+		getUnits().then( function(units) {
+			var unitsOutput = '';
+			for (j = 0; j < units.length; j++) {
+				unitsOutput += '<option data-id="'+units[j].unitId+'">'+units[j].unitName+'</option>';
+			}
+
+			$('#deviceProfile-channels').append(`
+				<div class="flex">
+					<div id="newChannelBtn" class="flex-none h-6 w-6 bg-green-200 hover:bg-green-400 text-green-500 hover:text-green-800 rounded-full flex justify-center items-center transition duration-200 cursor-pointer"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
+					</div>
+	
+					<div id="newChannelInfo" class="h-6 flex-auto flex bg-white rounded border border-gray-300 text-sm font-medium items-center hidden">
+						<select id="newChannel-type" class="w-10 sm:w-16 p-0 pl-1 h-full bg-white rounded-none rounded-l border-0 border-r border-gray-300 focus:ring-0 focus:border-gray-300 focus:bg-gray-100 transition-all truncate">
+								<option data-id="AI" selected>AI</option>
+								<option data-id="DI">DI</option>
+								<option data-id="COUNTER">COUNTER</option>
+						</select>
+
+						<input id="newChannel-name" class="flex-1 h-full bg-white border-none border border-gray-300 focus:ring-inset px-2" type="text">
+
+						<select id="newChannel-unit" class="w-10 sm:w-16 p-0 pl-1 h-full bg-white rounded-none border-0 border-l border-gray-300 focus:ring-0 focus:border-gray-300 focus:bg-gray-100 transition-all">
+							`+unitsOutput+`
+						</select>
+	
+						<div id="newChannel-save" class="w-6 h-full cursor-pointer flex justify-center items-center border-l border-gray-300 bg-green-200 hover:bg-green-400 text-green-500 hover:text-green-800 ">
+							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+						</div>
+
+						<div id="newChannel-close" class="w-6 h-full cursor-pointer flex justify-center items-center border-l border-gray-300 bg-red-200 hover:bg-red-400 text-red-500 hover:text-red-800">
+							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>
+						</div>
+					</div>
+				</div>
+			`);
+		});
+	}
+
+	
+	// Listen for cancel buttons
+	$('#deviceProfile-channels').delegate('#newChannelBtn', 'click', function() {
+		$('#newChannelInfo').removeClass('hidden');
+		$('#newChannelBtn').hide();
+	});
+	$('#deviceProfile-channels').delegate('#newChannel-close', 'click', function() {
+		$('#newChannelInfo').addClass('hidden');
+		$('#newChannelBtn').show();
+	});
+	
+	// Listen for channel delete
+	$('#deviceProfile-channels').delegate('#deleteChannel', 'click', function() {
+		var channelId = $(this).attr('data-id');
+		if(confirm("Are you sure you want to delete this channel?")) {
+			deleteChannel(channelId).then( function(response) {
+				alert(response)
+				getDeviceData().then( function(data) {
+					displayModalChannels(data.channels);
+				})
+			})
+		}
+	});
+
+	$('#deviceProfile-channels').delegate('#newChannel-type', 'change', function() {
+		if( $(this).val() == 'DI' ) {
+			$('#newChannel-unit').hide();
+		} else {
+			$('#newChannel-unit').show();
+		}
+	});
+
+	// Listen for new channel save
+	$('#deviceProfile-channels').delegate('#newChannel-save', 'click', function() {
+		var channelType = $('#newChannel-type').find(':selected').attr('data-id');
+		var channelName = $.trim($('#newChannel-name').val());
+		var unitId = $('#newChannel-unit').find(':selected').attr('data-id');
+		createChannel(channelType, channelName, unitId).then( function(response) {
+			if (response.status == 200) {
+				getDeviceData().then( function(data) {
+					displayModalChannels(data.channels);
+				})
+			} else {
+				alert(response.message);
+			}
+		})
+	});
+
+	$('#saveDevice').on('click', function() {
+		var deviceName = $.trim($('#deviceProfile-deviceName').val());
+		var devicePhone = $.trim($('#deviceProfile-devicePhone').val());
+		var groupId = $('#deviceProfile-group').find(':selected').attr('data-id');
+		var productId = $('#deviceProfile-product').find(':selected').attr('data-id');
+		var deviceTypeId = $('#deviceProfile-deviceType').find(':selected').attr('data-id');
+		updateDeviceData(deviceName, devicePhone, groupId, productId, deviceTypeId).then(function(response) {
+			if (response.status == 200) {
+				alert(response.message);
+				$('#editDevice-modal').addClass('hidden');
+				location.reload();
+			} else {
+				alert(response.message);
+			}
+		})
+	})
+
+	$('#deleteDevice').on('click', function() {
+		if( confirm('Are you sure you want to delete this device?') ) {
+			deleteDevice(deviceId);
+			document.location.href = 'devices.php';
+		}
+	})
+
+	// ! Edit device modal
+	$('#editDevice').on('click', function() {
+		$('#editDevice-modal').removeClass('hidden');
+		getDeviceData().then( function(data) {
+			// console.log(data);
+			$('#deviceProfile-id').html(data.deviceId);
+			$('#deviceProfile-deviceName').val(data.deviceName);
+			$('#deviceProfile-devicePhone').val(data.devicePhone);
+			$('#deviceProfile-group').val(data.groupName);
+			$('#deviceProfile-product').val(data.productName);
+			$('#deviceProfile-deviceType').val(data.deviceTypeName);
+			var createdAt = new Date( data.createdAt );
+			createdAt = createdAt.toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+			$('#deviceProfile-createdAt').html(createdAt);
+			$('#deviceProfile-createdBy').html(data.createdBy);
+			displayModalChannels(data.channels);
+		})
+		
+	})
+
+	// Listen for close buttons
+	$('#editDevice-modal').delegate('#close-device-modal, #cancelDevice', 'click', function() {
+		$('#editDevice-modal').addClass('hidden');
+	});
+
 	// ! ---------------------------------
 	// ! ***** Building components *****  |
 	// ! ---------------------------------
@@ -2236,6 +2390,22 @@ $(document).ready(function () {
 		})
 	}
 
+	function getUnits() {
+		return new Promise(function (resolve, reject) {
+			$.ajax({
+				url: './includes/sqlSingleDevice.php',
+				type: 'POST',
+				data: {
+					function: 'getUnits'
+				},
+				success: function (data) {
+					data = JSON.parse(data);
+					resolve(data);
+				}
+			})
+		})
+	}
+
 	function setupMap(longitude, latitude, mapId) {
 		mapboxgl.accessToken = 'pk.eyJ1IjoidGF1cmFzcCIsImEiOiJja2w2bzl6MmYyaXoyMm9xbzlld3dqaDJnIn0.dJGV_jlSPX-p51ZrQxaBew';
 		var map = new mapboxgl.Map({
@@ -2319,6 +2489,77 @@ $(document).ready(function () {
 					resolve(data);
 				}
 			})
+		})
+	}
+
+	function deleteChannel(channelId) {
+		return new Promise(function (resolve, reject) {
+			$.ajax({
+				url: './includes/sqlSingleDevice.php',
+				type: 'POST',
+				data: {
+					channelId: channelId,
+					function: 'deleteChannel'
+				},
+				success: function (data) {
+					resolve(data);
+				}
+			})
+		})
+	}
+
+	function createChannel(channelType, channelName, unitId) {
+		return new Promise(function (resolve, reject) {
+			$.ajax({
+				url: './includes/sqlSingleDevice.php',
+				type: 'POST',
+				data: {
+					deviceId: deviceId,
+					channelType: channelType,
+					channelName: channelName,
+					unitId: unitId,
+					function: 'createChannel'
+				},
+				success: function (data) {
+					data = JSON.parse(data);
+					resolve(data);
+				}
+			})
+		})
+	}
+
+	function updateDeviceData(deviceName, devicePhone, groupId, productId, deviceTypeId) {
+		return new Promise(function (resolve, reject) {
+			$.ajax({
+				url: './includes/sqlSingleDevice.php',
+				type: 'POST',
+				data: {
+					deviceId: deviceId,
+					deviceName: deviceName,
+					devicePhone: devicePhone,
+					groupId: groupId,
+					productId: productId,
+					deviceTypeId: deviceTypeId,
+					function: 'updateDeviceData'
+				},
+				success: function (data) {
+					data = JSON.parse(data);
+					resolve(data);
+				}
+			})
+		})
+	}
+
+	function deleteDevice(deviceId) {
+		$.ajax({
+			url: './includes/sqlSingleDevice.php',
+			type: 'POST',
+			data: {
+				deviceId: deviceId,
+				function: 'deleteDevice'
+			},
+			success: function (data) {
+			}
 		})
 	}
 })
