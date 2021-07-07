@@ -11,6 +11,7 @@ require_once './../includes/dbh.inc.php';
 
 // Includes
 require_once './rtmuMessage.php';
+require_once './ewbMessage.php';
 
 // Function to move message from pendingMessages table to messages
 function pendingToMessages($conn, $message) {
@@ -30,6 +31,19 @@ function pendingToMessages($conn, $message) {
         $msgType = 'SMS STATUS';
     } else {
         $msgType = 'SMS UNDEFINED';
+
+        // Send out an email once we spot an undefined message
+        require_once './../mailer/mailer.php';
+        $recipients = ['technical@yeltech.com'];
+        $subject = 'SMS UNDEFINED RECEIVED';
+        $emailBody = "
+        From: $from<br>
+        To: $to<br>
+        TextBody: $textBody<br><br>
+        Time sent: $timeSent<br>
+        Message Id: $messageuuid
+        ";
+        sendEmail($recipients, $subject, $emailBody);
     }
 
     $sqlAddToMessages = "INSERT INTO messages (fromNumber, toNumber, textBody, messageType, timeSent, messageuuid) VALUES (?, ?, ?, ?, ?, ?);";
@@ -47,7 +61,7 @@ function pendingToMessages($conn, $message) {
 
 // Get all the messages into an array
 $sql = "
-    SELECT pendingMessageId, fromNumber, toNumber, textBody, messageuuid, timeSent FROM pendingMessages ORDER BY pendingMessageId ASC
+    SELECT pendingMessageId, fromNumber, toNumber, textBody, messageuuid, timeSent, device FROM pendingMessages ORDER BY pendingMessageId ASC
 ";
 $result = mysqli_query($conn, $sql);
 $allMessages = array();
@@ -64,7 +78,9 @@ foreach ($allMessages as $message) {
     pendingToMessages($conn, $message);
 
     // Process the message
-    processRtmuMessage( $conn, $message );
+    if ( $message['device'] == 'RTMU' ) {
+        processRtmuMessage( $conn, $message );
+    }
 
     // Make a list of processed messages
     $idsList[] = $message['pendingMessageId'];
