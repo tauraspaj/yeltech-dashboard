@@ -33,11 +33,11 @@ function generateEmail($conn, $triggerId, $reading) {
 
 	$recipients = array();
 	$sql2 = "
-	SELECT alarmTriggers.deviceId, alarmRecipients.userId, users.email
+	SELECT alarmTriggers.deviceId, alarmRecipients.userId, users.email, sendingType.sendingType
 	FROM alarmTriggers
 	LEFT JOIN alarmRecipients ON alarmTriggers.deviceId = alarmRecipients.deviceId
 	LEFT JOIN users ON alarmRecipients.userId = users.userId
-	WHERE alarmTriggers.triggerId = $triggerId;
+	WHERE alarmTriggers.triggerId = $triggerId AND sendingType.sendingType = 'EMAIL';
 	";
 	$result2 = mysqli_query($conn, $sql2);
 	if ( mysqli_num_rows($result2) > 0 ) {
@@ -78,7 +78,6 @@ function generateEmail($conn, $triggerId, $reading) {
 	Alarm: <b>$alarmDescription</b><br><br>
 
 	$channelName: <b>$reading $unitName</b><br>
-	Reading: <b>$reading $unitName</b><br>
 	Trigger: <b>$operator$thresholdValue $unitName</b><br>
 	Timestamp: <b>$timeCreated</b>
 	$location
