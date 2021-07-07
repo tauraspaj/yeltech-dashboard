@@ -37,6 +37,7 @@ function generateEmail($conn, $triggerId, $reading) {
 	FROM alarmTriggers
 	LEFT JOIN alarmRecipients ON alarmTriggers.deviceId = alarmRecipients.deviceId
 	LEFT JOIN users ON alarmRecipients.userId = users.userId
+	LEFT JOIN sendingType ON sendingType.sendingId = users.sendingId
 	WHERE alarmTriggers.triggerId = $triggerId AND sendingType.sendingType = 'EMAIL';
 	";
 	$result2 = mysqli_query($conn, $sql2);
