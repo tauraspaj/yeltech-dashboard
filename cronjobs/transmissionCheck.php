@@ -45,6 +45,12 @@ if ( mysqli_num_rows($result) > 0 ) {
                     echo '<br>';
                 }
             }
+        } else {
+            // In case the device is turned on and is not transmitting...
+            $sql = "
+            UPDATE devices SET deviceStatus = '0' WHERE deviceId = $deviceId
+            ";
+            mysqli_query($conn, $sql);
         }
     }
 }
