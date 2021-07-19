@@ -38,6 +38,12 @@ $(document).ready(function () {
 			case 'rtmu_controlPanel':
 				display_rtmu_controlPanel();
 				break;
+			case 'ewb_dashboard':
+				display_ewb_dashboard();
+				break;
+			case 'ewbv2_dashboard':
+				display_ewbv2_dashboard();
+				break;
 			case 'alarms':
 				display_alarms();
 				break;
@@ -55,16 +61,21 @@ $(document).ready(function () {
 
 	// ! Data about each device
 	var subNavbar = {
-		rtmu: [
+		'rtmu': [
 			{ title: 'Dashboard', component:'rtmu_dashboard' },
 			{ title: 'Control Panel', component:'rtmu_controlPanel' },
 			{ title: 'Alarms', component:'alarms' },
 			{ title: 'Recipients', component:'recipients' },
 			{ title: 'Log', component:'log' }
 		],
-		ewb: [
-			{ title: 'EWB Dashboard', component:'ewb_dashboard' },
-			{ title: 'Device Info', component:'deviceData' },
+		'ewb': [
+			{ title: 'Dashboard', component:'ewb_dashboard' },
+			{ title: 'Control Panel', component:'rtmu_controlPanel' },
+			{ title: 'Recipients', component:'recipients' }
+		],
+		'ewb v2': [
+			{ title: 'Dashboard', component:'ewbv2_dashboard' },
+			{ title: 'Control Panel', component:'rtmu_controlPanel' },
 			{ title: 'Alarms', component:'alarms' },
 			{ title: 'Recipients', component:'recipients' },
 			{ title: 'Log', component:'log' }
@@ -1926,9 +1937,362 @@ $(document).ready(function () {
 			$('#logFrom, #logTo').val("");
 		})
 	}
+
+	// ! SHOW COMPONENT: EWB Dashboard
+	function display_ewb_dashboard() {
+		// * Put all cards together and generate final output
+		var output = `
+		<div class="grid grid-cols-1 gap-4 lg:grid-cols-5 lg:gap-6">
+			<!-- Left panel -->
+			<div id="channelDisplay" class="lg:col-span-2 space-y-4 lg:space-y-6">
+				
+			</div>
+
+			<!-- Right panel -->
+			<div class="lg:col-span-3">
+				<!-- Card -->
+				<div class="col-span-2 md:col-span-2 lg:col-span-2 card-wrapper bg-gray-50">
+					<div class="card-header relative">
+						<div class="card-header-icon bg-purple-100 text-purple-500">
+							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clip-rule="evenodd"></path></svg>
+						</div>
+						<div class="card-header-title text-purple-800 bg-purple-100">
+							Message history	
+						</div>
+
+						<div id="messageHistoryCal" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800 absolute right-4">
+							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path></svg>
+						</div>
+						<div id="messageHistoryCalSelector" class="w-48 bg-white shadow rounded z-10 absolute top-10 right-4 border flex flex-col p-2 hidden">
+							<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">From</p>
+							<input id="messageHistoryFrom" type="date" class="bg-white text-gray-700">
+							<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">To</p>
+							<input id="messageHistoryTo" type="date" class="bg-white text-gray-700">
+							<div class="flex justify-center items-center">
+								<button id="gomessageHistoryCal" class="bg-gray-50 border rounded w-16 mx-auto mt-2 hover:bg-gray-100">Go</button>
+								<button id="resetmessageHistoryCal" class="bg-gray-50 border rounded w-16 mx-auto mt-2 hover:bg-gray-100">Reset</button>
+							</div>
+						</div>
+					</div>
+
+					<!-- Table -->
+					<div id="messageHistoryCardBody" class="flex-auto py-2 px-4">
+						<div class="flex overflow-x-auto">
+							<table class="table-fixed min-w-full">
+								<thead class="uppercase text-xs bg-bluegray-50 border-b border-gray-200 text-bluegray-900">
+									<tr>
+										<th class="text-center w-1/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">From</th>
+										<th class="text-center w-1/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">To</th>
+										<th class="text-center w-6/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Message</th>
+										<th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Timestamp</th>
+										<th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Message Type</th>
+									</tr>
+								</thead>
+								<tbody id="table_messageHistory">
+									<!-- This area gets filled via PHP -->
+								</tbody>
+							</table>
+						</div>
+						<div id="loadingOverlay_messageHistory" class="flex flex-auto w-full block justify-center items-center space-x-2 uppercase font-semibold text-bluegray-800 py-8">
+							<svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+							<p>Loading...</p>
+						</div>
+
+						<div class="flex flex-col items-center justify-center py-4">
+							<div class="flex">
+								<button id="previous_messageHistory" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-200 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Previous</button>
+								<button id="next_messageHistory" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-200 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Next</button>
+							</div>
+							<p class="mt-4 text-xs font-semibold">Showing <span id="range_messageHistory"></span> of <span id="total_messageHistory"></span></p>
+						</div>
+					</div>
+				</div>
+				<!-- End of card-->
+			</div>	
+
+			<!-- End of card-->
+		</div>
+		`;
+		// * Update site content once its generated
+		siteContent.html(output);
+		// Update left side with device status and channels
+		getEWBChannels().then( function(channelData) {
+			channelDisplay = '';
+			getDeviceData().then( function(deviceData) {
+				status = deviceData.deviceStatus
+				
+				if (status == 1) {
+					channelDisplay += `
+					<!-- Card -->
+					<div class="col-span-1">
+						<div class="bg-green-50 shadow-md rounded-xl h-24 flex justify-center items-center relative overflow-hidden">
+							<div class="text-green-300 opacity-40 transform left-0 -rotate-12 ml-4 absolute overflow-hidden">
+								<svg class="w-44 h-44" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.05 3.636a1 1 0 010 1.414 7 7 0 000 9.9 1 1 0 11-1.414 1.414 9 9 0 010-12.728 1 1 0 011.414 0zm9.9 0a1 1 0 011.414 0 9 9 0 010 12.728 1 1 0 11-1.414-1.414 7 7 0 000-9.9 1 1 0 010-1.414zM7.879 6.464a1 1 0 010 1.414 3 3 0 000 4.243 1 1 0 11-1.415 1.414 5 5 0 010-7.07 1 1 0 011.415 0zm4.242 0a1 1 0 011.415 0 5 5 0 010 7.072 1 1 0 01-1.415-1.415 3 3 0 000-4.242 1 1 0 010-1.415zM10 9a1 1 0 011 1v.01a1 1 0 11-2 0V10a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
+							</div>
+							<div class="z-10 text-center">
+								<p class="font-semibold text-sm tracking-wider text-green-800">STATUS</p>
+								<p class="font-bold text-3xl text-green-900">ONLINE</p>
+							</div>
+						</div>
+					</div>
+					<!-- End of card -->
+					`
+				} else {
+					channelDisplay += `
+					<!-- Card -->
+					<div class="col-span-1">
+						<div class="bg-red-50 shadow-md rounded-xl h-24 flex justify-center items-center relative overflow-hidden">
+							<div class="text-red-300 opacity-40 transform left-0 -rotate-12 ml-4 absolute overflow-hidden">
+								<svg class="w-44 h-44" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M3.707 2.293a1 1 0 00-1.414 1.414l6.921 6.922c.05.062.105.118.168.167l6.91 6.911a1 1 0 001.415-1.414l-.675-.675a9.001 9.001 0 00-.668-11.982A1 1 0 1014.95 5.05a7.002 7.002 0 01.657 9.143l-1.435-1.435a5.002 5.002 0 00-.636-6.294A1 1 0 0012.12 7.88c.924.923 1.12 2.3.587 3.415l-1.992-1.992a.922.922 0 00-.018-.018l-6.99-6.991zM3.238 8.187a1 1 0 00-1.933-.516c-.8 3-.025 6.336 2.331 8.693a1 1 0 001.414-1.415 6.997 6.997 0 01-1.812-6.762zM7.4 11.5a1 1 0 10-1.73 1c.214.371.48.72.795 1.035a1 1 0 001.414-1.414c-.191-.191-.35-.4-.478-.622z"></path></svg>
+							</div>
+							<div class="z-10 text-center">
+								<p class="font-semibold text-sm tracking-wider text-red-800">STATUS</p>
+								<p class="font-bold text-3xl text-red-900">OFFLINE</p>
+							</div>
+						</div>
+					</div>
+					<!-- End of card -->
+					`
+				}
+
+				// Display DI channel
+				if( channelData['DI'] != null ) {
+					var dateDisplay = new Date( channelData['DI']['smsAlarmTime'] );
+					dateDisplay = dateDisplay.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
+
+					// Extra processing for red warnings
+					redBorder = '';
+					redText = '';
+					defaultColor = 'lightblue'
+					if ( channelData['DI']['smsAlarmHeader'].toUpperCase() == 'FALLEN DOWN') {
+						redBorder = 'border border-red-400';
+						redText = 'text-red-600';
+						defaultColor = 'red';
+					}
+
+					channelDisplay += `
+					<!-- Card -->
+						<div class="col-span-1 card-wrapper bg-gray-50 `+redBorder+`">
+							<div class="card-header">
+								<div class="card-header-icon bg-`+defaultColor+`-100 text-`+defaultColor+`-500 lg:hidden xl:block">
+									<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+								</div>
+								<div class="card-header-title text-`+defaultColor+`-800 bg-`+defaultColor+`-100">
+									`+channelData['DI']['channelName']+`
+								</div>
+							</div>
+							<div class="flex flex-col justify-center items-center my-4">
+								<p class="text-2xl xl:text-3xl font-semibold text-gray-800 text-center uppercase whitespace-nowrap `+redText+`">`+channelData['DI']['smsAlarmHeader']+`<br>
+								<p class="text-xs text-gray-400 italic mt-4">`+dateDisplay+`</p>
+							</div>
+						</div>
+						<!-- End of card -->
+					`
+				} else {
+					channelDisplay += `
+						<!-- Card -->
+							<div class="col-span-1 card-wrapper bg-gray-50">
+								<div class="card-header">
+									<div class="card-header-icon bg-lightblue-100 text-lightblue-500 lg:hidden xl:block">
+										<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+									</div>
+									<div class="card-header-title text-lightblue-800 bg-lightblue-100">
+										EWB BOARD
+									</div>
+								</div>
+								<div class="flex flex-col justify-center items-center">
+									<p class="italic my-4">No alarms found...</p>
+								</div>
+							</div>
+							<!-- End of card -->
+						`
+				}
+
+				// Display AI channel
+				if( channelData['AI'] != null ) {
+					var dateDisplay = new Date( channelData['AI']['smsAlarmTime'] );
+					dateDisplay = dateDisplay.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
+
+					unitDisplay = '';
+					if (channelData['AI']['unitName'] != null) { 
+						unitDisplay = channelData['AI']['unitName'];
+					}
+
+					alarmReadingDisplay = '';
+					if (channelData['AI']['smsAlarmReading'] != null) { 
+						alarmReadingDisplay = channelData['AI']['smsAlarmReading'];
+					}
+
+					// Extra processing for red warnings
+					redBorder = '';
+					redText = '';
+					defaultColor = 'lightblue'
+					if ( channelData['AI']['smsAlarmHeader'].toUpperCase() == 'BOARD LIGHTS OUT' ||
+						channelData['AI']['smsAlarmHeader'].toUpperCase() == 'RECHARGE BATTERY'
+					) {
+						redBorder = 'border border-red-400';
+						redText = 'text-red-600';
+						defaultColor = 'red';
+					}
+
+					channelDisplay += `
+					<!-- Card -->
+						<div class="col-span-1 card-wrapper bg-gray-50 `+redBorder+`">
+							<div class="card-header">
+								<div class="card-header-icon bg-`+defaultColor+`-100 text-`+defaultColor+`-500 lg:hidden xl:block">
+									<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+								</div>
+								<div class="card-header-title text-`+defaultColor+`-800 bg-`+defaultColor+`-100">
+									VOLTAGE MONITOR
+								</div>
+							</div>
+							<div class="flex flex-col justify-center items-center my-4">
+								<p class="text-2xl xl:text-3xl font-semibold text-gray-800 text-center uppercase whitespace-nowrap `+redText+`">`+channelData['AI']['smsAlarmHeader']+`<br>
+								<span class="text-2xl font-medium lg:text-xl">`+alarmReadingDisplay+` `+unitDisplay+`</span></p>
+								<p class="text-xs text-gray-400 italic mt-4">`+dateDisplay+`</p>
+							</div>
+						</div>
+						<!-- End of card -->
+					`
+				} else {
+					channelDisplay += `
+						<!-- Card -->
+							<div class="col-span-1 card-wrapper bg-gray-50">
+								<div class="card-header">
+									<div class="card-header-icon bg-lightblue-100 text-lightblue-500 lg:hidden xl:block">
+										<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+									</div>
+									<div class="card-header-title text-lightblue-800 bg-lightblue-100">
+										VOLTAGE MONITOR
+									</div>
+								</div>
+								<div class="flex flex-col justify-center items-center">
+									<p class="italic my-4">No alarms found...</p>
+								</div>
+							</div>
+							<!-- End of card -->
+						`
+				}
+
+
+
+				for (i = 0; i < channelData.length; i++) {
+					if ( channelData[i]['reading'] != null ) {
+						var dateDisplay = new Date( channelData[i]['reading']['smsAlarmTime'] );
+						dateDisplay = dateDisplay.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
+						
+						unitDisplay = '';
+						if (channelData[i]['reading']['unitName'] != null) { 
+							unitDisplay = channelData[i]['reading']['unitName'];
+						}
+	
+						alarmReadingDisplay = '';
+						if (channelData[i]['reading']['smsAlarmReading'] != null) { 
+							alarmReadingDisplay = channelData[i]['reading']['smsAlarmReading'];
+						}
+	
+						// Extra processing for red warnings
+						redBorder = '';
+						redText = '';
+						defaultColor = 'lightblue'
+						if ( channelData[i]['reading']['smsAlarmHeader'].toUpperCase() == 'FALLEN DOWN' ||
+							channelData[i]['reading']['smsAlarmHeader'].toUpperCase() == 'BOARD LIGHTS OUT'	
+						) {
+							redBorder = 'border border-red-400';
+							redText = 'text-red-600';
+							defaultColor = 'red';
+						}
+	
+						channelDisplay += `
+						<!-- Card -->
+							<div class="col-span-1 card-wrapper bg-gray-50 `+redBorder+`">
+								<div class="card-header">
+									<div class="card-header-icon bg-`+defaultColor+`-100 text-`+defaultColor+`-500 lg:hidden xl:block">
+										<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+									</div>
+									<div class="card-header-title text-`+defaultColor+`-800 bg-`+defaultColor+`-100">
+										`+channelData[i]['channelName']+`
+									</div>
+								</div>
+								<div class="flex flex-col justify-center items-center my-4">
+									<p class="text-2xl xl:text-3xl font-semibold text-gray-800 text-center uppercase whitespace-nowrap `+redText+`">`+channelData[i]['reading']['smsAlarmHeader']+`<br>
+									<span class="text-2xl font-medium lg:text-xl">`+alarmReadingDisplay+` `+unitDisplay+`</span></p>
+									<p class="text-xs text-gray-400 italic mt-4">`+dateDisplay+`</p>
+								</div>
+							</div>
+							<!-- End of card -->
+						`
+					} else {
+						channelDisplay += `
+						<!-- Card -->
+							<div class="col-span-1 card-wrapper bg-gray-50">
+								<div class="card-header">
+									<div class="card-header-icon bg-lightblue-100 text-lightblue-500 lg:hidden xl:block">
+										<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+									</div>
+									<div class="card-header-title text-lightblue-800 bg-lightblue-100">
+										`+channelData[i]['channelName']+`
+									</div>
+								</div>
+								<div class="flex flex-col justify-center items-center">
+									<p class="italic my-4">No alarms found...</p>
+								</div>
+							</div>
+							<!-- End of card -->
+						`
+					}
+				}
+				$('#channelDisplay').html(channelDisplay);
+
+				// Display message history
+				//#region 
+				var messageHistoryPageNumber = 1;
+				var messageHistoryPerPage = 10;
+				var fromDate = null;
+				var toDate = null;
+				getMessageHistory(messageHistoryPerPage, messageHistoryPageNumber, 'table_messageHistory', fromDate, toDate);
+
+				// Alarm paging
+				$('#next_messageHistory').on('click', function () {
+					messageHistoryPageNumber += 1;
+					getMessageHistory(messageHistoryPerPage, messageHistoryPageNumber, 'table_messageHistory', fromDate, toDate);
+				})
+				$('#previous_messageHistory').on('click', function () {
+					messageHistoryPageNumber -= 1;
+					getMessageHistory(messageHistoryPerPage, messageHistoryPageNumber, 'table_messageHistory', fromDate, toDate);
+				})
+
+				$('#messageHistoryCal').on('click', function() {
+					$('#messageHistoryCalSelector').toggleClass('hidden');
+				})
+				$('#gomessageHistoryCal').on('click', function() {
+					alarmPageNumber = 1;
+					fromDate = $('#messageHistoryFrom').val();
+					toDate = $('#messageHistoryTo').val();
+					getMessageHistory(messageHistoryPerPage, messageHistoryPageNumber, 'table_messageHistory', fromDate, toDate);
+					$('#messageHistoryCalSelector').addClass('hidden');
+				})
+
+				$('#resetmessageHistoryCal').on('click', function() {
+					messageHistoryPageNumber = 1;
+					fromDate = null;
+					toDate = null;
+					getMessageHistory(messageHistoryPerPage, messageHistoryPageNumber, 'table_messageHistory', fromDate, toDate);
+					$('#messageHistoryCalSelector').addClass('hidden');
+					$('#messageHistoryFrom, #messageHistoryTo').val("");
+				})
+				//#endregion
+			})
+		})
+	}
+
+	// ! SHOW COMPONENT: EWB v2 Dashboard
+	function display_ewbv2_dashboard() {
+
+	}
 	
 	// ! Hide loaders on load
-    $('#loadingOverlay_measurements, #loadingOverlay_alarms').hide();
+    $('#loadingOverlay_measurements, #loadingOverlay_alarms, #loadingOverlay_messageHistory').hide();
 
 
 
@@ -2562,4 +2926,73 @@ $(document).ready(function () {
 			}
 		})
 	}
+
+	function getEWBChannels() {
+		return new Promise(function (resolve, reject) {
+			$.ajax({
+				url: './includes/sqlSingleDevice.php',
+				type: 'POST',
+				data: {
+					deviceId: deviceId,
+					function: 'getEWBChannels'
+				},
+				success: function (data) {
+					data = JSON.parse(data);
+					resolve(data);
+				}
+			})
+		})
+	}
+
+	function getMessageHistory(perPage, pageNumber, displayTableId, fromDate, toDate) {
+		$.ajax({
+			url: './includes/sqlSingleDevice.php',
+			type: 'POST',
+			data: {
+				messageHistoryPerPage: perPage,
+				offset: perPage * (pageNumber - 1),
+				deviceId: deviceId,
+				fromDate: fromDate,
+				toDate: toDate,
+				function: 'loadTable_messageHistory'
+			},
+			beforeSend: function () {
+				$('#loadingOverlay_messageHistory').show();
+			},
+			success: function (data) {
+				$('#loadingOverlay_messageHistory').hide();
+				var messageHistory = JSON.parse(data);
+				console.log(messageHistory);
+
+				totalCount = messageHistory['totalCount'];
+				returnedCount = messageHistory['messageHistory'].length;
+				pageControl(totalCount, returnedCount, perPage, pageNumber, 'messageHistory');
+
+				var outputTable = '';
+				for (i = 0; i < messageHistory['messageHistory'].length; i++) {
+					var alternatingBg = '';
+					if (i%2 == 0) {
+						alternatingBg = 'bg-gray-100';
+					} else {
+						alternatingBg = '';
+					}
+					var dateDisplay = new Date( messageHistory['messageHistory'][i]['timeSent']);
+					dateDisplay.setHours(dateDisplay.getHours() + 1);
+					dateDisplay = dateDisplay.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
+
+					outputTable += `
+					<tr class="border-b border-gray-200 h-10 `+ alternatingBg +`">
+						<td class="text-center py-2 px-4 text-sm text-lightblue-500 font-semibold whitespace-nowrap">`+messageHistory['messageHistory'][i]['fromNumber']+`</td>
+						<td class="text-center py-2 px-4 text-sm text-lightblue-500 font-semibold whitespace-nowrap">`+messageHistory['messageHistory'][i]['toNumber']+`</td>
+						<td class="text-left py-2 px-4 text-xs text-gray-600">`+messageHistory['messageHistory'][i]['textBody']+`</td>
+						<td class="text-center py-2 px-4 text-sm text-gray-600 whitespace-nowrap">`+dateDisplay+`</td>
+						<td class="text-center py-2 px-4 text-sm text-gray-600">`+messageHistory['messageHistory'][i]['messageType']+`</td>
+					</tr>
+					`;
+				}
+				$('#'+displayTableId).html(outputTable);
+			}
+		})
+	}
+	
 })

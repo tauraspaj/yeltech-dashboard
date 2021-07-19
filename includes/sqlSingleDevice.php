@@ -587,11 +587,15 @@ switch ($_POST['function']) {
 		$sql = "
 		UPDATE devices SET deviceStatus = $newStatus WHERE deviceId = $deviceId
 		";
-		if ( mysqli_query($conn, $sql) ) {
-			echo 'SUCCESS';
-		} else {
-			echo 'ERROR';
+		mysqli_query($conn, $sql);
+
+		if ($newStatus == 0) {
+			$sql = "
+				UPDATE alarmTriggers SET isTriggered = 0 WHERE deviceId = $deviceId AND isTriggered = 1;
+			";
+			mysqli_query($conn, $sql);
 		}
+
 		break;
 	// ! End of device status
 
@@ -821,6 +825,104 @@ switch ($_POST['function']) {
 		mysqli_query($conn, $sql);
 		break;
 	// ! End of delete device
+
+	// ! Update device data
+	case 'getEWBChannels':
+		$deviceId = $_POST['deviceId'];
+		$response = array();
+
+		// First find the status of the Digital (EWB Board) channel
+		$sql = "
+		SELECT smsAlarms.smsAlarmHeader, smsAlarms.smsAlarmTime, channels.channelName
+		FROM smsAlarms
+		LEFT JOIN channels on smsAlarms.channelId = channels.channelId
+		WHERE smsAlarms.deviceId = $deviceId AND channels.channelType='DI'
+		ORDER BY smsAlarmTime DESC
+		LIMIT 1;
+		";
+		$result = mysqli_query($conn, $sql);
+		if ( mysqli_num_rows($result) > 0 ) {
+			while ($row = mysqli_fetch_assoc($result)) {
+				$response['DI'] = $row;
+			}
+		} else {
+			$response['DI'] = null;
+		}
+
+		$sql2 = "
+		SELECT smsAlarms.smsAlarmHeader, smsAlarms.smsAlarmTime, smsAlarms.smsAlarmReading, channels.channelName, units.unitName
+		FROM smsAlarms
+		LEFT JOIN channels ON smsAlarms.channelId = channels.channelId
+		LEFT JOIN units ON channels.unitId = units.unitId
+		WHERE smsAlarms.deviceId = $deviceId AND channels.channelType='AI'
+		ORDER BY smsAlarmTime DESC
+		LIMIT 1;
+		";
+		$result2 = mysqli_query($conn, $sql2);
+		if ( mysqli_num_rows($result2) > 0 ) {
+			while ($row = mysqli_fetch_assoc($result2)) {
+				$response['AI'] = $row;
+			}
+		} else {
+			$response['AI'] = null;
+		}
+
+		echo json_encode($response);
+		break;
+	// ! End of EWB channel data
+
+	// ! Get EWB message history
+	case 'loadTable_messageHistory':
+		$messageHistoryPerPage = $_POST['messageHistoryPerPage'];
+		$offset = $_POST['offset'];
+		$deviceId = $_POST['deviceId'];
+		$fromDate = $_POST['fromDate'];
+		$toDate = $_POST['toDate'];
+
+		if ($fromDate != null && $toDate != null) {
+			$messageHistoryBetween = "AND (messages.timeSent BETWEEN '$fromDate' AND '$toDate')";
+		} else {
+			$messageHistoryBetween = '';
+		}
+
+		$return = array();
+		
+		$sql = "
+		SELECT messages.fromNumber, messages.toNumber, messages.textBody, messages.messageType, messages.timeSent
+		FROM messages
+		LEFT JOIN devices ON messages.fromNumber = devices.devicePhone
+		WHERE devices.deviceId = $deviceId $messageHistoryBetween
+		ORDER BY timeSent DESC
+		LIMIT $messageHistoryPerPage OFFSET $offset;
+		";
+		
+		$messageHistory = array();
+
+		$result = mysqli_query($conn, $sql);
+		if (mysqli_num_rows($result) > 0) {
+			while ($row = mysqli_fetch_assoc($result)) {
+				$messageHistory[] = $row;
+			}
+		}
+		$return['messageHistory'] = $messageHistory;
+		
+		$sqlTotalMessages = "
+			SELECT COUNT(*) as totalRows FROM messages
+			LEFT JOIN devices ON messages.fromNumber = devices.devicePhone
+			WHERE devices.deviceId = $deviceId $messageHistoryBetween
+		";
+		$result = mysqli_query($conn, $sqlTotalMessages);
+		if ( mysqli_num_rows($result) > 0 ) {
+			while ($row = mysqli_fetch_assoc($result)) {
+				$messageHistoryCount = $row['totalRows'];
+			}
+		}
+
+		$return['totalCount'] = $messageHistoryCount;
+		
+		echo json_encode($return);
+		break;
+	// ! End of EWB message history
 
 	default: break;
 		// 
