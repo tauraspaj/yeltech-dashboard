@@ -9,15 +9,16 @@ $from = $_POST["sender"];
 $from = '+'.$from;
 
 // Receiver's phone number - Plivo number
-$to = $_POST["receiver"];
+$to = $_POST["inNumber"];
 $to = '+'.$to;
 
 // The SMS text message which was received
-$textBody = $_POST["text"];
+$textBody = $_POST["content"];
 $textBody = str_replace("\r", "\n", $textBody);
 
 // Message iD
-$messageuuid = "TextMagic ".$_POST["id"];
+$messageuuid = 'TextLocal '.$_POST["msgId"];
+
 
 // Date of the message
 $timeSent = date('Y-m-d H:i:s');

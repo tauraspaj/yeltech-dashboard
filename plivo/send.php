@@ -9,7 +9,7 @@ function sendMessage($from, $to, $text) {
         [$to], #to
         $text #text
     );
-    print_r($response);
+    return $response;
 }
 
 ?>

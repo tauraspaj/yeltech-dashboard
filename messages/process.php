@@ -10,8 +10,7 @@
 require_once './../includes/dbh.inc.php';
 
 // Includes
-require_once './rtmuMessage.php';
-require_once './ewbMessage.php';
+require_once './bscMessage.php';
 
 // Function to move message from pendingMessages table to messages
 function pendingToMessages($conn, $message) {
@@ -55,13 +54,14 @@ function pendingToMessages($conn, $message) {
         echo("Bind error");
     }
     if(!mysqli_stmt_execute($stmtAddToMessages)) {
-        echo("Execute error");
+        printf("Error: %s.\n", mysqli_stmt_error($stmtAddToMessages));
     }
 }
 
+
 // Get all the messages into an array
 $sql = "
-    SELECT pendingMessageId, fromNumber, toNumber, textBody, messageuuid, timeSent, device FROM pendingMessages ORDER BY pendingMessageId ASC
+    SELECT pendingMessageId, fromNumber, toNumber, textBody, messageuuid, timeSent FROM pendingMessages ORDER BY pendingMessageId ASC
 ";
 $result = mysqli_query($conn, $sql);
 $allMessages = array();
@@ -77,10 +77,7 @@ foreach ($allMessages as $message) {
     // Move each message from pendingMessages table to messages table
     pendingToMessages($conn, $message);
 
-    // Process the message
-    if ( $message['device'] == 'RTMU' ) {
-        processRtmuMessage( $conn, $message );
-    }
+    processBSCmessage( $conn, $message );
 
     // Make a list of processed messages
     $idsList[] = $message['pendingMessageId'];
@@ -91,6 +88,6 @@ $idsList = implode(', ', $idsList);
 $sqlDelete = "
 DELETE FROM pendingMessages WHERE pendingMessageId IN ($idsList)
 ";
-mysqli_query($conn, $sqlDelete)
+mysqli_query($conn, $sqlDelete);
 
 ?>
