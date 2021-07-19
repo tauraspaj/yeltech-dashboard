@@ -270,7 +270,9 @@ $(document).ready(function () {
 	// Reset password func
 	$('#viewuser-buttons').delegate('#resetPassword', 'click', function () {
 		var userId = $(this).prop('data-id');
-		resetPassword(userId);
+		if (confirm("Are you sure you want to reset this user's password?")) {
+			resetPassword(userId);
+		}
 	})
 	
 	function showLatestUsers() {
