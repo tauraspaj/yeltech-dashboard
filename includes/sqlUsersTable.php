@@ -274,6 +274,20 @@ if ($function == 'showUsers') {
 	mysqli_stmt_close($stmt);
 
 	exit();
+} elseif ($function == 'resetPassword') {
+	$userId = $_POST['userId'];
+	$encryptedPwd = password_hash('Passw0rd', PASSWORD_DEFAULT);
+
+	$sql = "
+		UPDATE users SET pwd = '$encryptedPwd' WHERE userId = $userId;
+	";
+	if (mysqli_query($conn, $sql)) {
+		echo "Password has been reset to: 'Passw0rd'";
+	} else {
+		echo "Something went wrong!";
+	}
+	
+	exit();
 }
 
 ?>

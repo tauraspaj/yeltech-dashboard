@@ -197,6 +197,11 @@ include_once('header.php');
 		<!-- Buttons -->
 		<div id="viewuser-buttons" class="flex justify-end items-center mt-4 space-x-4">
 			<?php
+				// Super Admins and Yeltech Admins can reset password
+				if ($_SESSION['roleId'] == 1 || $_SESSION['roleId'] == 2) {
+					echo '<button id="resetPassword" class="h-10 px-1 border-b-2 italic border-transparent hover:border-lightblue-500 hover:text-black text-gray-500 transition-all">Reset Password</button>';
+				}
+
 				// Only admins can access delete button
 				if ($_SESSION['roleId'] == 1 || $_SESSION['roleId'] == 2 || $_SESSION['roleId'] == 3) {
 					echo '<button id="deleteUser" class="h-10 border-0 hover:border-0 px-4 rounded text-gray-800 hover:bg-red-500 hover:text-white transition-all focus:bg-red-500 focus:text-white">Delete</button>';

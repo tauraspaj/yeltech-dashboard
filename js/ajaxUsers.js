@@ -194,6 +194,21 @@ $(document).ready(function () {
 		})
 	}
 
+	function resetPassword(userId) {
+		$.ajax({
+			url: './includes/sqlUsersTable.php',
+			type: 'POST',
+			data: {
+				userId: userId,
+				function: 'resetPassword'
+			},
+			success: function (data) {
+				alert(data);
+				toggleModal('viewuser-modal');
+			}
+		})
+	}
+
 	function showUserProfile(user) {
 		if ($('#viewuser-modal').hasClass('hidden')) {
 			$('#viewuser-modal').removeClass('hidden');
@@ -228,6 +243,11 @@ $(document).ready(function () {
 				$('#profile-phone').html('<p class="text-center font-semibold text-sm whitespace-nowrap">'+user.phoneNumber+'</p>');
 				$('#profile-sendingType').html('<p class="text-center font-semibold text-sm whitespace-nowrap">'+user.sendingType+'</p>');
 			}
+
+			// Super admins and yeltech admins and reset the password
+			if (session_roleId == 1 || session_roleId == 2) {
+				$('#resetPassword').prop('data-id', user.userId)
+			}
 		})
 
 		var createdAtDate = new Date( user.createdAt );
@@ -245,6 +265,12 @@ $(document).ready(function () {
 	$('#viewuser-buttons').delegate('#saveUser', 'click', function() {
 		var userId = $(this).prop('data-id');
 		saveUser(userId);
+	})
+
+	// Reset password func
+	$('#viewuser-buttons').delegate('#resetPassword', 'click', function () {
+		var userId = $(this).prop('data-id');
+		resetPassword(userId);
 	})
 	
 	function showLatestUsers() {
@@ -338,7 +364,6 @@ $(document).ready(function () {
 
 	// ! Listen to changes on role checkboxes
 	var roles = $('#rolesFilter').children().last().children().children();
-	// alert( roles[0].attr('data-id') );
 	roles.on('change', function() {
 		selectedRoles = [];
 		roles.each(function() {
@@ -352,7 +377,6 @@ $(document).ready(function () {
 
 	// ! Listen to changes on sending type checkboxes
 	var sendingTypes = $('#sendingTypesFilter').children().last().children().children();
-	// alert( roles[0].attr('data-id') );
 	sendingTypes.on('change', function() {
 		selectedSendingTypes = [];
 		sendingTypes.each(function() {
@@ -446,7 +470,6 @@ $(document).ready(function () {
 			$(this).addClass('border-red-500');
 		}
 	})
-
 
 	$('form').on('submit', function (e) {
 		e.preventDefault();
