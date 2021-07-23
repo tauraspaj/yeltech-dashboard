@@ -5,19 +5,19 @@ require_once './../includes/dbh.inc.php';
 
 
 // Sender's phone numer
-$from = $_POST["sender"];
+$from = $_REQUEST["sender"];
 $from = '+'.$from;
 
 // Receiver's phone number - Plivo number
-$to = $_POST["inNumber"];
+$to = $_REQUEST["inNumber"];
 $to = '+'.$to;
 
 // The SMS text message which was received
-$textBody = $_POST["content"];
+$textBody = $_REQUEST["content"];
 $textBody = str_replace("\r", "\n", $textBody);
 
 // Message iD
-$messageuuid = 'TextLocal '.$_POST["msgId"];
+$messageuuid = 'TextLocal '.$_REQUEST["msgId"];
 
 
 // Date of the message
