@@ -56,6 +56,9 @@ $(document).ready(function () {
 			case 'log':
 				display_log();
 				break;
+			case 'message_history':
+				display_messageHistory();
+				break;
 		}
 	}
 
@@ -78,7 +81,8 @@ $(document).ready(function () {
 			{ title: 'Control Panel', component:'rtmu_controlPanel' },
 			{ title: 'Alarms', component:'alarms' },
 			{ title: 'Recipients', component:'recipients' },
-			{ title: 'Log', component:'log' }
+			{ title: 'Log', component:'log' },
+			{ title: 'Message History', component:'message_history' }
 		]
 	}
 
@@ -255,7 +259,6 @@ $(document).ready(function () {
 	$('#editDevice').on('click', function() {
 		$('#editDevice-modal').removeClass('hidden');
 		getDeviceData().then( function(data) {
-			// console.log(data);
 			$('#deviceProfile-id').html(data.deviceId);
 			$('#deviceProfile-deviceName').val(data.deviceName);
 			$('#deviceProfile-devicePhone').val(data.devicePhone);
@@ -2064,7 +2067,7 @@ $(document).ready(function () {
 					redBorder = '';
 					redText = '';
 					defaultColor = 'lightblue'
-					if ( channelData['DI']['smsAlarmHeader'].toUpperCase() == 'FALLEN DOWN') {
+					if ( channelData['DI']['smsAlarmHeader'].toUpperCase() == 'FALLEN DOWN' || channelData['DI']['smsAlarmHeader'].toUpperCase() == 'FALLEN OVER') {
 						redBorder = 'border border-red-400';
 						redText = 'text-red-600';
 						defaultColor = 'red';
@@ -2128,6 +2131,7 @@ $(document).ready(function () {
 					redText = '';
 					defaultColor = 'lightblue'
 					if ( channelData['AI']['smsAlarmHeader'].toUpperCase() == 'BOARD LIGHTS OUT' ||
+						channelData['AI']['smsAlarmHeader'].toUpperCase() == 'ESR BOARD LIGHTS OUT' ||
 						channelData['AI']['smsAlarmHeader'].toUpperCase() == 'RECHARGE BATTERY'
 					) {
 						redBorder = 'border border-red-400';
@@ -2152,7 +2156,7 @@ $(document).ready(function () {
 								<p class="text-xs text-gray-400 italic mt-4">`+dateDisplay+`</p>
 							</div>
 						</div>
-						<!-- End of card -->
+					<!-- End of card -->
 					`
 				} else {
 					channelDisplay += `
@@ -2173,8 +2177,6 @@ $(document).ready(function () {
 							<!-- End of card -->
 						`
 				}
-
-
 
 				for (i = 0; i < channelData.length; i++) {
 					if ( channelData[i]['reading'] != null ) {
@@ -2288,7 +2290,748 @@ $(document).ready(function () {
 
 	// ! SHOW COMPONENT: EWB v2 Dashboard
 	function display_ewbv2_dashboard() {
+		// * Put all cards together and generate final output
+		var output = `
+		<div class="grid grid-cols-2 gap-4 md:grid-cols-2 md:gap-4 lg:grid-cols-4 lg:gap-6">
+			<!-- Card -->
+			<div id="ewbStatus" class="col-span-1"></div>
+			<!-- End of card -->
 
+			<!-- Card -->
+			<div id="di_card" class="col-span-1">
+			</div>
+			<!-- End of card -->
+			
+			<!-- Card -->
+			<div id="ai1_card" class="col-span-1"></div>
+			<!-- End of card -->
+
+			<!-- Card -->
+			<div id="ai2_card" class="col-span-1"></div>
+			<!-- End of card -->
+
+			<!-- Card -->
+			<div class="col-span-2 md:col-span-2 lg:col-span-2 card-wrapper bg-gray-50">
+				<!-- Title -->
+				<div class="flex-none flex justify-between items-center h-12 bg-white rounded-t-xl border-b relative">
+					<div class="flex items-center">
+						<div class="hidden md:block bg-blue-100 text-blue-500 rounded-full p-2 ml-4 mr-2 lg:mr-4">
+							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path></svg>
+						</div>
+						<div id="dateSelectors" class="flex justify-center items-center space-x-2 ml-2">
+							<div data-id="3hr" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">3hr</div>
+							<div data-id="12hr" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">12hr</div>
+							<div data-id="1d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">1d</div>
+							<div data-id="7d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">7d</div>
+							<div data-id="30d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">30d</div>
+							<div data-id="ChartCal" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+							</div>
+						</div>
+						<div id="ChartCalSelector" class="w-48 bg-white shadow rounded z-10 absolute left-28 top-10 border flex flex-col p-2 hidden">
+							<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">From</p>
+							<input id="chartFrom" type="date" class="bg-white text-gray-700">
+							<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">To</p>
+							<input id="chartTo" type="date" class="bg-white text-gray-700">
+							<button class="bg-gray-50 border rounded w-16 mx-auto mt-2 hover:bg-gray-100">Go</button>
+						</div>
+					</div>
+				</div>
+
+				<!-- Chart -->
+				<div class="flex-auto p-2 lg:p-4 flex justify-center items-center">
+					<canvas id="canvas">
+						<!-- Filled with js -->
+					</canvas>
+				</div>
+			</div>
+			<!-- End of card-->
+
+			<!-- Card -->
+			<div class="col-span-2 md:col-span-2 lg:col-span-2 card-wrapper bg-gray-50">
+				<div class="card-header relative">
+					<div class="card-header-icon bg-purple-100 text-purple-500">
+						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd"></path></svg>	
+					</div>
+					<div class="card-header-title text-purple-800 bg-purple-100">
+						Alarms	
+					</div>
+
+					<div id="AlarmCal" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800 absolute right-4">
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+					</div>
+					<div id="AlarmCalSelector" class="w-48 bg-white shadow rounded z-10 absolute top-10 right-4 border flex flex-col p-2 hidden">
+						<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">From</p>
+						<input id="alarmFrom" type="date" class="bg-white text-gray-700">
+						<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">To</p>
+						<input id="alarmTo" type="date" class="bg-white text-gray-700">
+						<div class="flex justify-center items-center">
+							<button id="goAlarmCal" class="bg-gray-50 border rounded w-16 mx-auto mt-2 hover:bg-gray-100">Go</button>
+							<button id="resetAlarmCal" class="bg-gray-50 border rounded w-16 mx-auto mt-2 hover:bg-gray-100">Reset</button>
+						</div>
+					</div>
+				</div>
+
+				<!-- Table -->
+				<div id="alarmsCardBody" class="flex-auto py-2 px-4">
+					<div id="triggeredAlarms">
+					
+					</div>
+					<div class="flex overflow-x-auto">
+						<table class="table-fixed min-w-full">
+							<thead class="uppercase text-xs bg-bluegray-50 border-b border-gray-200 text-bluegray-900">
+								<tr>
+									<th class="text-left w-2/12 py-2 px-4 font-medium text-gray-500 whitespace-nowrap">Channel</th>
+									<th class="text-center w-6/12 lg:w-4/12 py-2 px-4 font-medium text-gray-500 whitespace-nowrap">Alarm</th>
+									<th class="text-center w-4/12 lg:w-4/12 py-2 px-4 font-medium text-gray-500 whitespace-nowrap">Timestamp</th>
+								</tr>
+							</thead>
+							<tbody id="table_alarms">
+								<!-- This area gets filled via PHP -->
+							</tbody>
+						</table>
+					</div>
+					<div id="loadingOverlay_alarms" class="flex flex-auto w-full block justify-center items-center space-x-2 uppercase font-semibold text-bluegray-800 py-8">
+						<svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+						<p>Loading...</p>
+					</div>
+
+					<div class="flex flex-col items-center justify-center py-4">
+						<div class="flex">
+							<button id="previous_alarms" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-200 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Previous</button>
+							<button id="next_alarms" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-200 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Next</button>
+						</div>
+						<p class="mt-4 text-xs font-semibold">Showing <span id="range_alarms"></span> of <span id="total_alarms"></span></p>
+					</div>
+				</div>
+			</div>
+			<!-- End of card-->
+		</div>
+		`;
+		// * Update site content once its generated
+		siteContent.html(output);
+
+		// * Status and EWB BOARD channel
+		ewbv2_getLatestReadings().then( function (ewbChannels) {
+			getDeviceData().then( function(deviceData ) {
+				status = deviceData.deviceStatus;
+				// STATUS processing
+				if (status == 1) {
+					statusHTML = `
+					<!-- Card -->
+					<div class="col-span-1">
+						<div class="bg-green-50 shadow-md rounded-xl h-40 flex justify-center items-center relative overflow-hidden">
+							<div class="text-green-300 opacity-40 transform left-0 -rotate-12 -ml-6 absolute overflow-hidden">
+								<svg class="w-44 h-44" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.05 3.636a1 1 0 010 1.414 7 7 0 000 9.9 1 1 0 11-1.414 1.414 9 9 0 010-12.728 1 1 0 011.414 0zm9.9 0a1 1 0 011.414 0 9 9 0 010 12.728 1 1 0 11-1.414-1.414 7 7 0 000-9.9 1 1 0 010-1.414zM7.879 6.464a1 1 0 010 1.414 3 3 0 000 4.243 1 1 0 11-1.415 1.414 5 5 0 010-7.07 1 1 0 011.415 0zm4.242 0a1 1 0 011.415 0 5 5 0 010 7.072 1 1 0 01-1.415-1.415 3 3 0 000-4.242 1 1 0 010-1.415zM10 9a1 1 0 011 1v.01a1 1 0 11-2 0V10a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
+							</div>
+							<div class="z-10 text-center">
+								<p class="font-semibold text-sm tracking-wider text-green-800">STATUS</p>
+								<p class="font-bold text-3xl text-green-900">ONLINE</p>
+							</div>
+						</div>
+					</div>
+					<!-- End of card -->
+					`;
+					$('#ewbStatus').html(statusHTML);
+				} else {
+					statusHTML = `
+					<!-- Card -->
+					<div class="col-span-1">
+						<div class="bg-red-50 shadow-md rounded-xl h-40 flex justify-center items-center relative overflow-hidden">
+							<div class="text-red-300 opacity-40 transform left-0 -rotate-12 -ml-6 absolute overflow-hidden">
+								<svg class="w-44 h-44" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M3.707 2.293a1 1 0 00-1.414 1.414l6.921 6.922c.05.062.105.118.168.167l6.91 6.911a1 1 0 001.415-1.414l-.675-.675a9.001 9.001 0 00-.668-11.982A1 1 0 1014.95 5.05a7.002 7.002 0 01.657 9.143l-1.435-1.435a5.002 5.002 0 00-.636-6.294A1 1 0 0012.12 7.88c.924.923 1.12 2.3.587 3.415l-1.992-1.992a.922.922 0 00-.018-.018l-6.99-6.991zM3.238 8.187a1 1 0 00-1.933-.516c-.8 3-.025 6.336 2.331 8.693a1 1 0 001.414-1.415 6.997 6.997 0 01-1.812-6.762zM7.4 11.5a1 1 0 10-1.73 1c.214.371.48.72.795 1.035a1 1 0 001.414-1.414c-.191-.191-.35-.4-.478-.622z"></path></svg>
+							</div>
+							<div class="z-10 text-center">
+								<p class="font-semibold text-sm tracking-wider text-red-800">STATUS</p>
+								<p class="font-bold text-3xl text-red-900">OFFLINE</p>
+							</div>
+						</div>
+					</div>
+					<!-- End of card -->
+					`;
+					$('#ewbStatus').html(statusHTML);
+				}
+
+				// Display DI channel
+				if( ewbChannels['DI']['alarm'] != null ) {
+					var dateDisplay = new Date( ewbChannels['DI']['alarm']['smsAlarmTime'] );
+					dateDisplay = dateDisplay.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
+
+					// Extra processing for red warnings
+					redBorder = '';
+					redText = '';
+					defaultColor = 'lightblue'
+					if ( ewbChannels['DI']['alarm']['smsAlarmHeader'].toUpperCase() == 'FALLEN DOWN' || ewbChannels['DI']['alarm']['smsAlarmHeader'].toUpperCase() == 'FALLEN OVER') {
+						redBorder = 'border border-red-400';
+						redText = 'text-red-600';
+						defaultColor = 'red';
+					}
+
+					ewbBoardHTML = `
+					<!-- Card -->
+						<div class="col-span-1 h-40 card-wrapper bg-gray-50 `+redBorder+`">
+							<div class="card-header">
+								<div class="card-header-icon bg-`+defaultColor+`-100 text-`+defaultColor+`-500 lg:hidden 2xl:block">
+									<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+								</div>
+								<div class="card-header-title text-`+defaultColor+`-800 bg-`+defaultColor+`-100">
+									`+ewbChannels['DI']['alarm']['channelName']+`
+								</div>
+							</div>
+							<div class="flex flex-col justify-center items-center my-4">
+								<p class="text-xl xl:text-2xl font-semibold text-gray-800 text-center uppercase whitespace-nowrap `+redText+`">`+ewbChannels['DI']['alarm']['smsAlarmHeader']+`<br>
+								<p class="text-xs text-gray-400 italic mt-4">`+dateDisplay+`</p>
+							</div>
+						</div>
+						<!-- End of card -->
+					`;
+					$('#di_card').html(ewbBoardHTML);
+				} else {
+					ewbBoardHTML = `
+						<!-- Card -->
+							<div class="col-span-1 card-wrapper h-40 bg-gray-50">
+								<div class="card-header">
+									<div class="card-header-icon bg-lightblue-100 text-lightblue-500 lg:hidden xl:block">
+										<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+									</div>
+									<div class="card-header-title text-lightblue-800 bg-lightblue-100">
+										EWB BOARD
+									</div>
+								</div>
+								<div class="flex flex-col justify-center items-center">
+									<p class="italic my-4">No alarms found...</p>
+								</div>
+							</div>
+							<!-- End of card -->
+						`;
+					$('#di_card').html(ewbBoardHTML);
+				}
+
+				function compareToThreshold(reading, operator, thresholdValue) {
+					reading = parseFloat(reading);
+					thresholdValue = parseFloat(thresholdValue);
+					response = false;
+					switch(operator) {
+						case '>':
+							if (reading > thresholdValue) { response = true; }
+							break;
+						case '>=':
+							if (reading >= thresholdValue) { response = true; }
+							break;
+						case '<':
+							if (reading < thresholdValue) { response = true; }
+							break;
+						case '<=':
+							if (reading <= thresholdValue) { response = true; }
+							break;
+						case '==':
+							if (reading == thresholdValue) { response = true; }
+							break;
+					}
+					return response;
+				}
+
+				function generateRedWarningCard(type, jsonDataRow, alarmList) {
+					returnCardHTML = '';
+
+					unitDisplay = '';
+					if (jsonDataRow['unit'] != null) { 
+						unitDisplay = jsonDataRow['unit'];
+					}
+
+					if ( type == 'alarm' ) {
+						var dateDisplay = new Date( jsonDataRow['alarm']['smsAlarmTime'] );
+						dateDisplay = dateDisplay.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
+
+						alarmReadingDisplay = '';
+						if (jsonDataRow['alarm']['smsAlarmReading'] != null) { 
+							alarmReadingDisplay = jsonDataRow['alarm']['smsAlarmReading'];
+						}
+
+						returnCardHTML = `
+						<!-- Card -->
+							<div class="col-span-1 card-wrapper bg-gray-50 border border-red-400">
+								<div class="card-header">
+									<div class="card-header-icon bg-red-100 text-red-500 lg:hidden 2xl:block">
+										<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+									</div>
+									<div class="card-header-title text-red-800 bg-red-100 whitespace-nowrap truncate text-xs sm:text-sm">
+										`+jsonDataRow['channelName']+`
+									</div>
+								</div>
+								<div class="flex flex-col justify-center items-center my-4">
+									<p class="text-base xl:text-xl font-semibold text-center uppercase text-red-600 ">`+jsonDataRow['alarm']['smsAlarmHeader']+`<br>
+									<span class="text-lg font-medium lg:text-xl">`+alarmReadingDisplay+` `+unitDisplay+`</span></p>
+									<p class="text-xs text-gray-400 italic mt-2">`+dateDisplay+`</p>
+								</div>
+							</div>
+						<!-- End of card -->
+						`;
+						
+					} else if ( type == 'reading' ) {
+						var dateDisplay = new Date( jsonDataRow['reading']['measurementTime'] );
+						dateDisplay = dateDisplay.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
+
+						alarmOutput = '';
+						if (alarmList != null) {
+							alarmList.forEach(alarm => {
+								alarmOutput += alarm + '<br>';
+							});
+						}
+
+						returnCardHTML = `
+						<!-- Card -->
+							<div class="col-span-1 card-wrapper bg-gray-50 border border-red-400">
+								<div class="card-header">
+									<div class="card-header-icon bg-red-100 text-red-500 lg:hidden 2xl:block">
+										<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+									</div>
+									<div class="card-header-title text-red-800 bg-red-100 whitespace-nowrap truncate text-xs sm:text-sm">
+										`+jsonDataRow['channelName']+`
+									</div>
+								</div>
+								<div class="flex flex-col justify-center items-center my-4">
+									<p class="text-base xl:text-xl font-semibold text-center uppercase text-red-600 ">`+alarmOutput+`
+									<span class="text-lg font-medium lg:text-xl">`+jsonDataRow['reading']['measurement']+` `+unitDisplay+`</span></p>
+									<p class="text-xs text-gray-400 italic mt-2">`+dateDisplay+`</p>
+								</div>
+							</div>
+						<!-- End of card -->
+						`;
+					}
+
+					return returnCardHTML;
+				}
+
+				function generateBlueRegularCard(type, jsonDataRow ) {
+					returnCardHTML = '';
+
+					unitDisplay = '';
+					if (jsonDataRow['unit'] != null) { 
+						unitDisplay = jsonDataRow['unit'];
+					}
+
+					if (type == 'reading') {
+						var dateDisplay = new Date( jsonDataRow['reading']['measurementTime'] );
+						dateDisplay = dateDisplay.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
+
+						returnCardHTML = `
+						<!-- Card -->
+							<div class="col-span-1 h-40 card-wrapper bg-gray-50">
+								<div class="card-header">
+									<div class="card-header-icon bg-lightblue-100 text-lightblue-500 lg:hidden 2xl:block">
+										<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+									</div>
+									<div class="card-header-title text-lightblue-800 bg-lightblue-100 whitespace-nowrap truncate text-xs sm:text-sm">
+										`+jsonDataRow['channelName']+`
+									</div>
+								</div>
+								<div class="flex flex-col justify-center items-center my-4">
+									<p class="text-2xl xl:text-2xl font-semibold text-gray-800 text-center uppercase whitespace-nowrap">`+jsonDataRow['reading']['measurement']+` `+unitDisplay+`<br>
+									<p class="text-xs text-gray-400 italic mt-4">`+dateDisplay+`</p>
+								</div>
+							</div>
+						<!-- End of card -->
+						`
+					}
+					return returnCardHTML;
+				}
+
+				// Function to workout how each analog card should be displayed
+				function calculateCardDisplay(data) {
+					returnCard = '';
+					if ( data['reading'] == null && data['alarm'] == null ) {
+						// Return card saying no readings if received yet if doesn't have an alarm or reading
+						returnCard = `
+						<!-- Card -->
+							<div class="col-span-1 card-wrapper h-40 bg-gray-50">
+								<div class="card-header">
+									<div class="card-header-icon bg-lightblue-100 text-lightblue-500 lg:hidden 2xl:block">
+										<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+									</div>
+									<div class="card-header-title text-lightblue-800 bg-lightblue-100 whitespace-nowrap truncate text-xs sm:text-sm">
+										`+data['channelName']+`
+									</div>
+								</div>
+								<div class="flex flex-col justify-center items-center">
+									<p class="italic my-4 text-center">No readings received yet...</p>
+								</div>
+							</div>
+						<!-- End of card -->
+						`;
+					} else if ( ( (data['reading'] == null) && !(data['alarm'] == null) ) || ( !(data['reading'] == null) && (data['alarm'] == null) ) ) {
+						// XOR gate. Either reading is not null or alarm is not null. We display the one that's not null
+						// But we must find the one that's not null to work out card processing
+						if (data['reading'] == null && data['alarm'] != null) {
+							// If reading is null and alarm isn't, then we must display the card highlighted in red, because it's in alarm mode.
+							returnCard = generateRedWarningCard('alarm', data);
+
+						} else {
+							// This will pass when reading is not null and alarm is null. We must check the which one is the latter and compare against the thresholds and see if we need to highlight it in red
+							const displayAlarms = [];
+							if (data['thresholds'] != null) {
+								data['thresholds'].forEach(threshold => {
+									if ( compareToThreshold( data['reading']['measurement'], threshold['operator'], threshold['thresholdValue'] ) ) {
+										displayAlarms.push( threshold['alarmDescription'] )
+									}
+								});
+							}
+
+							if( displayAlarms.length == 0) {
+								// no alarms triggered so display simple blue card with the reading
+								returnCard = generateBlueRegularCard('reading', data);
+							} else {
+								// show triggered alarms with the reading underneath
+								alarmOutput = '';
+								displayAlarms.forEach(alarm => {
+									alarmOutput += alarm + '<br>';
+								});
+								returnCard = generateRedWarningCard('reading', data, displayAlarms);
+							}
+						}
+					} else {
+						// This will pass when both alarm and reading are not null
+						// We must first find out which came latest - reading or the alarm. If it's the alarm, we display the alarm, if it's reading, we check the reading with thresholds
+						measurementDate = new Date( data['reading']['measurementTime'] );
+						alarmDate = new Date( data['alarm']['smsAlarmTime'] );
+						if ( measurementDate >= alarmDate ) {
+							// Reading date is more recent...
+							const displayAlarms = [];
+							if (data['thresholds'] != null) {
+								data['thresholds'].forEach(threshold => {
+									if ( compareToThreshold( data['reading']['measurement'], threshold['operator'], threshold['thresholdValue'] ) ) {
+										displayAlarms.push( threshold['alarmDescription'] )
+									}
+								});
+							}
+
+							if( displayAlarms.length == 0) {
+								// no alarms triggered so display simple blue card with the reading
+								returnCard = generateBlueRegularCard('reading', data);
+							} else {
+								// show triggered alarms with the reading underneath
+								alarmOutput = '';
+								displayAlarms.forEach(alarm => {
+									alarmOutput += alarm + '<br>';
+								});
+								returnCard = generateRedWarningCard('reading', data, displayAlarms);
+							}
+						} else {
+							// Alarm date is more recent...
+							returnCard = generateRedWarningCard('alarm', data);
+						}
+					}
+
+					return returnCard;
+				}
+
+				// Display AI 1 channel
+				if (ewbChannels.hasOwnProperty('AI1') ) {
+					$('#ai1_card').html( calculateCardDisplay(ewbChannels['AI1']) );
+				} else {
+					ai1HTML = `
+					<!-- Card -->
+					<div class="col-span-1 card-wrapper h-40 bg-gray-50">
+						<div class="card-header">
+							<div class="card-header-icon bg-lightblue-100 text-lightblue-500 lg:hidden xl:block">
+								<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+							</div>
+							<div class="card-header-title text-lightblue-800 bg-lightblue-100">
+								Analog Channel #1
+							</div>
+						</div>
+						<div class="flex flex-col justify-center items-center">
+							<p class="italic my-4 text-center">Analog channel #1 not registered</p>
+						</div>
+					</div>
+					<!-- End of card -->
+					`;
+					$('#ai1_card').html(ai1HTML);
+				}
+
+
+				// Display AI 2 channel
+				if (ewbChannels.hasOwnProperty('AI2') ) {
+					$('#ai2_card').html( calculateCardDisplay(ewbChannels['AI2']) );
+				} else {
+					ai2HTML = `
+					<!-- Card -->
+					<div class="col-span-1 card-wrapper h-40 bg-gray-50">
+						<div class="card-header">
+							<div class="card-header-icon bg-lightblue-100 text-lightblue-500 lg:hidden xl:block">
+								<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+							</div>
+							<div class="card-header-title text-lightblue-800 bg-lightblue-100">
+								Analog Channel #2
+							</div>
+						</div>
+						<div class="flex flex-col justify-center items-center">
+							<p class="italic my-4 text-center">Analog channel #2 not registered</p>
+						</div>
+					</div>
+					<!-- End of card -->
+					`;
+					$('#ai2_card').html(ai2HTML);
+				}
+			})
+		})
+
+
+		// * Load alarms card
+		//#region 
+		var alarmPageNumber = 1;
+		var alarmsPerPage = 5;
+		var fromDate = null;
+		var toDate = null;
+		getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
+
+		// Alarm paging
+		$('#next_alarms').on('click', function () {
+			alarmPageNumber += 1;
+			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
+		})
+		$('#previous_alarms').on('click', function () {
+			alarmPageNumber -= 1;
+			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
+		})
+
+		$('#AlarmCal').on('click', function() {
+			$('#AlarmCalSelector').toggleClass('hidden');
+		})
+		$('#goAlarmCal').on('click', function() {
+			alarmPageNumber = 1;
+			fromDate = $('#alarmFrom').val();
+			toDate = $('#alarmTo').val();
+			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
+			$('#AlarmCalSelector').addClass('hidden');
+		})
+
+		$('#resetAlarmCal').on('click', function() {
+			alarmPageNumber = 1;
+			fromDate = null;
+			toDate = null;
+			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
+			$('#AlarmCalSelector').addClass('hidden');
+			$('#alarmFrom, #alarmTo').val("");
+		})
+
+		function displayTriggeredAlarms(triggeredAlarms) {
+			var triggeredAlarmsOutput = '';
+			for (i = 0; i < triggeredAlarms.length; i++) {
+				triggeredAlarmsOutput += `
+				<!-- Alarm -->
+				<div class="flex h-10 text-sm text-red-600 font-medium items-center pl-4 bg-red-50 border border-red-500 rounded my-2">
+					<div class="hidden xl:block flex-1 whitespace-nowrap mx-2 text-xs italic">
+						ACTIVE ALARM!
+					</div>
+					<div class="flex-1 whitespace-nowrap">
+						<span class="text-xs uppercase text-red-400 mr-1">Channel:</span> `+triggeredAlarms[i].channelName+`
+					</div>
+					<div class="flex-1 whitespace-nowrap text-center">
+						<span class="text-xs uppercase text-red-400 mr-1">Trigger:</span> `+triggeredAlarms[i].operator+` `+triggeredAlarms[i].thresholdValue+` `+triggeredAlarms[i].unitName+`
+					</div>
+				</div>
+				<!-- End of alarm -->
+				`
+			}
+			$('#triggeredAlarms').html(triggeredAlarmsOutput);
+		}
+		// Display triggered alarms
+		getTriggeredAlarms().then( function(triggeredAlarms) {
+			displayTriggeredAlarms(triggeredAlarms);
+		})
+		//#endregion
+
+		// * Load chart card
+		//#region 
+		var ctx = $('#canvas')[0].getContext('2d');
+		var chart = new Chart(ctx, {
+			type: 'line',
+			data: { datasets: [] },
+			options: {
+				scales: {
+					xAxes: [{
+						type: 'time',
+						time: {
+							unit: 'hour',
+							stepSize: 0.5,
+							tooltipFormat: 'HH:mm DD-MM-YYYY',
+						},
+						ticks: {
+							autoSkip: true,
+							maxTicksLimit: 10,
+							major: {
+								enabled: true,
+								fontStyle: 'bold',
+								fontSize: 14
+							},
+						},
+						scaleLabel: {
+							display: true,
+							labelString: 'Time of alarm'
+						},
+						gridLines: {
+							drawOnChartArea: false
+						}
+					}],
+					yAxes: [{
+						scaleLabel: {
+							display: true,
+							labelString: 'Temperature (°C)'
+						},
+						ticks: {
+							autoSkip: true,
+							maxTicksLimit: 6
+						}
+					}]
+				}
+			}
+		});
+		getDatasets('3hr','NOW').then( function (data) {
+			drawChart(chart, data);
+		})
+
+		var activeClass = 'text-gray-800 bg-gray-100';
+		$('#dateSelectors').children().first().addClass(activeClass);
+		$('#dateSelectors').children().on('click', function() {
+			$('#dateSelectors').children().removeClass(activeClass);
+			$(this).addClass(activeClass);
+			var dataid = $(this).attr('data-id');
+			if (dataid != 'ChartCal') {
+				getDatasets(dataid,'NOW').then( function (data) {
+					drawChart(chart, data);
+				})
+
+				if ( !$('#ChartCalSelector').hasClass('hidden') ) {
+					$('#ChartCalSelector').addClass('hidden');
+				}
+				$('#chartFrom, #chartTo').val("");
+			} else {
+				$('#ChartCalSelector').toggleClass('hidden');
+			}
+		})
+		$('#ChartCalSelector > button').on('click', function() {
+			getDatasets($('#chartFrom').val() , $('#chartTo').val()).then( function (data) {
+				drawChart(chart, data);
+			})
+			$('#ChartCalSelector').addClass('hidden');
+		})
+		//#endregion
+	
+	}
+
+	// ! SHOW COMPONENT: Message history
+	function display_messageHistory() {
+		// * Put all cards together and generate final output
+		var output = `
+		<div class="grid grid-cols-1">
+
+			<!-- Left panel -->
+			<div class="col-span-1">
+				<!-- Card -->
+				<div class="col-span-2 md:col-span-2 lg:col-span-2 card-wrapper bg-gray-50">
+					<div class="card-header relative">
+						<div class="card-header-icon bg-purple-100 text-purple-500">
+							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clip-rule="evenodd"></path></svg>
+						</div>
+						<div class="card-header-title text-purple-800 bg-purple-100">
+							Message history	
+						</div>
+
+						<div id="messageHistoryCal" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800 absolute right-4">
+							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path></svg>
+						</div>
+						<div id="messageHistoryCalSelector" class="w-48 bg-white shadow rounded z-10 absolute top-10 right-4 border flex flex-col p-2 hidden">
+							<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">From</p>
+							<input id="messageHistoryFrom" type="date" class="bg-white text-gray-700">
+							<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">To</p>
+							<input id="messageHistoryTo" type="date" class="bg-white text-gray-700">
+							<div class="flex justify-center items-center">
+								<button id="gomessageHistoryCal" class="bg-gray-50 border rounded w-16 mx-auto mt-2 hover:bg-gray-100">Go</button>
+								<button id="resetmessageHistoryCal" class="bg-gray-50 border rounded w-16 mx-auto mt-2 hover:bg-gray-100">Reset</button>
+							</div>
+						</div>
+					</div>
+
+					<!-- Table -->
+					<div id="messageHistoryCardBody" class="flex-auto py-2 px-4">
+						<div class="flex overflow-x-auto">
+							<table class="table-fixed min-w-full">
+								<thead class="uppercase text-xs bg-bluegray-50 border-b border-gray-200 text-bluegray-900">
+									<tr>
+										<th class="text-center w-1/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">From</th>
+										<th class="text-center w-1/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">To</th>
+										<th class="text-center w-6/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Message</th>
+										<th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Timestamp</th>
+										<th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Message Type</th>
+									</tr>
+								</thead>
+								<tbody id="table_messageHistory">
+									<!-- This area gets filled via PHP -->
+								</tbody>
+							</table>
+						</div>
+						<div id="loadingOverlay_messageHistory" class="flex flex-auto w-full block justify-center items-center space-x-2 uppercase font-semibold text-bluegray-800 py-8">
+							<svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+							<p>Loading...</p>
+						</div>
+
+						<div class="flex flex-col items-center justify-center py-4">
+							<div class="flex">
+								<button id="previous_messageHistory" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-200 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Previous</button>
+								<button id="next_messageHistory" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-200 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Next</button>
+							</div>
+							<p class="mt-4 text-xs font-semibold">Showing <span id="range_messageHistory"></span> of <span id="total_messageHistory"></span></p>
+						</div>
+					</div>
+				</div>
+				<!-- End of card-->
+			</div>	
+
+			<!-- End of card-->
+		</div>
+		`;
+		// * Update site content once its generated
+		siteContent.html(output);
+
+		// Display message history
+		//#region 
+		var messageHistoryPageNumber = 1;
+		var messageHistoryPerPage = 10;
+		var fromDate = null;
+		var toDate = null;
+		getMessageHistory(messageHistoryPerPage, messageHistoryPageNumber, 'table_messageHistory', fromDate, toDate);
+
+		// Alarm paging
+		$('#next_messageHistory').on('click', function () {
+			messageHistoryPageNumber += 1;
+			getMessageHistory(messageHistoryPerPage, messageHistoryPageNumber, 'table_messageHistory', fromDate, toDate);
+		})
+		$('#previous_messageHistory').on('click', function () {
+			messageHistoryPageNumber -= 1;
+			getMessageHistory(messageHistoryPerPage, messageHistoryPageNumber, 'table_messageHistory', fromDate, toDate);
+		})
+
+		$('#messageHistoryCal').on('click', function() {
+			$('#messageHistoryCalSelector').toggleClass('hidden');
+		})
+		$('#gomessageHistoryCal').on('click', function() {
+			alarmPageNumber = 1;
+			fromDate = $('#messageHistoryFrom').val();
+			toDate = $('#messageHistoryTo').val();
+			getMessageHistory(messageHistoryPerPage, messageHistoryPageNumber, 'table_messageHistory', fromDate, toDate);
+			$('#messageHistoryCalSelector').addClass('hidden');
+		})
+
+		$('#resetmessageHistoryCal').on('click', function() {
+			messageHistoryPageNumber = 1;
+			fromDate = null;
+			toDate = null;
+			getMessageHistory(messageHistoryPerPage, messageHistoryPageNumber, 'table_messageHistory', fromDate, toDate);
+			$('#messageHistoryCalSelector').addClass('hidden');
+			$('#messageHistoryFrom, #messageHistoryTo').val("");
+		})
+		//#endregion
 	}
 	
 	// ! Hide loaders on load
@@ -2342,6 +3085,23 @@ $(document).ready(function () {
 				data: {
 					deviceId: deviceId,
 					function: 'rtmu_getLatestReadings'
+				},
+				success: function (data) {
+					data = JSON.parse(data);
+					resolve(data);
+				}
+			})
+		})
+	}
+
+	function ewbv2_getLatestReadings() {
+		return new Promise(function (resolve, reject) {
+			$.ajax({
+				url: './includes/sqlSingleDevice.php',
+				type: 'POST',
+				data: {
+					deviceId: deviceId,
+					function: 'ewbv2_getLatestReadings'
 				},
 				success: function (data) {
 					data = JSON.parse(data);
@@ -2705,7 +3465,6 @@ $(document).ready(function () {
 				$('#loadingOverlay_measurements').show();
 			},
 			success: function (data) {
-				console.log(data);
 				$('#loadingOverlay_measurements').hide();
 				var measurements = JSON.parse(data);
 				
@@ -2962,7 +3721,6 @@ $(document).ready(function () {
 			success: function (data) {
 				$('#loadingOverlay_messageHistory').hide();
 				var messageHistory = JSON.parse(data);
-				console.log(messageHistory);
 
 				totalCount = messageHistory['totalCount'];
 				returnedCount = messageHistory['messageHistory'].length;

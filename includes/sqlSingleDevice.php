@@ -924,6 +924,199 @@ switch ($_POST['function']) {
 		break;
 	// ! End of EWB message history
 
+	// ! EWB V2 - Get latest readings
+	case 'ewbv2_getLatestReadings':
+		$deviceId = $_POST['deviceId'];
+		$response = array();
+
+		// First find the status of the Digital (EWB Board) channel
+		$sql = "
+		SELECT smsAlarms.smsAlarmHeader, smsAlarms.smsAlarmTime, channels.channelName
+		FROM smsAlarms
+		LEFT JOIN channels on smsAlarms.channelId = channels.channelId
+		WHERE smsAlarms.deviceId = $deviceId AND channels.channelType='DI'
+		ORDER BY smsAlarmTime DESC
+		LIMIT 1;
+		";
+		$result = mysqli_query($conn, $sql);
+		if ( mysqli_num_rows($result) > 0 ) {
+			while ($row = mysqli_fetch_assoc($result)) {
+				$response['DI']['alarm'] = $row;
+			}
+		} else {
+			$response['DI']['alarm'] = null;
+		}
+
+		// Loop through each analog channel
+		$sql = "SELECT ROW_NUMBER() OVER() AS num_row, channels.channelId, channels.channelName, units.unitName 
+		FROM channels
+		LEFT JOIN units ON channels.unitId = units.unitId
+		WHERE channels.channelType = 'AI' AND channels.deviceId = $deviceId 
+		ORDER BY channelId ASC";
+		$result = mysqli_query($conn, $sql);
+		if (mysqli_num_rows($result) > 0) {
+			// JSON output will be as follows:
+			// ai1 { thresholds[], reading[], alarm[] }
+			// ai2 { thresholds[], reading[], alarm[] }
+			while ($rowChannels = mysqli_fetch_assoc($result)) {
+				$thisId = $rowChannels['channelId'];
+				
+				$thisRow = "AI{$rowChannels['num_row']}"; 
+				$response[$thisRow] = array();
+				$response[$thisRow]['unit'] = $rowChannels['unitName'];
+				$response[$thisRow]['channelName'] = $rowChannels['channelName'];
+
+				// 1. Find thresholds
+				$sqlThresholds = "
+					SELECT alarmTriggers.triggerId, alarmTriggers.operator, alarmTriggers.thresholdValue, alarmTriggers.isTriggered, alarmTriggers.alarmDescription
+					FROM alarmTriggers
+					WHERE channelId = $thisId
+				";
+				$resultThresholds = mysqli_query($conn, $sqlThresholds);
+				if ( mysqli_num_rows($resultThresholds) > 0 ) {
+					while ($rowThresholds = mysqli_fetch_assoc($resultThresholds)) {
+						$response[$thisRow]['thresholds'][] = $rowThresholds;
+					}
+				} else {
+					$response[$thisRow]['thresholds'] = null;
+				}
+
+				// 2. Find latest reading
+				$sqlReading = "
+					SELECT measurements.measurement, measurements.measurementTime
+					FROM measurements
+					WHERE measurements.channelId = $thisId
+					ORDER BY measurements.measurementTime DESC
+					LIMIT 1
+				";
+				$resultReading = mysqli_query($conn, $sqlReading);
+				if ( mysqli_num_rows($resultReading) > 0 ) {
+					while ($rowReading = mysqli_fetch_assoc($resultReading)) {
+						$response[$thisRow]['reading'] = $rowReading;
+					}
+				} else {
+					$response[$thisRow]['reading'] = null;
+				}
+
+				// 3. Find latest alarm message sent
+				$sqlAlarm = "
+					SELECT smsAlarms.smsAlarmHeader, smsAlarms.smsAlarmTime, smsAlarms.smsAlarmReading
+					FROM smsAlarms
+					WHERE smsAlarms.channelId = $thisId
+					ORDER BY smsAlarmTime DESC
+					LIMIT 1;
+				";
+				$resultAlarm  = mysqli_query($conn, $sqlAlarm );
+				if ( mysqli_num_rows($resultAlarm ) > 0 ) {
+					while ($rowAlarm  = mysqli_fetch_assoc($resultAlarm )) {
+						$response[$thisRow]['alarm'] = $rowAlarm ;
+					}
+				} else {
+					$response[$thisRow]['alarm'] = null;
+				}
+			}
+		}
+		
+
+		echo json_encode($response);
+		exit();
+
+		// Get the AI channels
+		$aiChannels = array();
+		$sql = "SELECT channels.channelId, channels.channelName, units.unitName 
+		FROM channels
+		LEFT JOIN units ON channels.unitId = units.unitId
+		WHERE channels.channelType = 'AI' AND channels.deviceId = $deviceId 
+		ORDER BY channelId ASC";
+		// $sql = "SELECT COUNT(*) as numberOfAI FROM channels WHERE channelType = 'AI' AND deviceId = $deviceId";
+		$result = mysqli_query($conn, $sql);
+		if (mysqli_num_rows($result) > 0) {
+			$k = 0;		
+			while ($row = mysqli_fetch_assoc($result)) {
+				$sql3 = "
+				SELECT measurements.measurement, measurements.measurementTime, units.unitName
+				FROM measurements
+				LEFT JOIN units ON units.unitId = {$row['unitId']}
+				WHERE measurements.channelId = {$row['channelId']}
+				ORDER BY measurements.measurementTime DESC
+				LIMIT 1
+				";
+
+				$readings = array();
+
+				$result3 = mysqli_query($conn, $sql3);
+				if (mysqli_num_rows($result3) > 0) {
+					while ($row3 = mysqli_fetch_assoc($result3)) {
+						$row += $row3;
+					}
+					$return['latestMeasurements'][$k] = $row;
+				} else {
+					$return['latestMeasurements'][$k] = null;
+				}
+				$k++;
+			}
+			$numberOfAI = count($aiChannels);
+			$return['numberOfAI'] = $k;
+		}
+		
+		// Get latest message from DI channel
+		$sql2 = "
+		SELECT smsAlarms.smsAlarmHeader, smsAlarms.smsAlarmTime
+		FROM smsAlarms
+		LEFT JOIN channels ON smsAlarms.deviceId = channels.deviceId AND channels.channelType = 'DI'
+		WHERE smsAlarms.deviceId = $deviceId 
+		ORDER BY smsAlarms.smsAlarmId DESC
+		LIMIT 1;
+		";
+		$result2 = mysqli_query($conn, $sql2);		
+		if (mysqli_num_rows($result2) > 0) {
+			while ($row = mysqli_fetch_assoc($result2)) {
+				$return['ewbBoard'] = $row;
+			}
+		} else {
+			$return['ewbBoard'] = 'Undefined';
+		}
+
+		$sql4 = "SELECT devices.deviceStatus FROM devices WHERE devices.deviceId = $deviceId";
+		$result4 = mysqli_query($conn, $sql4);
+		if ( mysqli_num_rows($result4) > 0 ) {
+			while ($row = mysqli_fetch_assoc($result4)) {
+				$return['deviceStatus'] = $row['deviceStatus'];
+			}
+		}
+
+		$sql5 = "
+			SELECT COUNT(historyId) AS numberOfTriggeredAlarms 
+			FROM triggeredAlarmsHistory 
+			WHERE deviceId = $deviceId
+		";
+		$result5 = mysqli_query($conn, $sql5);
+		if ( mysqli_num_rows($result5) > 0 ) {
+			while ($row = mysqli_fetch_assoc($result5)) {
+				$return['numberOfTriggeredAlarms'] = $row['numberOfTriggeredAlarms'];
+			}
+		}
+
+		$sql6 = "
+			SELECT clearedAt
+			FROM triggeredAlarmsHistory 
+			WHERE deviceId = $deviceId
+            ORDER BY clearedAt DESC 
+            LIMIT 1
+		";
+		$result6 = mysqli_query($conn, $sql6);
+		if ( mysqli_num_rows($result6) > 0 ) {
+			while ($row = mysqli_fetch_assoc($result6)) {
+				$return['latestAlarmSent'] = $row['clearedAt'];
+			}
+		} else {
+			$return['latestAlarmSent'] = '';
+		}
+		
+		echo json_encode($return);
+		break;
+	// ! End EWB V2 - Get latest readings
+
 	default: break;
 		// 
 }
