@@ -1249,31 +1249,15 @@ $(document).ready(function () {
 					<!-- Side nav -->
 					<div id="alarmsNav" class="flex-none flex flex-col w-14 md:w-20">
 
-						<div class="flex flex-col justify-center items-center py-2 border-gray-200">
+						<div id="testHere" class="flex flex-col justify-center items-center py-2 border-gray-200">
 							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd"></path></svg>
 							<p class="text-xs uppercase font-medium text-center mt-1">Alarms</p>
-						</div>`;
+						</div>
 
-		// For EWBv2s, only super admins are allowed to create alarms
-		if (productRestriction == 'ewbv2') {
-			getRoleId().then( function(roleId) {
-				if(roleId == 1 || roleId == 2) {
-					output += `
-					<div id="newAlarm" class="flex flex-col justify-center items-center py-2 border-gray-200">
-						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>	<p class="text-xs uppercase font-medium text-center mt-1">New</p>
-					</div>
-					`
-				}
-			})
-		} else {
-			output += `
-			<div id="newAlarm" class="flex flex-col justify-center items-center py-2 border-gray-200">
-				<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>	<p class="text-xs uppercase font-medium text-center mt-1">New</p>
-			</div>
-			`
-		}
+						<div id="newAlarm" class="flex flex-col justify-center items-center py-2 border-gray-200">
+							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>	<p class="text-xs uppercase font-medium text-center mt-1">New</p>
+						</div>
 
-		output += `
 						<div class="flex-auto border-bluegray-200 rounded-bl-xl" style="min-height: 8rem">
 						<!-- Filler -->
 						</div>
@@ -1688,6 +1672,14 @@ $(document).ready(function () {
 		})
 		//#endregion
 		
+		if(productRestriction == 'ewbv2' ) {
+			getRoleId().then(function(roleId) {
+				if(roleId != 1 && roleId != 2) {
+					$('#newAlarm').off('click');
+					$('#newAlarm').addClass('cursor-not-allowed');
+				}
+			})
+		}
 	}
 
 	// ! SHOW COMPONENT: Display recipients
