@@ -38,6 +38,10 @@ include_once('header.php');
 				<input id="profile-longitude" class="flex-1 h-8 border border-gray-300" type="text">
 			</div>
 			<div class="flex h-10 items-center">
+				<div class="flex-1 text-center text-sm">SMS Left</div>
+				<input id="profile-smsLeft" class="flex-1 h-8 border border-gray-300" type="text">
+			</div>
+			<div class="flex h-10 items-center">
 				<div class="flex-1 text-center text-sm">Dashboard Access</div>
 				<select id="profile-dashAccess" class="flex-1 h-8 border border-gray-300">
 					<option value="0">No</option>
@@ -192,10 +196,10 @@ include_once('header.php');
 					<thead class="uppercase text-xs bg-bluegray-50 border-b border-gray-200 text-bluegray-900">
 						<tr>
                             <th class="text-left w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Group Name</th>
-                            <th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Latitude</th>
-                            <th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Longitude</th>
-                            <th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Number of users</th>
-                            <th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Number of devices</th>
+                            <th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">SMS Left</th>
+                            <th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Lat / Long</th>
+                            <th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Users</th>
+                            <th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Devices</th>
                             <th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap"></th>
 						</tr>
 					</thead>

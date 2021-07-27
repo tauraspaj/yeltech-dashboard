@@ -59,6 +59,18 @@ if ($_POST['function'] == 'showGroups') {
 				}
 			}
 
+			$sqlSms = "
+			SELECT smsLeft
+			FROM `groups`
+			WHERE groupId = $currentGroup
+			";
+			$resultSms = mysqli_query($conn, $sqlSms);
+			if ( mysqli_num_rows($resultSms) > 0 ) {
+				while ($rowThis = mysqli_fetch_assoc($resultSms)) {
+					$row += $rowThis;
+				}
+			}
+
 			$resultArray[] = $row;
 
 		}
@@ -114,7 +126,7 @@ if ($_POST['function'] == 'showGroups') {
 } elseif ($_POST['function'] == 'findGroup') {
 	$groupId = $_POST['groupId'];
 	$sql = "
-	SELECT `groups`.groupId, `groups`.groupName, `groups`.latitude, `groups`.longitude, `groups`.dashAccess, `groups`.appAccess, `groups`.createdAt, `groups`.createdBy
+	SELECT `groups`.groupId, `groups`.groupName, `groups`.smsLeft, `groups`.latitude, `groups`.longitude, `groups`.dashAccess, `groups`.appAccess, `groups`.createdAt, `groups`.createdBy
 	FROM `groups`
 	WHERE groupId = $groupId
 	";
@@ -158,6 +170,7 @@ if ($_POST['function'] == 'showGroups') {
 } elseif ($_POST['function'] == 'updateGroupInfo') {
 	$groupId = $_POST['groupId'];
 	$groupName = $_POST['groupName'];
+	$smsLeft = $_POST['smsLeft'];
 	$latitude = $_POST['latitude'];
 	$longitude = $_POST['longitude'];
 	$appAccess = $_POST['appAccess'];
@@ -187,6 +200,10 @@ if ($_POST['function'] == 'showGroups') {
 		}
 	}
 
+	if ($smsLeft < 0) {
+		$smsLeft = 0;
+	}
+
 	if ($appAccess != 0 && $appAccess != 1) {
 		$response['status'] = 'Error';
 		$response['message'] = 'Invalid app access value';
@@ -200,10 +217,10 @@ if ($_POST['function'] == 'showGroups') {
 		exit;
 	}
 
-	$sql = "UPDATE `groups` SET groupName=?, latitude=?, longitude=?, appAccess=?, dashAccess=? WHERE groupId=?";
+	$sql = "UPDATE `groups` SET groupName=?, smsLeft=?, latitude=?, longitude=?, appAccess=?, dashAccess=? WHERE groupId=?";
 		$stmt = mysqli_stmt_init($conn);
 		mysqli_stmt_prepare($stmt, $sql);
-		mysqli_stmt_bind_param($stmt, "ssssss", $groupName, $latitude, $longitude, $appAccess, $dashAccess, $groupId);
+		mysqli_stmt_bind_param($stmt, "sssssss", $groupName, $smsLeft, $latitude, $longitude, $appAccess, $dashAccess, $groupId);
 		mysqli_stmt_execute($stmt);
 		if (mysqli_stmt_error($stmt)) {
 			$response['status'] = 'Error';
