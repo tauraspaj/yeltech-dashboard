@@ -68,52 +68,7 @@ switch ($function) {
         echo json_encode($triggeredDevices);
         break;
     
-    case 'getHomeData':
-        if ($_SESSION['roleId'] == 4 || $_SESSION['roleId'] == 3) {
-            $devicesGroup = $_SESSION['groupId'];
-            $usersGroup = $_SESSION['groupId'];
-        } else {
-            $devicesGroup = 'devices.groupId';
-            $usersGroup = 'users.groupId';
-        }
 
-        $return = array();
-
-        $sql = "
-            SELECT COUNT(*) as totalDevices FROM devices WHERE devices.groupId = $devicesGroup
-        ";
-        $result = mysqli_query($conn, $sql);
-        if ( mysqli_num_rows($result) > 0 ) {
-            while ($row = mysqli_fetch_assoc($result)) {
-                $return['totalDevices'] = $row['totalDevices'];
-            }
-        }
-
-        $sql2 = "
-            SELECT COUNT(*) as totalUsers FROM users WHERE users.groupId = $usersGroup
-        ";
-        $result2 = mysqli_query($conn, $sql2);
-        if ( mysqli_num_rows($result2) > 0 ) {
-            while ($row = mysqli_fetch_assoc($result2)) {
-                $return['totalUsers'] = $row['totalUsers'];
-            }
-        }
-
-        $sql3 = "
-            SELECT COUNT(*) as totalAlarms
-            FROM triggeredAlarmsHistory
-            LEFT JOIN devices ON triggeredAlarmsHistory.deviceId = devices.deviceId
-            WHERE devices.groupId = $devicesGroup
-        ";
-        $result3 = mysqli_query($conn, $sql3);
-        if ( mysqli_num_rows($result3) > 0 ) {
-            while ($row = mysqli_fetch_assoc($result3)) {
-                $return['totalAlarms'] = $row['totalAlarms'];
-            }
-        }
-
-        echo json_encode($return);
-        break;
     
     case 'getDeviceCoordinates':
         if ($_SESSION['roleId'] == 4 || $_SESSION['roleId'] == 3) {

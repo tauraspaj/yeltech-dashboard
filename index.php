@@ -33,7 +33,26 @@ include_once('header.php');
 				</div>
 			</div>
 			<div class="flex-auto flex justify-center items-center bg-gray-50 rounded-b-xl">
-				<p id="totalDevicesDisplay" class="text-2xl font-medium text-gray-800"></p>
+				<p id="totalDevicesDisplay" class="text-2xl font-medium text-gray-800">
+					<?php
+						if ($_SESSION['roleId'] == 1 || $_SESSION['roleId'] == 2) {
+							$devicesGroup = 'devices.groupId';
+							$usersGroup = 'users.groupId';
+						} else {
+							$devicesGroup = $_SESSION['groupId'];
+							$usersGroup = $_SESSION['groupId'];
+						}
+						$sql = "
+							SELECT COUNT(*) as totalDevices FROM devices WHERE devices.groupId = $devicesGroup
+						";
+						$result = mysqli_query($conn, $sql);
+						if ( mysqli_num_rows($result) > 0 ) {
+							while ($row = mysqli_fetch_assoc($result)) {
+								echo $row['totalDevices'];
+							}
+						}
+					?>
+				</p>
 			</div>
 		</div>
 
@@ -47,21 +66,54 @@ include_once('header.php');
 				</div>
 			</div>
 			<div class="flex-auto flex justify-center items-center bg-gray-50 rounded-b-xl">
-				<p id="totalUsersDisplay" class="text-2xl font-medium text-gray-800"></p>
+				<p id="totalUsersDisplay" class="text-2xl font-medium text-gray-800">
+					<?php
+					$sql2 = "
+					SELECT COUNT(*) as totalUsers FROM users WHERE users.groupId = $usersGroup
+					";
+					$result2 = mysqli_query($conn, $sql2);
+					if ( mysqli_num_rows($result2) > 0 ) {
+						while ($row = mysqli_fetch_assoc($result2)) {
+							echo $row['totalUsers'];
+						}
+					}
+					?>
+				</p>
 			</div>
 		</div>
 
-		<div class="col-span-1 card-wrapper h-36">
+		<?php
+		$sql2 = "
+		SELECT smsLeft FROM `groups` WHERE groupId = {$_SESSION['groupId']}
+		";
+		$result2 = mysqli_query($conn, $sql2);
+		if ( mysqli_num_rows($result2) > 0 ) {
+			while ($row = mysqli_fetch_assoc($result2)) {
+				$smsLeft = $row['smsLeft'];
+			}
+		}
+
+		$borderHighlight = '';
+		if ($smsLeft < 50) {
+			$borderHighlight = 'border-2 border-red-500';
+		} else if ($smsLeft < 100) {
+			$borderHighlight = 'border border-yellow-500';
+		}
+		?>
+		<div class="col-span-1 card-wrapper h-36 <?php echo $borderHighlight;?>">
 			<div class="card-header">
 				<div class="card-header-icon">
 					<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path></svg>
 				</div>
 				<div class="card-header-title">
-					Alarms sent
+					SMS Credits
 				</div>
 			</div>
-			<div class="flex-auto flex justify-center items-center bg-gray-50 rounded-b-xl">
-				<p id="totalAlarmsDisplay" class="text-2xl font-medium text-gray-800"></p>
+			<div class="flex-auto flex flex-col justify-center items-center bg-gray-50 rounded-b-xl">
+				<p id="totalAlarmsDisplay" class="text-2xl font-medium text-gray-800">
+					<?php echo $smsLeft; ?>
+				</p>
+				<p class="text-center text-xs italic mt-1">To top up, get in touch <br> <span class="font-medium">info@yeltech.com</span></p>
 			</div>
 		</div>
 

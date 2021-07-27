@@ -110,19 +110,4 @@ $(document).ready(function () {
             $('#alarmedList').html(output);
         }
     })
-
-    // Get home data
-    $.ajax({
-        url: './includes/sqlHeader.php',
-        type: 'POST',
-        data: {
-            function: 'getHomeData'
-        },
-        success: function (data) {
-            data = JSON.parse(data);
-            $('#totalDevicesDisplay').html(data['totalDevices']);
-            $('#totalUsersDisplay').html(data['totalUsers']);
-            $('#totalAlarmsDisplay').html(data['totalAlarms']);
-        }
-    })
 })
