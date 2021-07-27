@@ -82,7 +82,7 @@ $(document).ready(function () {
 	var searchPhone = '';
 
     $('#searchSubmit').on('click', function() {
-        searchPhone = $('#searchPhone').val();
+        searchPhone = $.trim($('#searchPhone').val());
         showMessages(msgPerPage, msgPageNumber);
     })
 
