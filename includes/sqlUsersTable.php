@@ -57,7 +57,7 @@ if ($function == 'showUsers') {
 	LEFT JOIN `groups` ON users.groupId = `groups`.groupId
 	LEFT JOIN sendingType ON users.sendingId = sendingType.sendingId
 	LEFT JOIN roles ON users.roleId = roles.roleId
-	WHERE ($roleSearch) AND ($sendingTypesSearch) AND (users.groupId = $groupFilter) AND (users.fullname LIKE '%$searchString%' OR users.email LIKE '%$searchString%')
+	WHERE ($roleSearch) AND ($sendingTypesSearch) AND (users.groupId = $groupFilter) AND (users.fullname LIKE '%$searchString%' OR users.email LIKE '%$searchString%' OR `groups`.groupName LIKE '%$searchString%')
 	ORDER BY roleId ASC, groupName ASC, fullName ASC
 	LIMIT $devicesPerPage OFFSET $offset
 	";
@@ -74,7 +74,9 @@ if ($function == 'showUsers') {
 	
 	
 	$sqlTotal = "
-	SELECT COUNT(*) as totalRows FROM users WHERE ($roleSearch) AND ($sendingTypesSearch) AND (users.groupId = $groupFilter) AND (users.fullname LIKE '%$searchString%' OR users.email LIKE '%$searchString%')
+	SELECT COUNT(*) as totalRows FROM users 
+	LEFT JOIN `groups` ON users.groupId = `groups`.groupId
+	WHERE ($roleSearch) AND ($sendingTypesSearch) AND (users.groupId = $groupFilter) AND (users.fullname LIKE '%$searchString%' OR users.email LIKE '%$searchString%' OR `groups`.groupName LIKE '%$searchString%')
 	";
 	
 	$result = mysqli_query($conn, $sqlTotal);
