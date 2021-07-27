@@ -1462,7 +1462,7 @@ $(document).ready(function () {
 			// * Fill newAlarm div
 			//#region 
 			var newAlarmDivOutput = `
-			<div class="bg-bluegray-50 px-2 lg:px-4 border-r rounded-b-xl border-gray-200">
+			<div class="px-2 lg:px-4 border-r rounded-b-xl border-gray-200">
 				<!-- Form -->
 				<form id="alarmForm" method="post" autocomplete="off" class="flex flex-col max-w-4xl">
 					<!-- Row -->
