@@ -19,7 +19,7 @@ switch ($function) {
         $sql = "
             SELECT 'device' AS type, devices.deviceId as id, devices.deviceName as name, devices.deviceAlias as aliasEmail
             FROM devices
-            WHERE (devices.groupId = $devicesGroup) AND (devices.deviceName LIKE '%$searchString%' OR devices.deviceAlias LIKE '%$searchString%')
+            WHERE (devices.groupId = $devicesGroup) AND (devices.deviceName LIKE '%$searchString%' OR devices.deviceAlias LIKE '%$searchString%' OR devices.phoneNumber LIKE '%$searchString%')
             LIMIT 3;
         ";
         $result = mysqli_query($conn, $sql);

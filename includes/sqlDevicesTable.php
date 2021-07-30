@@ -38,7 +38,7 @@ if ($function == 'showDevices') {
 	SELECT devices.deviceId, devices.deviceName, devices.deviceAlias, devices.nextCalibrationDue, devices.deviceStatus, devices.customLocation, devices.latitude, devices.longitude, `groups`.groupName as groupName
 	FROM devices
 	LEFT JOIN `groups` ON devices.groupId = `groups`.groupId
-	WHERE ($productTypeSearch) AND (devices.groupId = $groupFilter) AND (devices.deviceName LIKE '%$searchString%' OR devices.deviceAlias LIKE '%$searchString%' OR `groups`.groupName LIKE '%$searchString%')
+	WHERE ($productTypeSearch) AND (devices.groupId = $groupFilter) AND (devices.deviceName LIKE '%$searchString%' OR devices.deviceAlias LIKE '%$searchString%' OR devices.devicePhone LIKE '%$searchString%' OR `groups`.groupName LIKE '%$searchString%')
 	ORDER BY `groups`.groupName ASC, devices.deviceName ASC
 	LIMIT $devicesPerPage OFFSET $offset
 	";
@@ -88,7 +88,7 @@ if ($function == 'showDevices') {
 	$sqlTotal = "
 	SELECT COUNT(*) as totalRows FROM devices 
 	LEFT JOIN `groups` ON devices.groupId = `groups`.groupId
-	WHERE ($productTypeSearch) AND (devices.groupId = $groupFilter) AND (devices.deviceName LIKE '%$searchString%' OR devices.deviceAlias LIKE '%$searchString%' OR `groups`.groupName LIKE '%$searchString%')
+	WHERE ($productTypeSearch) AND (devices.groupId = $groupFilter) AND (devices.deviceName LIKE '%$searchString%' OR devices.deviceAlias LIKE '%$searchString%' OR devices.devicePhone LIKE '%$searchString%' OR `groups`.groupName LIKE '%$searchString%')
 	";
 
 	$result = mysqli_query($conn, $sqlTotal);
