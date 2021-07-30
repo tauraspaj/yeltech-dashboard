@@ -45,6 +45,29 @@ function addToTriggerHistory($conn, $triggerId) {
 	mysqli_stmt_close($stmt);
 }
 
+// Function to compare reading to alarm threshold
+function compareToThreshold($reading, $operator, $thresholdValue) {
+    $response = false;
+    switch ($operator) {
+        case '>':
+            if ($reading > $thresholdValue) { $response = true; }
+            break;
+        case '>=':
+            if ($reading >= $thresholdValue) { $response = true; }
+            break;
+        case '<':
+            if ($reading < $thresholdValue) { $response = true; }
+            break;
+        case '<=':
+            if ($reading <= $thresholdValue) { $response = true; }
+            break;
+        case '==':
+            if ($reading == $thresholdValue) { $response = true; }
+            break;
+    }
+    return $response;
+}
+
 function processBSCmessage($conn, $message) {
     $from = $message['fromNumber'];
     $textBody = $message['textBody'];
@@ -54,7 +77,8 @@ function processBSCmessage($conn, $message) {
     $message_type = $data[1];
     
     // Find device Id
-    $sql = "SELECT devices.deviceId, devices.deviceStatus, products.productName
+    $sql = "
+    SELECT devices.deviceId, devices.deviceStatus, products.productName
     FROM devices
     LEFT JOIN products ON devices.productId = products.productId
     WHERE devicePhone = $from";
@@ -81,10 +105,11 @@ function processBSCmessage($conn, $message) {
     }
 
     // Bsc devices record channels in the order ai1, ai2, cnt -> aiN, aiN+1, cnt
-    $sql = "SELECT channelId FROM channels WHERE (channelType = 'AI' OR channelType = 'COUNTER') AND deviceId = $deviceId
+    $sql = "
+    SELECT channelId FROM channels WHERE (channelType = 'AI' OR channelType = 'COUNTER') AND deviceId = $deviceId
     ORDER BY CASE WHEN channelType = 'AI' THEN '1'
-                WHEN channelType = 'COUNTER' THEN '2'
-                ELSE channelType END ASC";
+            WHEN channelType = 'COUNTER' THEN '2'
+            ELSE channelType END ASC";
     $result = mysqli_query($conn, $sql);
     $channelsArray = array();
     if (mysqli_num_rows($result) > 0) {
@@ -131,70 +156,36 @@ function processBSCmessage($conn, $message) {
                     $thisMeasurement = $measurements[$i+$channelIndex];
                     $thisChannelId = $channelsArray[$channelIndex];
     
-                    $triggeredRequired = 0;
+                    $triggeredRequired = false;
     
                     for ($k = 0; $k < count($alarmTriggers); $k++) {
-                        switch ( $alarmTriggers[$k]['operator'] ) {
-                            case '>':
-                                if ($thisMeasurement > $alarmTriggers[$k]['thresholdValue']) {
-                                    $triggeredRequired = 1;
-                                } else {
-                                    $triggeredRequired = 0;
+                         // Check measurement's channel and only compare thresholds on that channel
+                        if ($alarmTriggers[$k]['channelId'] == $thisChannelId) {
+                            $triggeredRequired = compareToThreshold($thisMeasurement, $alarmTriggers[$k]['operator'], $alarmTriggers[$k]['thresholdValue']);
+
+                            if ($triggeredRequired) {
+                                // Check if the alarmtriggered is 1
+                                if ($alarmTriggers[$k]['isTriggered'] == 0) {
+                                    // If the alarm is not already triggered, trigger it
+                                    $sqlUpdateTrigger = "UPDATE alarmTriggers SET isTriggered = 1 WHERE triggerId = {$alarmTriggers[$k]['triggerId']}";
+                                    mysqli_query($conn, $sqlUpdateTrigger);
+        
+                                    // Send out emails
+                                    sendTriggerNotifications($conn, $alarmTriggers[$k]['triggerId'], $thisMeasurement);
+
+                                    // Add to triggersHistory
+                                    addToTriggerHistory($conn, $alarmTriggers[$k]['triggerId']);
+        
+                                    $alarmTriggers[$k]['isTriggered'] = 1;
                                 }
-                                break;
-                            case '>=':
-                                if ($thisMeasurement >= $alarmTriggers[$k]['thresholdValue']) {
-                                    $triggeredRequired = 1;
-                                } else {
-                                    $triggeredRequired = 0;
+                            } else {
+                                if ($alarmTriggers[$k]['isTriggered'] == 1 && $triggeredRequired == 0) {
+                                    // Update isTriggered
+                                    $sqlUpdateTrigger = "UPDATE alarmTriggers SET isTriggered = 0 WHERE triggerId = {$alarmTriggers[$k]['triggerId']}";
+                                    mysqli_query($conn, $sqlUpdateTrigger);
+        
+                                    $alarmTriggers[$k]['isTriggered'] = 0;
                                 }
-                                break;
-                            case '==':
-                                if ($thisMeasurement == $alarmTriggers[$k]['thresholdValue']) {
-                                    $triggeredRequired = 1;
-                                } else {
-                                    $triggeredRequired = 0;
-                                }
-                                break;
-                            case '<':
-                                if ($thisMeasurement < $alarmTriggers[$k]['thresholdValue']) {
-                                    $triggeredRequired = 1;
-                                } else {
-                                    $triggeredRequired = 0;
-                                }
-                                break;
-                            case '<=':
-                                if ($thisMeasurement <= $alarmTriggers[$k]['thresholdValue']) {
-                                    $triggeredRequired = 1;
-                                } else {
-                                    $triggeredRequired = 0;
-                                }
-                                break;
-                            default:
-                                break;
-                        }
-                        if ($triggeredRequired == 1) {
-                            // Check if the alarmtriggered is 1
-                            if ($alarmTriggers[$k]['isTriggered'] == 0) {
-                                // If the alarm is not already triggered, trigger it
-                                $sqlUpdateTrigger = "UPDATE alarmTriggers SET isTriggered = 1 WHERE triggerId = {$alarmTriggers[$k]['triggerId']}";
-                                mysqli_query($conn, $sqlUpdateTrigger);
-    
-                                // Send out emails
-                                sendTriggerNotifications($conn, $alarmTriggers[$k]['triggerId'], $thisMeasurement);
-    
-                                $alarmTriggers[$k]['isTriggered'] = 1;
-                            }
-                        } else {
-                            if ($alarmTriggers[$k]['isTriggered'] == 1 && $triggeredRequired == 0) {
-                                // Update isTriggered
-                                $sqlUpdateTrigger = "UPDATE alarmTriggers SET isTriggered = 0 WHERE triggerId = {$alarmTriggers[$k]['triggerId']}";
-                                mysqli_query($conn, $sqlUpdateTrigger);
-    
-                                // Add to triggersHistory
-                                addToTriggerHistory($conn, $alarmTriggers[$k]['triggerId']);
-    
-                                $alarmTriggers[$k]['isTriggered'] = 0;
                             }
                         }
                     }
@@ -240,70 +231,36 @@ function processBSCmessage($conn, $message) {
                     $thisMeasurement = $measurements[$i+$channelIndex];
                     $thisChannelId = $channelsArray[$channelIndex];
     
-                    $triggeredRequired = 0;
+                    $triggeredRequired = false;
     
                     for ($k = 0; $k < count($alarmTriggers); $k++) {
-                        switch ( $alarmTriggers[$k]['operator'] ) {
-                            case '>':
-                                if ($thisMeasurement > $alarmTriggers[$k]['thresholdValue']) {
-                                    $triggeredRequired = 1;
-                                } else {
-                                    $triggeredRequired = 0;
+                        // Check measurement's channel and only compare thresholds on that channel
+                        if ($alarmTriggers[$k]['channelId'] == $thisChannelId) {
+                            $triggeredRequired = compareToThreshold($thisMeasurement, $alarmTriggers[$k]['operator'], $alarmTriggers[$k]['thresholdValue']);
+                            
+                            if ($triggeredRequired) {
+                                // Check if the alarmtriggered is 1
+                                if ($alarmTriggers[$k]['isTriggered'] == 0) {
+                                    // If the alarm is not already triggered, trigger it
+                                    $sqlUpdateTrigger = "UPDATE alarmTriggers SET isTriggered = 1 WHERE triggerId = {$alarmTriggers[$k]['triggerId']}";
+                                    mysqli_query($conn, $sqlUpdateTrigger);
+                                    
+                                    // Send out emails
+                                    sendTriggerNotifications($conn, $alarmTriggers[$k]['triggerId'], $thisMeasurement);
+
+                                    // Add to triggersHistory
+                                    addToTriggerHistory($conn, $alarmTriggers[$k]['triggerId']);
+                                    
+                                    $alarmTriggers[$k]['isTriggered'] = 1;
                                 }
-                                break;
-                            case '>=':
-                                if ($thisMeasurement >= $alarmTriggers[$k]['thresholdValue']) {
-                                    $triggeredRequired = 1;
-                                } else {
-                                    $triggeredRequired = 0;
+                            } else {
+                                if ($alarmTriggers[$k]['isTriggered'] == 1 && $triggeredRequired == 0) {
+                                    // Update isTriggered
+                                    $sqlUpdateTrigger = "UPDATE alarmTriggers SET isTriggered = 0 WHERE triggerId = {$alarmTriggers[$k]['triggerId']}";
+                                    mysqli_query($conn, $sqlUpdateTrigger);
+                                    
+                                    $alarmTriggers[$k]['isTriggered'] = 0;
                                 }
-                                break;
-                            case '==':
-                                if ($thisMeasurement == $alarmTriggers[$k]['thresholdValue']) {
-                                    $triggeredRequired = 1;
-                                } else {
-                                    $triggeredRequired = 0;
-                                }
-                                break;
-                            case '<':
-                                if ($thisMeasurement < $alarmTriggers[$k]['thresholdValue']) {
-                                    $triggeredRequired = 1;
-                                } else {
-                                    $triggeredRequired = 0;
-                                }
-                                break;
-                            case '<=':
-                                if ($thisMeasurement <= $alarmTriggers[$k]['thresholdValue']) {
-                                    $triggeredRequired = 1;
-                                } else {
-                                    $triggeredRequired = 0;
-                                }
-                                break;
-                            default:
-                                break;
-                        }
-                        if ($triggeredRequired == 1) {
-                            // Check if the alarmtriggered is 1
-                            if ($alarmTriggers[$k]['isTriggered'] == 0) {
-                                // If the alarm is not already triggered, trigger it
-                                $sqlUpdateTrigger = "UPDATE alarmTriggers SET isTriggered = 1 WHERE triggerId = {$alarmTriggers[$k]['triggerId']}";
-                                mysqli_query($conn, $sqlUpdateTrigger);
-    
-                                // Send out emails
-                                sendTriggerNotifications($conn, $alarmTriggers[$k]['triggerId'], $thisMeasurement);
-    
-                                $alarmTriggers[$k]['isTriggered'] = 1;
-                            }
-                        } else {
-                            if ($alarmTriggers[$k]['isTriggered'] == 1 && $triggeredRequired == 0) {
-                                // Update isTriggered
-                                $sqlUpdateTrigger = "UPDATE alarmTriggers SET isTriggered = 0 WHERE triggerId = {$alarmTriggers[$k]['triggerId']}";
-                                mysqli_query($conn, $sqlUpdateTrigger);
-    
-                                // Add to triggersHistory
-                                addToTriggerHistory($conn, $alarmTriggers[$k]['triggerId']);
-    
-                                $alarmTriggers[$k]['isTriggered'] = 0;
                             }
                         }
                     }
@@ -390,6 +347,18 @@ function processBSCmessage($conn, $message) {
             } else {
                 $sql = "INSERT INTO smsStatus(deviceId, smsStatus, smsStatusTime) VALUES($deviceId, '$status', '$timeSent')";
                 mysqli_query($conn, $sql);
+
+                if ($status == 'HALT') {
+                    // Turn device offline on HALT
+                    $sql = "UPDATE devices SET deviceStatus = '0' WHERE deviceId = $deviceId";
+                    mysqli_query($conn, $sql);
+
+                    // And remove all triggers
+                    $sql = "
+                        UPDATE alarmTriggers SET isTriggered = 0 WHERE deviceId = $deviceId AND isTriggered = 1;
+                    ";
+                    mysqli_query($conn, $sql);
+                }
             }
     
         break;
