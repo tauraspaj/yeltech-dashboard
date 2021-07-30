@@ -248,7 +248,7 @@ function processBSCmessage($conn, $message) {
                                     // Send out emails
                                     sendTriggerNotifications($conn, $alarmTriggers[$k]['triggerId'], $thisMeasurement);
 
-                                    // Add to triggersHistory
+                                    // Add to triggersHistory on trigger creation
                                     addToTriggerHistory($conn, $alarmTriggers[$k]['triggerId']);
                                     
                                     $alarmTriggers[$k]['isTriggered'] = 1;
