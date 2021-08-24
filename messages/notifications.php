@@ -141,6 +141,26 @@ function sendTriggerNotifications($conn, $triggerId, $reading) {
 		$newSMSleft = $smsLeft - $smsCounter;
 		$sqlUpdateSMS = "UPDATE `groups` SET smsLeft = $newSMSleft WHERE groupId=$groupId";
 		mysqli_query($conn, $sqlUpdateSMS);
+
+		// Proactive warning - inform that customers have under 50 credits left
+		if ($newSMSleft < 50 && $newSMSleft > 1) {
+			$emailSubject_WARNING50 = "WARNING: YOU ONLY HAVE $newSMSleft CREDITS LEFT";
+			$emailBody_WARNING50 = "
+				Hi! <br>
+				We would like to inform you have you only have <b>$newSMSleft</b> SMS credits left.<br><br>
+				You will no longer receive SMS alerts if you run out of credits, so in order to avoid any disruption, we urge you to top up as soon as possible.<br>
+				Please get in touch with us to add more SMS credits!
+			";
+
+			// Now lets create an array of all the recipients
+			$warningRecipients = array();
+			foreach ($smsRecipients as $smsRecipient) {
+				$warningRecipients[] = $smsRecipient['email'];
+			}
+			$warningRecipients[] = 'info@yeltech.com';
+			// Send
+			sendEmail($warningRecipients, $emailSubject_WARNING50, $emailBody_WARNING50);
+		}
 	} else {
 		// Send out email notification to all the sms recipients
 		$emailSubject2 = "WARNING: YOU DON'T HAVE ENOUGH SMS CREDITS LEFT";
@@ -282,10 +302,31 @@ function forwardEWBalarms($conn, $deviceId, $message) {
 			}
 		}
 
+		
 		// Deduct the number of messages sent
 		$newSMSleft = $smsLeft - $smsCounter;
 		$sqlUpdateSMS = "UPDATE `groups` SET smsLeft = $newSMSleft WHERE groupId=$groupId";
 		mysqli_query($conn, $sqlUpdateSMS);
+		
+		// Proactive warning - inform that customers have under 50 credits left
+		if ($newSMSleft < 50 && $newSMSleft > 1) {
+			$emailSubject_WARNING50 = "WARNING: YOU ONLY HAVE $newSMSleft CREDITS LEFT";
+			$emailBody_WARNING50 = "
+				Hi! <br>
+				We would like to inform you have you only have <b>$newSMSleft</b> SMS credits left.<br><br>
+				You will no longer receive SMS alerts if you run out of credits, so in order to avoid any disruption, we urge you to top up as soon as possible.<br>
+				Please get in touch with us to add more SMS credits!
+			";
+
+			// Now lets create an array of all the recipients
+			$warningRecipients = array();
+			foreach ($smsRecipients as $smsRecipient) {
+				$warningRecipients[] = $smsRecipient['email'];
+			}
+			$warningRecipients[] = 'info@yeltech.com';
+			// Send
+			sendEmail($warningRecipients, $emailSubject_WARNING50, $emailBody_WARNING50);
+		}
 	} else {
 		// Send out email notification to all the sms recipients
 		$emailSubject2 = "WARNING: YOU DON'T HAVE ENOUGH SMS CREDITS LEFT";
