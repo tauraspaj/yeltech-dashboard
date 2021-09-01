@@ -87,8 +87,18 @@ if ($resultCheck > 0) {
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- META CHARSET -->
+    <meta charset="UTF-8">
+    <!-- META CHARSET -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- META VIEWPORT -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- META DESCRIPTION -->
+    <meta name="description" content="Smart IoT platform for Yeltech's IoT devices. 24/7 access to your data with custom alarm creation.">
+    <!-- META KEYWORDS -->
+    <meta name="keywords" content="Yeltech, remote, sensors, rtmu, monitor, iot, internet of things">
+    <!-- META AUTHOR -->
+    <meta name="author" content="Yeltech Ltd">
 
 	<!-- Chart js -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
