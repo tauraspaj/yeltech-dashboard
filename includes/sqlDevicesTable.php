@@ -8,8 +8,10 @@ if ($function == 'showDevices') {
 	// Display all devices to super admins
 	if ($_SESSION['roleId'] == 4 || $_SESSION['roleId'] == 3) {
 		$groupFilter = $_SESSION['groupId'];
+		$order = 'ORDER BY alarmsTriggered DESC, devices.deviceStatus DESC, `groups`.groupName ASC, devices.deviceName ASC';
 	} else {
 		$groupFilter = $_POST['groupId'];
+		$order = 'ORDER BY `groups`.groupName ASC, devices.deviceName ASC';
 	}
 
 	$searchString = $_POST['pageSearchString'];
@@ -35,11 +37,13 @@ if ($function == 'showDevices') {
 	$offset = $_POST['offset'];
 
 	$sql = "
-	SELECT devices.deviceId, devices.deviceName, devices.deviceAlias, devices.nextCalibrationDue, devices.deviceStatus, devices.customLocation, devices.latitude, devices.longitude, `groups`.groupName as groupName
+	SELECT DISTINCT devices.deviceId, devices.deviceName, devices.deviceAlias, devices.nextCalibrationDue, devices.deviceStatus, devices.customLocation, devices.latitude, devices.longitude, `groups`.groupName as groupName, subscriptions.subFinish, (SELECT COUNT(*) FROM alarmTriggers WHERE alarmTriggers.isTriggered = 1 AND alarmTriggers.deviceId = devices.deviceId) AS alarmsTriggered
 	FROM devices
 	LEFT JOIN `groups` ON devices.groupId = `groups`.groupId
+	LEFT JOIN subscriptions ON devices.deviceId = subscriptions.deviceId
+	LEFT JOIN alarmTriggers ON devices.deviceId = alarmTriggers.deviceId
 	WHERE ($productTypeSearch) AND (devices.groupId = $groupFilter) AND (devices.deviceName LIKE '%$searchString%' OR devices.deviceAlias LIKE '%$searchString%' OR devices.devicePhone LIKE '%$searchString%' OR `groups`.groupName LIKE '%$searchString%')
-	ORDER BY `groups`.groupName ASC, devices.deviceName ASC
+	$order
 	LIMIT $devicesPerPage OFFSET $offset
 	";
 
@@ -50,16 +54,17 @@ if ($function == 'showDevices') {
 
 	if ($resultCheck > 0) {
 		while ($row = mysqli_fetch_assoc($result)) {
-			// Find the number of alarms triggered for each device
-			$sqlAlarms = "
-				SELECT COUNT(triggerId) AS alarmsTriggered FROM alarmTriggers WHERE deviceId = {$row['deviceId']} AND isTriggered = 1;
+			$sqlTriggeredAlarms = "
+				SELECT alarmDescription FROM alarmTriggers WHERE deviceId = {$row['deviceId']} AND isTriggered = 1
 			";
-			$resultAlarms = mysqli_query($conn, $sqlAlarms);
-			if ( mysqli_num_rows($resultAlarms) > 0 ) {
-				while ($row3 = mysqli_fetch_assoc($resultAlarms)) {
-					$row +=  $row3;
+			$resultTriggeredAlarms = mysqli_query($conn, $sqlTriggeredAlarms);
+			$triggeredAlarmsArr = array();
+			if ( mysqli_num_rows($resultTriggeredAlarms) > 0 ) {
+				while ($rowTriggeredAlarms = mysqli_fetch_assoc($resultTriggeredAlarms)) {
+					array_push($triggeredAlarmsArr, $rowTriggeredAlarms);
 				}
 			}
+			$row['alarms'] = $triggeredAlarmsArr;
 
 			$sqlReading = "
 				SELECT measurements.measurement, measurements.measurementTime, units.unitName

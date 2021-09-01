@@ -49,36 +49,37 @@ $(document).ready(function () {
 				selectedProducts: selectedProducts,
 				function: 'showDevices'
 			},
-			beforeSend: function () {
-				$('#loadingOverlay').show();
-			},
 			success: function (data) {
-				$('#loadingOverlay').hide();
 				// console.log(data);
 				var devices = JSON.parse(data);
+				console.log(devices);
 
 				totalCount = devices[devices.length - 1]['totalRows'];
 				returnedCount = devices.length - 1;
 				pageControl(totalCount, returnedCount, perPage, pageNumber);
-
-				console.log(devices);
 
 				var outputTable = '';
 				for (i = 0; i < devices.length - 1; i++) {
 					// Display custom alias
 					var display1 = devices[i].deviceName;
 					var display2 = devices[i].deviceAlias;
-					if (devices[i].deviceAlias == null || devices[i].deviceAlias == '') {
+					if (devices[devices.length - 1]['powerRole'] == 1 || devices[devices.length - 1]['powerRole'] == 2) {
 						display1 = devices[i].deviceName;
-						display2 = '';
+						display2 = '<span class="bg-lightblue-500 text-xs px-2 text-white inline font-medium rounded text-center">'+ devices[i].groupName + '</span>';
 					} else {
-						if (devices[devices.length - 1]['powerRole'] == 1 || devices[devices.length - 1]['powerRole'] == 2) {
+						if (devices[i].deviceAlias == null || devices[i].deviceAlias == '') {
 							display1 = devices[i].deviceName;
-							display2 = devices[i].deviceAlias;
+							display2 = '';
 						} else {
 							display1 = devices[i].deviceAlias;
 							display2 = devices[i].deviceName;
 						}
+					}
+
+					// Display group for super admins
+					var groupDisplay = '';
+					if (devices[devices.length - 1]['powerRole'] == 1 || devices[devices.length - 1]['powerRole'] == 2) {
+						groupDisplay = `<span class="bg-lightblue-500 text-xs px-2 text-white inline font-medium rounded text-center">`+ devices[i].groupName + `</span>`
 					}
 
 					// Process location, display - if not existent. Display custom location if set
@@ -89,6 +90,65 @@ $(document).ready(function () {
 						}
 					} else {
 						location = devices[i].customLocation;
+					}
+
+					// Process last reading
+					var lastReading = '-';
+					if (devices[i].measurement != null && devices[i].measurementTime != null) {
+						var timestamp = new Date( Date.parse(devices[i].measurementTime) );
+						var timestamp = timestamp.toLocaleString('en-GB', { hour: 'numeric', minute:'numeric', day: 'numeric', month: 'short' });
+
+						lastReading = `
+							<p class="text-center text-sm font-semibold text-gray-800">
+								`+devices[i].measurement + ` ` + devices[i].unitName + `
+							<p>
+							<p class="text-center text-xs text-gray-500">
+								`+timestamp+`
+							</p>
+						`
+					}
+
+					// Process alarm
+					var alarmDisplay = '';
+					var alarmList = '';
+					if (devices[i].alarmsTriggered == 0) {
+						alarmDisplay = `
+						<div class="flex justify-center items-center h-8 border rounded bg-gray-300">
+							<div class="bg-gray-300 h-full w-6 text-white flex justify-center items-center">
+								<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path></svg>
+							</div>
+							<p class="text-gray-500 text-xs font-medium px-2 whitespace-nowrap bg-white h-full rounded-r flex justify-center items-center">0 ALARMS</p>
+						</div>`;
+					} else {
+						alarm = '<span class="text-red-500 whitespace-nowrap font-medium">'+devices[i].alarmsTriggered+' TRIGGERED</span>';
+						if (devices[i].alarmsTriggered == 1) {
+							numberOfAlarms = devices[i].alarmsTriggered + ' ALARM';
+						} else {
+							numberOfAlarms = devices[i].alarmsTriggered + ' ALARMS';
+						}
+						alarmDisplay = `
+						<div class="flex justify-center items-center h-8 border rounded border-red-400">
+							<div class="bg-red-400 h-full w-6 text-white flex justify-center items-center">
+								<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path></svg>
+							</div>
+							<p class="text-red-500 text-xs font-medium px-2 whitespace-nowrap bg-white h-full rounded-r flex justify-center items-center">`+numberOfAlarms+`</p>
+						</div>`;
+
+						// Display list of alarms
+						for(j = 0; j < devices[i].alarms.length; j++) {
+							alarmList += '<span class="bg-red-500 text-white rounded text-xs px-2 mr-2 font-medium">'+devices[i].alarms[j].alarmDescription+'</span>'
+						}
+					}
+
+					// Process status
+					var statusDisplay = '';
+					var sideStripColour = '';
+					if (devices[i].deviceStatus == 0) {
+						sideStripColour = 'border-red-500';
+						statusDisplay = '<span class="bg-red-500 rounded px-2 text-white text-xs uppercase font-medium">Offline</span>'
+					} else if (devices[i].deviceStatus == 1) {
+						sideStripColour = 'border-green-500';
+						statusDisplay = '<span class="bg-green-500 rounded px-2 text-white text-xs uppercase font-medium">Online</span>';
 					}
 
 					// Process next calibration date. This should go orange if you're within the last 30 days and red if you're past the date.
@@ -102,64 +162,87 @@ $(document).ready(function () {
 
 						// Format to dd month yyyy
 						var formattedDate = nextCalibrationDate.toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-
 						if ( currentDate >= nextCalibrationDate ) {
-							nextCalibrationDate = '<span class="bg-red-100 text-red-500 font-medium rounded-full px-2 py-1">' + formattedDate + '</span>';
+							nextCalibrationDate = '<svg class="w-4 h-4 mr-1 text-red-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg><p class="text-red-500 text-sm font-medium">' + formattedDate + '</p>';
 						} else if ( currentDate < nextCalibrationDate && currentDate >= monthWarning ) {
-							nextCalibrationDate = '<span class="text-yellow-500">' + formattedDate + '</span>';
+							nextCalibrationDate = '<svg class="w-4 h-4 mr-1 text-yellow-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg><p class="text-yellow-500 text-sm font-medium">' + formattedDate + '</p>';
 						} else if (currentDate < monthWarning) {
-							nextCalibrationDate = '<span>' + formattedDate + '</span>';
+							nextCalibrationDate = '<p class="text-gray-800 text-sm font-medium">' + formattedDate + '</p>';
 						}
 					}
 
-					// Process alarm
-					var alarm = '';
-					var rowFormat = 'bg-white hover:bg-gray-100';
-					if (devices[i].alarmsTriggered == 0) {
-						alarm = '<span class="text-green-500">None</span>';
-					} else {
-						alarm = '<span class="text-red-500 whitespace-nowrap font-medium">'+devices[i].alarmsTriggered+' TRIGGERED</span>';
-						display1 = '<span class="text-red-500 hover:text-red-600">'+display1+'</span>';
-						display2 = '<span class="text-red-400">'+display2+'</span>';
-					}
-
-					var lastReading = '-';
-					if (devices[i].measurement != null && devices[i].measurementTime != null) {
-						var timestamp = new Date( Date.parse(devices[i].measurementTime) );
-						var timestamp = timestamp.toLocaleString('en-GB', { hour: 'numeric', minute:'numeric', day: 'numeric', month: 'long' });
-						lastReading = '<span class="font-medium">'+devices[i].measurement + ' ' + devices[i].unitName + '</span><br><span class="text-gray-400 text-xs">' + timestamp + '</span>';
-					}
-
-					// Process status
-					var status = '';
-					if (devices[i].deviceStatus == 0) {
-						status = '<span class="flex-none bg-red-100 h-8 w-8 flex justify-center items-center rounded-full font-semibold uppercase text-red-500"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M3.707 2.293a1 1 0 00-1.414 1.414l6.921 6.922c.05.062.105.118.168.167l6.91 6.911a1 1 0 001.415-1.414l-.675-.675a9.001 9.001 0 00-.668-11.982A1 1 0 1014.95 5.05a7.002 7.002 0 01.657 9.143l-1.435-1.435a5.002 5.002 0 00-.636-6.294A1 1 0 0012.12 7.88c.924.923 1.12 2.3.587 3.415l-1.992-1.992a.922.922 0 00-.018-.018l-6.99-6.991zM3.238 8.187a1 1 0 00-1.933-.516c-.8 3-.025 6.336 2.331 8.693a1 1 0 001.414-1.415 6.997 6.997 0 01-1.812-6.762zM7.4 11.5a1 1 0 10-1.73 1c.214.371.48.72.795 1.035a1 1 0 001.414-1.414c-.191-.191-.35-.4-.478-.622z"></path></svg></span>';
-					} else if (devices[i].deviceStatus == 1) {
-						status = '<span class="flex-none bg-green-100 h-8 w-8 flex justify-center items-center rounded-full font-semibold uppercase text-green-500"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.05 3.636a1 1 0 010 1.414 7 7 0 000 9.9 1 1 0 11-1.414 1.414 9 9 0 010-12.728 1 1 0 011.414 0zm9.9 0a1 1 0 011.414 0 9 9 0 010 12.728 1 1 0 11-1.414-1.414 7 7 0 000-9.9 1 1 0 010-1.414zM7.879 6.464a1 1 0 010 1.414 3 3 0 000 4.243 1 1 0 11-1.415 1.414 5 5 0 010-7.07 1 1 0 011.415 0zm4.242 0a1 1 0 011.415 0 5 5 0 010 7.072 1 1 0 01-1.415-1.415 3 3 0 000-4.242 1 1 0 010-1.415zM10 9a1 1 0 011 1v.01a1 1 0 11-2 0V10a1 1 0 011-1z" clip-rule="evenodd"></path></svg></span>'
-					}
 
 					outputTable += `
-					<tr class="`+rowFormat+` h-12">
-						<td class="text-left py-2 px-4 text-sm flex space-x-3 items-center">
-							`+ status +`
-							<a href="./device.php?id=`+ devices[i].deviceId + `" class="flex flex-col justify-center">
-								<span title="View device" class="font-semibold whitespace-nowrap text-lightblue-500 cursor-pointer hover:text-lightblue-600">`+ display1 + `</span>
-								<span class="text-gray-400">`+ display2 + `</span>
-							</a>
-						</td>
-						<td class="text-center py-2 px-4 text-sm text-gray-600 whitespace-nowrap capitalize">`+ devices[i].groupName + `</td>
-						<td class="text-center py-2 px-4 text-sm text-gray-600 whitespace-nowrap">`+ location + `</td>
-						<td class="text-center py-2 px-4 text-sm text-gray-600 whitespace-nowrap">`+ nextCalibrationDate + `</td>
-						<td class="text-center py-2 px-4 text-sm text-gray-600 whitespace-nowrap">`+ lastReading + `</td>
-						<td class="text-center py-2 px-4 text-sm text-gray-600 whitespace-nowrap">`+ alarm +`</td>
-						<td class="text-center px-8 md:px-12">
-							<a href="./device.php?id=`+ devices[i].deviceId + `">
-								<button class="focus:outline-none text-xs text-gray-600 uppercase bg-gray-50 border border-gray-300 rounded font-medium py-1 px-2 hover:bg-gray-200" title="View device">
-									View
-								</button>
-							</a>
-						</td>
-					</tr>
+					<div class="flex flex-col">
+						<div id="row" class="border-l-4 `+sideStripColour+` rounded-tl">
+							<div class="bg-white border border-l-0 rounded-tr flex py-4 pr-6 hover:bg-gray-50">
+
+								<div class="flex-none w-16 lg:w-24 flex justify-center lg:items-center mt-2 lg:mt-0 text-gray-600">
+									<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+								</div>
+
+								<div class="flex-auto grid grid-cols-2 md:grid-cols-5 gap-6">
+									<div class="col-span-1 flex flex-col justify-center">
+										<p class="text-gray-400 text-xs uppercase whitespace-nowrap">`+display2+`</p>
+										<p class="text-gray-900 text-sm md:text-base font-bold">`+display1+`</p>
+									</div>
+
+									<div class="col-span-1 flex justify-center lg:justify-start items-center">
+										`+alarmDisplay+`
+									</div>
+				
+									<div class="col-span-1 flex md:justify-center lg:justify-start items-center space-x-2">
+										<div>
+										<p class="text-gray-400 text-xs hidden xl:block">Reading</p>
+										</div>
+										<div>
+											`+lastReading+`
+										</div>
+									</div>
+				
+									<div class="col-span-1 flex justify-center lg:justify-start items-center space-x-2">
+										<div>
+											<p class="text-gray-400 text-xs hidden xl:block">Location</p>
+										</div>
+										<div>
+											<p class="text-center text-sm font-medium text-gray-800">
+												`+location+`
+											<p>
+										</div>
+									</div>
+
+									<div class="col-span-2 md:col-span-1 h-full flex items-center justify-end md:justify-center">
+										<a id="dashboard_button" href="./device.php?id=`+ devices[i].deviceId + `" class="flex justify-center items-center py-2 px-2 border text-gray-500 space-x-2 bg-white rounded cursor-pointer transition hover:bg-gray-100" title="Dashboard">
+											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+											<p class="text-xs font-medium md:hidden xl:block">Dashboard</p>
+										</a>
+									</div>
+								</div>
+
+							</div>
+						</div>
+
+						<div id="row_dropdown" class="bg-white border border-t-0 flex flex-col px-12 md:px-16 py-8 space-y-4 rounded-b hidden">
+							<div class="flex items-center">
+									<div class="w-32 md:w-72 text-gray-600 text-sm">Status</div>
+									<div class="flex items-center">
+										`+statusDisplay+`
+									</div>
+							</div>
+							<div class="flex items-center">
+									<div class="w-32 md:w-72 text-gray-600 text-sm">Next Calibration</div>
+									<div class="flex items-center">`+nextCalibrationDate+`</div>
+							</div>
+							<div class="flex items-center">
+									<div class="w-32 md:w-72 text-gray-600 text-sm">Subscription Finish</div>
+									<div class="text-sm font-medium text-gray-800">31 July 2022</div>
+							</div>
+							<div class="flex items-center">
+									<div class="w-32 md:w-72 text-gray-600 text-sm">Alarms</div>
+									<div class="flex items-center">`+alarmList+`</div>
+							</div>
+						</div>
+					</div>
 					`;
 				}
 				devicesTable.html(outputTable);
@@ -173,7 +256,7 @@ $(document).ready(function () {
 
 
 	var devicePageNumber = 1;
-	var devicesPerPage = 10;
+	var devicesPerPage = 7;
 	var devicesTable = $('#devicesTableBody');
 	var totalCount = 0;
 
@@ -248,6 +331,11 @@ $(document).ready(function () {
 	$('#previousDevicesButton').on('click', function () {
 		devicePageNumber -= 1;
 		showDevices(devicesPerPage, devicePageNumber);
+	})
+
+	// ! Row dropdown functionality
+	$('#devicesTableBody').delegate('#row', 'click', function() {
+		$(this).siblings('#row_dropdown').slideToggle();
 	})
 
 })

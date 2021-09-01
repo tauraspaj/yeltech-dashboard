@@ -10,15 +10,15 @@ include_once('header.php');
 	<div class="hidden lg:block flex-none bg-gray-100 lg:h-full lg:w-44 xl:w-60">
 		<div class="fixed h-full flex flex-col" style="width: inherit;">
 			<!-- Filters div -->
-			<div class="flex flex-col space-y-8 h-full pt-8 bg-gray-200 rounded-tr-3xl shadow-md">
-				<input id="pageSearchBar" type="text" class="h-10 w-40 xl:w-52 outline-none focus:outline-none bg-gray-100 rounded-lg text-gray-800 font-medium flex justify-center items-center text-sm space-x-1 mx-auto px-4 border border-gray-300 transition-all" placeholder="Filter devices...">
+			<div class="flex flex-col space-y-8 h-full pt-4 px-4 shadow-md">
+				<input id="pageSearchBar" type="text" class="h-10 w-full outline-none focus:outline-none bg-white focus:bg-white rounded-lg text-gray-800 font-medium flex justify-center items-center text-sm space-x-1 mx-auto px-4 border border-gray-300 transition-all" placeholder="Filter devices...">
 
 				<!-- Php code for roles filter -->
 				<?php
 				if ($_SESSION['roleId'] == 1 || $_SESSION['roleId'] == 2) {
 					echo '
 					<!-- Single filter -->
-					<div class="flex flex-col px-4">
+					<div class="flex flex-col px-2">
 						<!-- Title -->
 						<div id="groupsTitle" class="flex items-center cursor-pointer space-x-2">
 							<div id="icons">
@@ -56,7 +56,7 @@ include_once('header.php');
 				?>
 
 				<!-- Single filter -->
-				<div id="productsFilter" class="flex flex-col px-4">
+				<div id="productsFilter" class="flex flex-col px-2">
 					<!-- Title -->
 					<div id="productsTitle" class="flex items-center cursor-pointer space-x-2">
 						<div id="icons">
@@ -130,42 +130,21 @@ include_once('header.php');
 	<!-- End of filters subnav -->
 
 	<!-- Site content -->
-	<div class="flex-auto grid grid-cols-1 p-4 gap-4 md:grid-cols-2 md:gap-4 lg:grid-cols-3 lg:gap-8 lg:p-8 auto-rows-min">
-		<!-- Table card -->
-		<div class="col-span-1 md:col-span-2 lg:col-span-3 bg-white shadow-lg border rounded-b">
-			<div class="flex bg-white overflow-x-auto min-w-full">
-				<table class="table-fixed min-w-full">
-					<thead class="uppercase text-xs bg-bluegray-50 border-b border-gray-200 text-bluegray-900">
-						<tr>
-							<th class="text-left w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Name</th>
-							<th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Group</th>
-							<th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Location</th>
-							<th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Next Calibration</th>
-							<th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Last Reading</th>
-							<th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Alarms</th>
-							<th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap"></th>
-						</tr>
-					</thead>
-					<tbody id="devicesTableBody" class="divide-y border-b">
-						<!-- This area gets filled via PHP -->
+	<div class="flex-auto flex flex-col">
+		<!-- Pagination -->
+		<div class="h-14 bg-gray-300 border-b w-full grid-cols-3 px-6 flex justify-center items-center space-x-4">
+			<button id="previousDevicesButton" class="focus:outline-none text-gray-600 transition hover:bg-gray-200 border border-gray-400 h-8 w-14 flex justify-center items-center cursor-pointer disabled:opacity-75 disabled:text-bluegray-400 disabled:bg-gray-300 disabled:cursor-default"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg></button>
 
-					</tbody>
-				</table>
-			</div>
-			<div id="loadingOverlay" class="flex flex-auto w-full justify-center items-center space-x-2 uppercase font-semibold text-bluegray-800 py-8">
-				<svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-				<p>Loading...</p>
-			</div>
+			<p class="text-xs uppercase font-medium text-gray-600 whitespace-nowrap">Showing <span class="font-extrabold" id="devicesRange"></span> of <span id="devicesTotal"></p>
 
-			<div class="flex flex-col items-center justify-center py-4">
-				<div class="flex">
-					<button id="previousDevicesButton" class="focus:outline-none h-14 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-sm border border-gray-200 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Previous</button>
-					<button id="nextDevicesButton" class="focus:outline-none h-14 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-sm border border-gray-200 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Next</button>
-				</div>
-				<p class="mt-4 text-sm font-semibold">Showing <span id="devicesRange"></span> of <span id="devicesTotal"></span></p>
-			</div>
+			<button id="nextDevicesButton" class="focus:outline-none text-gray-600 transition hover:bg-gray-200 border border-gray-400 h-8 w-14 flex justify-center items-center cursor-pointer disabled:opacity-75 disabled:text-bluegray-400 disabled:bg-gray-300 disabled:cursor-default"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg></button>
+		</div>
+		
+		<div id="devicesTableBody" class="flex-auto p-4 flex flex-col space-y-4 lg:space-y-4">
+
 		</div>
 	</div>
+	
 	<!-- End of site content -->
 
 </div>
