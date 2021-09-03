@@ -136,7 +136,12 @@ $(document).ready(function () {
 
 						// Display list of alarms
 						for(j = 0; j < devices[i].alarms.length; j++) {
-							alarmList += '<span class="bg-red-500 text-white rounded text-xs px-2 mr-2 font-medium">'+devices[i].alarms[j].alarmDescription+'</span>'
+							if (devices[i].alarms[j].alarmDescription == null) {
+								descriptionDisplay = '-';
+							} else {
+								descriptionDisplay = devices[i].alarms[j].alarmDescription;
+							}
+							alarmList += '<span class="bg-red-500 text-white rounded text-xs px-2 mr-2 font-medium">'+descriptionDisplay+'</span>'
 						}
 					}
 
@@ -174,7 +179,7 @@ $(document).ready(function () {
 
 					outputTable += `
 					<div class="flex flex-col">
-						<div id="row" class="border-l-4 `+sideStripColour+` rounded-tl">
+						<div id="row" class="border-l-2 `+sideStripColour+` rounded-tl">
 							<div class="bg-white border border-l-0 rounded-tr flex py-4 pr-6 hover:bg-gray-50">
 
 								<div class="flex-none w-16 lg:w-24 flex justify-center lg:items-center mt-2 lg:mt-0 text-gray-600">
@@ -205,7 +210,7 @@ $(document).ready(function () {
 											<p class="text-gray-400 text-xs hidden xl:block">Location</p>
 										</div>
 										<div>
-											<p class="text-center text-sm font-medium text-gray-800">
+											<p class="text-sm font-medium text-gray-800">
 												`+location+`
 											<p>
 										</div>

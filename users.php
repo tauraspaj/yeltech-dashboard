@@ -221,12 +221,12 @@ include_once('header.php');
 <!-- Bottom right dashboard window -->
 <div class="flex-auto flex-col lg:flex-row bg-gray-100 flex">
 	<!-- Filters subnav -->
-	<div class="hidden lg:block flex-none lg:h-full bg-transparent lg:w-44 xl:w-60">
-		<div class="fixed h-full flex flex-col bg-transparent" style="width: inherit;">
+	<div class="hidden lg:block flex-none bg-gray-200 lg:w-44 xl:w-60">
+		<div class="fixed h-full flex flex-col border-r border-gray-300" style="width: inherit;">
 			<!-- New user btn -->
 			<?php 
 			if ($_SESSION['roleId'] != 4) {
-				echo '<div class="bg-gray-100 pb-8 shadow-md rounded-br-3xl">
+				echo '<div class="bg-gray-100 pb-8 border-b border-gray-300">
 					<div href="./newuser.php" class="h-10 w-40 xl:w-52 focus:outline-none bg-lightblue-400 rounded-lg shadow text-white font-medium flex items-center text-sm mt-6 mx-auto transition-all hover:bg-lightblue-500 hover:ring-1 cursor-pointer" title="Create new user">
 						<div class="w-10 h-full rounded-l-lg flex justify-center items-center bg-lightblue-600">
 							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"></path></svg>
@@ -240,29 +240,29 @@ include_once('header.php');
 			?>
 					
 			<!-- Filters div -->
-			<div class="flex flex-col space-y-8 h-full pt-8 bg-gray-200 rounded-tr-3xl shadow-md">
-				<input id="userSearch" type="text" class="h-10 w-40 xl:w-52 outline-none focus:outline-none bg-gray-100 rounded-lg text-gray-800 font-medium flex justify-center items-center text-sm space-x-1 mx-auto px-4 border border-gray-300 transition-all" placeholder="Filter users...">
+			<div class="flex flex-col space-y-8 h-full pt-6 px-4 bg-gray-200">
+				<input id="userSearch" type="text" class="h-10 w-full outline-none focus:outline-none bg-gray-100 focus:bg-gray-50 rounded text-gray-800 font-medium flex justify-center items-center text-sm space-x-1 mx-auto px-4 border border-gray-300 transition-all" autocomplete="off" placeholder="Filter users...">
 
 				<!-- Php code for groups filter -->
 				<?php
 				if ($_SESSION['roleId'] == 1 || $_SESSION['roleId'] == 2) {
 					echo '
 					<!-- Single filter -->
-					<div class="flex flex-col px-4">
+					<div class="flex flex-col">
 						<!-- Title -->
 						<div id="groupsTitle" class="flex items-center cursor-pointer space-x-2">
 							<div id="icons">
-								<svg id="icon_plus" class="w-6 h-6 text-gray-800 transform duration-200" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
-								<svg id="icon_minus" class="w-6 h-6 text-gray-800 transform duration-200 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
+								<svg id="icon_plus" class="w-5 h-5 text-gray-600 transform duration-200" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
+								<svg id="icon_minus" class="w-5 h-5 text-gray-600 transform duration-200 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
 							</div>
 							<p class="text-xs font-semibold uppercase text-gray-600">Group</p>
 						</div>
 						<!-- Separator -->
-						<div class="border border-gray-300 mt-1"></div>
+						<div class="border-b border-gray-300  mt-1"></div>
 
 						<!-- Filter content -->
 						<div class="mt-2 hidden">
-							<select id="groupFilter" class="focus:outline-none w-full h-10 bg-gray-50 border border-gray-400 px-2 text-sm">
+							<select id="groupFilter" class="focus:outline-none w-full h-10 bg-gray-100 focus:bg-gray-50 text-gray-700 border border-gray-300 px-2 text-sm">
 								<option data-id="users.groupId" class="font-medium text-sm bg-bluegray-50 text-bluegray-800" selected>All Groups</option>
 					';
 
@@ -286,17 +286,17 @@ include_once('header.php');
 				?>
 
 				<!-- Single filter -->
-				<div id="rolesFilter" class="flex flex-col px-4">
+				<div id="rolesFilter" class="flex flex-col">
 					<!-- Title -->
 					<div id="rolesTitle" class="flex items-center cursor-pointer space-x-2">
 						<div id="icons">
-							<svg id="icon_plus" class="w-6 h-6 text-gray-800 transform duration-200" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
-							<svg id="icon_minus" class="w-6 h-6 text-gray-800 transform duration-200 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
+							<svg id="icon_plus" class="w-5 h-5 text-gray-600 transform duration-200" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
+							<svg id="icon_minus" class="w-5 h-5 text-gray-600 transform duration-200 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
 						</div>
 						<p class="text-xs font-semibold uppercase text-gray-600">Roles</p>
 					</div>
 					<!-- Separator -->
-					<div class="border border-gray-300 mt-1"></div>
+					<div class="border-b border-gray-300  mt-1"></div>
 					
 					<!-- Filter content -->
 					<div class="mt-2 flex flex-col space-y-1 hidden">
@@ -328,18 +328,18 @@ include_once('header.php');
 				<!-- End of single filter -->
 
 				<!-- Single filter -->
-				<div id="sendingTypesFilter" class="flex flex-col px-4">
+				<div id="sendingTypesFilter" class="flex flex-col">
 					<!-- Title -->
 					<div id="sendingTypeTitle" class="flex items-center cursor-pointer space-x-2">
 						<div id="icons">
-							<svg id="icon_plus" class="w-6 h-6 text-gray-800 transform duration-200" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
-							<svg id="icon_minus" class="w-6 h-6 text-gray-800 transform duration-200 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
+							<svg id="icon_plus" class="w-5 h-5 text-gray-600 transform duration-200" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
+							<svg id="icon_minus" class="w-5 h-5 text-gray-600 transform duration-200 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
 						</div>
 						<p class="text-xs font-semibold uppercase text-gray-600">Sending type</p>
 					</div>
 					
 					<!-- Separator -->
-					<div class="border border-gray-300 mt-1"></div>
+					<div class="border-b border-gray-300  mt-1"></div>
 					
 					<!-- Filter content -->
 					<div class="mt-2 flex flex-col space-y-1 hidden">

@@ -232,7 +232,7 @@ if ($resultCheck > 0) {
 				</div>
 
 				<!-- Nav -->
-				<div class="flex-auto flex flex-col justify-between border-r py-4">
+				<div class="flex-auto flex flex-col justify-between border-r border-gray-300 py-4">
 					<!-- Pages accessible by all -->
 					<div class="flex flex-col">
 						<?php 
@@ -359,7 +359,7 @@ if ($resultCheck > 0) {
         <!-- Right -->
         <div class="flex-auto flex flex-col">
             <!-- Right top bar -->
-            <div class="sticky top-0 flex-none flex justify-between h-16 bg-gray-50 border-b z-20">
+            <div class="sticky top-0 flex-none flex justify-between h-16 bg-gray-50 border-b border-gray-300 z-20">
 				<div class="flex flex-auto max-w-xl">
 					<!-- Burger icon for desktop -->
 					<button id="burger_desktop" class="hidden lg:flex flex-none h-16 w-16 items-center justify-center border-r hover:bg-lightblue-400 group hover:border-lightblue-400 focus:outline-none">
@@ -453,7 +453,7 @@ if ($resultCheck > 0) {
 										<p class="uppercase font-medium text-sm text-left truncate w-24">'.$name.'</p>
 									</div>
 									<div>
-										<p class="uppercase font-medium text-xs py-1 px-3 mr-2 bg-red-500 text-white rounded-full whitespace-nowrap">'.$triggeredDevices[$i]['nAlarmsTriggered'].' Alarms</p>
+										<p class="uppercase font-medium text-xs py-1 px-3 mr-2 bg-red-400 text-white rounded whitespace-nowrap">'.$triggeredDevices[$i]['nAlarmsTriggered'].' Alarms</p>
 									</div>
 								</a>';								
 							}

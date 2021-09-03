@@ -7,33 +7,33 @@ include_once('header.php');
 <!-- Bottom right dashboard window -->
 <div class="flex-auto flex-col lg:flex-row bg-gray-100 flex">
 	<!-- Filters subnav -->
-	<div class="hidden lg:block flex-none bg-gray-100 lg:h-full lg:w-44 xl:w-60">
+	<div class="hidden lg:block flex-none bg-gray-200 lg:h-full lg:w-44 xl:w-60">
 		<div class="fixed h-full flex flex-col" style="width: inherit;">
 			<!-- Filters div -->
-			<div class="flex flex-col space-y-8 h-full pt-4 px-4 shadow-md">
-				<input id="pageSearchBar" type="text" class="h-10 w-full outline-none focus:outline-none bg-white focus:bg-white rounded-lg text-gray-800 font-medium flex justify-center items-center text-sm space-x-1 mx-auto px-4 border border-gray-300 transition-all" placeholder="Filter devices...">
+			<div class="flex flex-col space-y-8 h-full pt-2 px-4 border-r border-gray-300">
+				<input id="pageSearchBar" type="text" class="h-10 w-full outline-none focus:outline-none bg-gray-100 focus:bg-gray-50 rounded text-gray-800 font-medium flex justify-center items-center text-sm space-x-1 mx-auto px-4 border border-gray-300 transition-all" autocomplete="off" placeholder="Filter devices...">
 
 				<!-- Php code for roles filter -->
 				<?php
 				if ($_SESSION['roleId'] == 1 || $_SESSION['roleId'] == 2) {
 					echo '
 					<!-- Single filter -->
-					<div class="flex flex-col px-2">
+					<div class="flex flex-col">
 						<!-- Title -->
 						<div id="groupsTitle" class="flex items-center cursor-pointer space-x-2">
 							<div id="icons">
-								<svg id="icon_plus" class="w-6 h-6 text-gray-800 transform duration-200" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
-								<svg id="icon_minus" class="w-6 h-6 text-gray-800 transform duration-200 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
+								<svg id="icon_plus" class="w-5 h-5 text-gray-600 transform duration-200" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
+								<svg id="icon_minus" class="w-5 h-5 text-gray-600 transform duration-200 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
 							</div>
 							<p class="text-xs font-semibold uppercase text-gray-600">Group</p>
 						</div>
 						<!-- Separator -->
-						<div class="border border-gray-300 mt-1"></div>
+						<div class="border-b border-gray-300  mt-1"></div>
 
 						<!-- Filter content -->
 						<div class="mt-2 hidden">
-							<select id="groupFilter" class="focus:outline-none w-full h-10 bg-gray-50 border border-gray-400 px-2 text-sm">
-								<option data-id="devices.groupId" class="font-medium text-sm bg-bluegray-50 text-bluegray-800" selected>All Groups</option>
+							<select id="groupFilter" class="focus:outline-none w-full h-10 bg-gray-100 focus:bg-gray-50 text-gray-700 border border-gray-300 px-2 text-sm">
+								<option data-id="devices.groupId" class="font-medium text-sm bg-gray-100 text-gray-800" selected>All Groups</option>
 					';
 
 					$sql = "SELECT groupId, groupName FROM `groups` ORDER BY groupName ASC";
@@ -56,17 +56,17 @@ include_once('header.php');
 				?>
 
 				<!-- Single filter -->
-				<div id="productsFilter" class="flex flex-col px-2">
+				<div id="productsFilter" class="flex flex-col">
 					<!-- Title -->
 					<div id="productsTitle" class="flex items-center cursor-pointer space-x-2">
 						<div id="icons">
-							<svg id="icon_plus" class="w-6 h-6 text-gray-800 transform duration-200" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
-							<svg id="icon_minus" class="w-6 h-6 text-gray-800 transform duration-200 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
+							<svg id="icon_plus" class="w-5 h-5 text-gray-600 transform duration-200" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
+							<svg id="icon_minus" class="w-5 h-5 text-gray-600 transform duration-200 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
 						</div>
 						<p class="text-xs font-semibold uppercase text-gray-600">Products</p>
 					</div>
 					<!-- Separator -->
-					<div class="border border-gray-300 mt-1"></div>
+					<div class="border-b border-gray-300 mt-1"></div>
 					
 					<!-- Filter content -->
 					<div class="mt-2 flex flex-col space-y-1 hidden">
@@ -132,7 +132,7 @@ include_once('header.php');
 	<!-- Site content -->
 	<div class="flex-auto flex flex-col">
 		<!-- Pagination -->
-		<div class="h-14 bg-gray-300 border-b w-full grid-cols-3 px-6 flex justify-center items-center space-x-4">
+		<div class="h-14 bg-gray-200 w-full px-6 flex justify-center items-center border-b border-gray-300 space-x-4">
 			<button id="previousDevicesButton" class="focus:outline-none text-gray-600 transition hover:bg-gray-200 border border-gray-400 h-8 w-14 flex justify-center items-center cursor-pointer disabled:opacity-75 disabled:text-bluegray-400 disabled:bg-gray-300 disabled:cursor-default"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg></button>
 
 			<p class="text-xs uppercase font-medium text-gray-600 whitespace-nowrap">Showing <span class="font-extrabold" id="devicesRange"></span> of <span id="devicesTotal"></p>
