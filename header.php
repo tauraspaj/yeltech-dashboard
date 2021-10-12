@@ -225,7 +225,7 @@ if ($resultCheck > 0) {
 			<!-- Left sidebar wrapper -->
 			<div class="w-full h-full flex flex-col">
 				<!-- Logo -->
-				<div class="flex-none h-16 bg-gray-50 flex justify-center items-center border-r border-b">
+				<div class="flex-none h-16 bg-gray-50 flex justify-center items-center border-r border-b border-gray-300">
 						<a href="index.php" title="Yeltech">
 							<img src="img/logo.png" alt="">
 						</a>
@@ -362,7 +362,7 @@ if ($resultCheck > 0) {
             <div class="sticky top-0 flex-none flex justify-between h-16 bg-gray-50 border-b border-gray-300 z-20">
 				<div class="flex flex-auto max-w-xl">
 					<!-- Burger icon for desktop -->
-					<button id="burger_desktop" class="hidden lg:flex flex-none h-16 w-16 items-center justify-center border-r hover:bg-lightblue-400 group hover:border-lightblue-400 focus:outline-none">
+					<button id="burger_desktop" class="hidden lg:flex flex-none h-16 w-16 items-center justify-center border-r border-gray-300 hover:bg-lightblue-400 group hover:border-lightblue-400 focus:outline-none">
 						<svg class="w-5 h-5 text-gray-700 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"></path></svg>
 					</button>
 					
@@ -373,7 +373,7 @@ if ($resultCheck > 0) {
 					</button>
 					
 					<!-- Search bar -->
-					<div class="flex-auto flex items-center relative md:border-r">
+					<div class="flex-auto flex items-center relative md:border-r border-gray-300">
 						<div class="flex-none hidden md:flex justify-center text-gray-800 transition-all duration-200 px-4">
 							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path></svg>
 						</div>
@@ -389,7 +389,7 @@ if ($resultCheck > 0) {
 
 				<div class="flex">
 					<!-- Notification icon -->
-					<button id="notificationsButton" class="flex-none h-16 w-16 md:w-20 flex items-center justify-center text-gray-700 hover:text-white border-l border-r hover:bg-lightblue-400 hover:border-lightblue-400 focus:outline-none focus:text-white focus:bg-lightblue-400 focus:border-lightblue-400">
+					<button id="notificationsButton" class="flex-none h-16 w-16 md:w-20 flex items-center justify-center text-gray-700 hover:text-white border-l border-r border-gray-300 hover:bg-lightblue-400 hover:border-lightblue-400 focus:outline-none focus:text-white focus:bg-lightblue-400 focus:border-lightblue-400">
 						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path></svg>
 						<?php 
 						if ($_SESSION['roleId'] == 4 || $_SESSION['roleId'] == 3) {
@@ -438,7 +438,7 @@ if ($resultCheck > 0) {
 						} else {
 							echo '<div class="bg-red-500 w-5 h-5 text-xs text-white rounded-lg flex items-center justify-center ml-1">'.$devicesCount.'</div>';
 
-							echo '<div id="devicesNotification" class="hidden absolute bottom-100 bg-gray-50 w-64 top-16 right-12 md:right-20 rounded-b border border-t-0 shadow-md border-gray-300 overflow-y-auto" style="max-height: 20rem;">';
+							echo '<div id="devicesNotification" class="hidden absolute bottom-100 bg-gray-50 w-64 top-16 right-12 md:right-20 border border-t-0 shadow-md border-gray-300 overflow-y-auto" style="max-height: 20rem;">';
 							for ($i = 0; $i < $devicesCount; $i++) {
 								$name = '';
 								if ($triggeredDevices[$i]['deviceAlias'] == null || $triggeredDevices[$i]['deviceAlias'] == '') {
@@ -463,7 +463,7 @@ if ($resultCheck > 0) {
 					</button>
 
 					<!-- Profile -->
-					<button id="openProfile" class="flex-none h-16 w-16 sm:w-auto flex items-center justify-center text-gray-700 hover:text-white border-r hover:bg-lightblue-400 hover:border-lightblue-400 focus:outline-none px-4">
+					<button id="openProfile" class="flex-none h-16 w-16 sm:w-auto flex items-center justify-center text-gray-700 hover:text-white border-r border-gray-300 hover:bg-lightblue-400 hover:border-lightblue-400 focus:outline-none px-4">
 						<svg class="flex-none w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path></svg>
 						<p class="hidden sm:block whitespace-nowrap ml-2 text-sm"><?php echo explode(" ", $_SESSION['fullName'])[0];?></p>
 					</button>
