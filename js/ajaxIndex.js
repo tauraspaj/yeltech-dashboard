@@ -96,7 +96,7 @@ $(document).ready(function () {
                             </div>
                         </div>
                         <div class="flex-1 mx-2 flex justify-center items-center whitespace-nowrap">
-                            <p class="bg-red-500 text-xs sm:text-sm px-2 py-1 rounded-full text-white font-medium whitespace-nowrap">`+devices[i].nAlarmsTriggered+` Alarms <span class="hidden sm:inline-block">Triggered!</span></p>
+                            <p class="uppercase font-medium text-xs py-1 px-3 mr-2 bg-red-500 text-white rounded whitespace-nowrap">`+devices[i].nAlarmsTriggered+` Alarms</p>
                         </div>
                     </a>
                     <!-- End of alarm -->
