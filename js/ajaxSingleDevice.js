@@ -8,7 +8,7 @@ $(document).ready(function () {
 
 	// Update title page
 	getDeviceData().then( function(data) {
-		$(document).prop('title', 'YelCloud - '+data.deviceName);
+		$(document).prop('title', data.deviceName + ' - YelCloud ');
 		$('#sidePanel-deviceName').html(data.deviceName);
 		session_roleId = $('#siteContent').attr('data-roleId');
 		session_groupId = $('#siteContent').attr('data-groupId');
@@ -76,6 +76,13 @@ $(document).ready(function () {
 			{ title: 'Recipients', component:'recipients' },
 			{ title: 'Log', component:'log' },
 			{ title: 'Message History', component:'message_history' }
+		],
+		'tilt': [
+			{ title: 'Dashboard', component:'tilt_dashboard' },
+			{ title: 'Control Panel', component:'rtmu_controlPanel' },
+			{ title: 'Alarms', component:'alarms' },
+			{ title: 'Recipients', component:'recipients' },
+			{ title: 'Log', component:'log' }
 		]
 	}
 
@@ -287,47 +294,47 @@ $(document).ready(function () {
 			<!-- End of card -->
 
 			<!-- Card -->
-			<div id="latestMeasurementsCard" class="col-span-1 card-wrapper bg-gray-50 border border-lightblue-400">
-				<div class="card-header">
-					<div class="card-header-icon bg-lightblue-100 text-lightblue-500 lg:hidden xl:block">
+			<div id="latestMeasurementsCard" class="col-span-1 card-wrapper-1 border-lightblue-400">
+				<div class="card-header-1">
+					<div class="card-icon-1 text-lightblue-500">
 						<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" class="bi bi-thermometer-half" viewBox="0 0 16 16">
 							<path d="M9.5 12.5a1.5 1.5 0 1 1-2-1.415V6.5a.5.5 0 0 1 1 0v4.585a1.5 1.5 0 0 1 1 1.415z"/>
 							<path d="M5.5 2.5a2.5 2.5 0 0 1 5 0v7.55a3.5 3.5 0 1 1-5 0V2.5zM8 1a1.5 1.5 0 0 0-1.5 1.5v7.987l-.167.15a2.5 2.5 0 1 0 3.333 0l-.166-.15V2.5A1.5 1.5 0 0 0 8 1z"/>
 						</svg>
 					</div>
-					<div class="card-header-title text-lightblue-800 bg-lightblue-100">
+					<div class="card-title-1">
 						Last reading	
 					</div>
 				</div>
-				<div id="latestMeasurements_body" class="flex flex-col justify-center items-center">
+				<div id="latestMeasurements_body" class="card-body-1 flex-col">
 					<p class="italic mt-4">No channels found...</p>
 				</div>
 			</div>
 			<!-- End of card -->
 			
 			<!-- Card -->
-			<div id="latestTempCard" class="col-span-1 card-wrapper bg-gray-50"></div>
+			<div id="latestTempCard" class="col-span-1 card-wrapper-1"></div>
 			<!-- End of card -->
 
 			<!-- Card -->
-			<div id="totalAlarmsCard" class="col-span-1 card-wrapper bg-gray-50"></div>
+			<div id="totalAlarmsCard" class="col-span-1 card-wrapper-1"></div>
 			<!-- End of card -->
 
 			<!-- Card -->
-			<div class="col-span-2 md:col-span-2 lg:col-span-2 card-wrapper bg-gray-50">
+			<div class="col-span-2 md:col-span-2 lg:col-span-2 card-wrapper-1">
 				<!-- Title -->
-				<div class="flex-none flex justify-between items-center h-12 bg-white rounded-t-xl border-b relative">
+				<div class="card-header-1 relative">
 					<div class="flex items-center">
-						<div class="hidden md:block bg-blue-100 text-blue-500 rounded-full p-2 ml-4 mr-2 lg:mr-4">
+						<div class="hidden sm:block text-gray-500 p-2 ml-4 mr-2 lg:mr-4">
 							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path></svg>
 						</div>
 						<div id="dateSelectors" class="flex justify-center items-center space-x-2 ml-2">
-							<div data-id="3hr" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">3hr</div>
-							<div data-id="12hr" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">12hr</div>
-							<div data-id="1d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">1d</div>
-							<div data-id="7d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">7d</div>
-							<div data-id="30d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">30d</div>
-							<div data-id="ChartCal" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">
+							<div data-id="3hr" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">3hr</div>
+							<div data-id="12hr" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">12hr</div>
+							<div data-id="1d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">1d</div>
+							<div data-id="7d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">7d</div>
+							<div data-id="30d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">30d</div>
+							<div data-id="ChartCal" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">
 								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
 							</div>
 						</div>
@@ -342,7 +349,7 @@ $(document).ready(function () {
 				</div>
 
 				<!-- Chart -->
-				<div class="flex-auto p-2 lg:p-4 flex justify-center items-center">
+				<div class="card-body-1 p-2 lg:p-4">
 					<canvas id="canvas">
 						<!-- Filled with js -->
 					</canvas>
@@ -351,12 +358,12 @@ $(document).ready(function () {
 			<!-- End of card-->
 
 			<!-- Card -->
-			<div class="col-span-2 md:col-span-2 lg:col-span-2 card-wrapper bg-gray-50">
-				<div class="card-header relative">
-					<div class="card-header-icon bg-purple-100 text-purple-500">
+			<div class="col-span-2 md:col-span-2 lg:col-span-2 card-wrapper-1">
+				<div class="card-header-1 relative">
+					<div class="card-icon-1">
 						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd"></path></svg>	
 					</div>
-					<div class="card-header-title text-purple-800 bg-purple-100">
+					<div class="card-title-1">
 						Alarms	
 					</div>
 
@@ -376,7 +383,7 @@ $(document).ready(function () {
 				</div>
 
 				<!-- Table -->
-				<div id="alarmsCardBody" class="flex-auto py-2 px-4">
+				<div id="alarmsCardBody" class="flex-auto bg-gray-50 py-2 px-4">
 					<div id="triggeredAlarms">
 					
 					</div>
@@ -401,8 +408,8 @@ $(document).ready(function () {
 
 					<div class="flex flex-col items-center justify-center py-4">
 						<div class="flex">
-							<button id="previous_alarms" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-200 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Previous</button>
-							<button id="next_alarms" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-200 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Next</button>
+							<button id="previous_alarms" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-300 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Previous</button>
+							<button id="next_alarms" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-300 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Next</button>
 						</div>
 						<p class="mt-4 text-xs font-semibold">Showing <span id="range_alarms"></span> of <span id="total_alarms"></span></p>
 					</div>
@@ -440,7 +447,7 @@ $(document).ready(function () {
 			var statusAndProbeCards = `
 				<div class="col-span-1 flex flex-col space-y-4">
 					<!-- Device status -->
-					<div class="bg-`+statusColor+`-50 shadow-md rounded-xl h-16 lg:h-20 flex justify-between items-center">
+					<div class="flex justify-between items-center bg-`+statusColor+`-50 border border-`+statusColor+`-300 shadow-md h-16 lg:h-20">
 						<div class="flex-1 flex items-center space-x-2 pl-4">
 							`+statusIcon+`
 							<p class="uppercase text-xs lg:text-sm font-medium text-gray-700">Status</p>
@@ -451,7 +458,7 @@ $(document).ready(function () {
 					</div>
 
 					<!-- Probe status -->
-					<div class="bg-`+statusColor+`-50 shadow-md rounded-xl h-16 lg:h-20 flex justify-between items-center">
+					<div class="flex justify-between items-center bg-`+statusColor+`-50 border border-`+statusColor+`-300 shadow-md h-16 lg:h-20">
 						<div class="flex-1 flex items-center space-x-2 pl-4">
 							<svg class="w-6 h-6 text-`+statusColor+`-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path></svg>
 							<p class="uppercase text-xs lg:text-sm font-medium text-gray-700">Probe</p>
@@ -489,16 +496,16 @@ $(document).ready(function () {
 					// * latestTempCard
 					//#region 
 					var latestTempCard = `
-						<div class="card-header">
-							<div class="card-header-icon bg-yellow-100 text-yellow-500 lg:hidden xl:block">
+						<div class="card-header-1">
+							<div class="card-icon-1">
 								<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path></svg>
 							</div>
-							<div class="card-header-title text-yellow-800 bg-yellow-100">
+							<div class="card-title-1">
 								Current temp
 							</div>
 						</div>
 		
-						<div class="flex-auto flex flex-col justify-center items-center space-y-2 py-4">
+						<div class="card-body-1 flex-col space-y-2 py-4">
 							<p class="font-medium text-gray-800"><span id="api_temp" class="text-5xl tracking-tighter"></span> <span class="">&#176;C</span></p>
 							<p id="api_loc" class="text-xs text-gray-400"></p>
 						</div>
@@ -529,17 +536,17 @@ $(document).ready(function () {
 					// * latestTempCard
 					//#region 
 					var latestTempCard = `
-						<div class="card-header">
-							<div class="card-header-icon bg-yellow-100 text-yellow-500 lg:hidden xl:block">
+						<div class="card-header-1">
+							<div class="card-icon-1">
 								<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path></svg>
 							</div>
-							<div class="card-header-title text-yellow-800 bg-yellow-100">
+							<div class="card-title-1">
 								Latest Temp
 							</div>
 						</div>
 		
-						<div class="flex-auto flex flex-col items-center space-y-2">
-							<p class="italic mt-4">No readings found...</p>
+						<div class="card-body-1">
+							<p class="italic">No readings found...</p>
 						</div>
 						`;
 					// Update values with latest temp
@@ -552,22 +559,23 @@ $(document).ready(function () {
 					var dateDisplay = new Date( readingsData.latestMeasurements[1].measurementTime );
 					dateDisplay = dateDisplay.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
 					var latestTempCard = `
-						<div class="card-header">
-							<div class="card-header-icon bg-yellow-100 text-yellow-500 lg:hidden xl:block">
+						<div id="ai2nd" class="card-header-1">
+							<div class="card-icon-1">
 								<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path></svg>
 							</div>
-							<div class="card-header-title text-yellow-800 bg-yellow-100">
+							<div class="card-title-1">
 								`+readingsData.latestMeasurements[1].channelName+`
 							</div>
 						</div>
 		
-						<div class="flex-auto flex flex-col justify-center items-center space-y-2 py-4">
+						<div class="card-body-1 flex-col space-y-2 py-4">
 							<p class="font-medium text-gray-800"><span class="text-5xl tracking-tighter">`+readingsData.latestMeasurements[1].measurement+`</span> <span class="">`+readingsData.latestMeasurements[1].unitName+`</span></p>
 							<p class="text-xs text-gray-400 italic mt-1 mb-2">`+dateDisplay+`</p>
 						</div>
 						`;
 					// Update values with latest temp
 					$('#latestTempCard').html(latestTempCard);
+					$('#ai2nd').parent().addClass('border-lightblue-400');
 					//#endregion
 				}
 			}
@@ -585,16 +593,16 @@ $(document).ready(function () {
 				timestampDisplay = 'Latest: '+dateDisplay;
 			}
 			var totalAlarmsCard = `
-			<div class="card-header">
-				<div class="card-header-icon bg-purple-100 text-purple-500 lg:hidden xl:block">
+			<div class="card-header-1">
+				<div class="card-icon-1">
 					<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd"></path></svg>
 				</div>
-				<div class="card-header-title text-purple-800 bg-purple-100">
+				<div class="card-title-1">
 					Alarms sent
 				</div>
 			</div>
 
-			<div class="flex-auto flex flex-col justify-center items-center space-y-2 py-4">
+			<div class="card-body-1 flex-col space-y-2 py-4">
 				<p class="font-medium text-gray-800"><span class="text-5xl tracking-tighter">`+readingsData.numberOfTriggeredAlarms+`</span></p>
 				<p class="text-xs text-gray-400 italic">`+timestampDisplay+`</p>
 			</div>
@@ -717,7 +725,7 @@ $(document).ready(function () {
 			drawChart(chart, data);
 		})
 
-		var activeClass = 'text-gray-800 bg-gray-100';
+		var activeClass = 'text-gray-800 bg-white ring-1 ring-gray-300';
 		$('#dateSelectors').children().first().addClass(activeClass);
 		$('#dateSelectors').children().on('click', function() {
 			$('#dateSelectors').children().removeClass(activeClass);
@@ -756,19 +764,19 @@ $(document).ready(function () {
 
 		<div class="grid grid-cols-2 gap-4 md:grid-cols-2 md:gap-4 lg:grid-cols-4 lg:gap-6">
 			<!-- Card -->
-			<div class="col-span-2 md:col-span-1 lg:col-span-2 xl:col-span-1 card-wrapper bg-gray-50">
+			<div class="col-span-2 md:col-span-1 lg:col-span-2 xl:col-span-1 card-wrapper-1">
 				<!-- Card header -->
-				<div class="card-header">
-					<div class="card-header-icon">
+				<div class="card-header-1">
+					<div class="card-icon-1">
 						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
 					</div>
-					<div class="card-header-title">
+					<div class="card-title-1">
 						Device
 					</div>
 				</div>
 
 				<!-- Card body -->
-				<div class="flex-auto flex flex-col p-2 divide-y divide-gray-200">
+				<div class="card-body-1 justify-start items-stretch flex-col p-2 divide-y divide-gray-200">
 					<div class="flex py-2">
 						<div class="flex-none w-16 text-xs uppercase text-gray-500 pl-1 whitespace-nowrap">Name</div>
 						<div class="flex-auto text-center whitespace-nowrap truncate text-sm font-semibold text-gray-800"><span id="device-name"></span></div>
@@ -796,19 +804,19 @@ $(document).ready(function () {
 			<!-- End of card -->
 
 			<!-- Card -->
-			<div class="col-span-2 md:col-span-1 lg:col-span-2 xl:col-span-1 card-wrapper bg-gray-50">
+			<div class="col-span-2 md:col-span-1 lg:col-span-2 xl:col-span-1 card-wrapper-1 bg-gray-50">
 				<!-- Card header -->
-				<div class="card-header">
-					<div class="card-header-icon">
+				<div class="card-header-1">
+					<div class="card-icon-1">
 						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.05 3.636a1 1 0 010 1.414 7 7 0 000 9.9 1 1 0 11-1.414 1.414 9 9 0 010-12.728 1 1 0 011.414 0zm9.9 0a1 1 0 011.414 0 9 9 0 010 12.728 1 1 0 11-1.414-1.414 7 7 0 000-9.9 1 1 0 010-1.414zM7.879 6.464a1 1 0 010 1.414 3 3 0 000 4.243 1 1 0 11-1.415 1.414 5 5 0 010-7.07 1 1 0 011.415 0zm4.242 0a1 1 0 011.415 0 5 5 0 010 7.072 1 1 0 01-1.415-1.415 3 3 0 000-4.242 1 1 0 010-1.415zM10 9a1 1 0 011 1v.01a1 1 0 11-2 0V10a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
 					</div>
-					<div class="card-header-title">
+					<div class="card-title-1">
 						State
 					</div>
 				</div>
 
 				<!-- Card body -->
-				<div class="flex-auto flex flex-col p-2 space-y-4">
+				<div class="card-body-1 justify-start items-stretch flex-col p-2 space-y-4">
 
 					<div class="border h-28 p-2 rounded-xl flex justify-between">
 						<div class="flex justify-center items-center uppercase text-sm font-semibold text-gray-800 w-24">
@@ -824,25 +832,25 @@ $(document).ready(function () {
 			<!-- End of card -->
 
 			<!-- Card -->
-			<div class="col-span-2 md:col-span-1 lg:col-span-2 xl:col-span-1 card-wrapper bg-gray-50">
+			<div class="col-span-2 md:col-span-1 lg:col-span-2 xl:col-span-1 card-wrapper-1 bg-gray-50">
 				<!-- Card header -->
-				<div class="card-header relative">
-					<div class="card-header-icon">
+				<div class="card-header-1 relative">
+					<div class="card-icon-1">
 						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path></svg>
 					</div>
 
 					<!-- Edit button -->
-					<button id="editMaintain" class="card-header-icon rounded focus:outline-none bg-green-200 border border-green-300 text-green-600 transition duration-200 hover:bg-green-300 hover:shadow-lg cursor-pointer absolute right-0" title="Edit">
+					<button id="editMaintain" class="card-icon-1 rounded focus:outline-none bg-green-200 border border-green-400 text-green-600 transition hover:bg-green-300 cursor-pointer absolute right-0 p-1.5" title="Edit">
 						<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path></svg>
 					</button>
 
-					<div class="card-header-title">
+					<div class="card-title-1">
 						Maintain
 					</div>
 				</div>
 
 				<!-- Card body -->
-				<div class="flex-auto flex flex-col p-2">
+				<div class="card-body-1 justify-start items-stretch flex-col p-2">
 					<div class="flex items-center py-2">
 						<div class="flex-auto text-xs uppercase text-gray-500 text-center whitespace-nowrap underline">Subscription</div>
 					</div>
@@ -871,25 +879,25 @@ $(document).ready(function () {
 			<!-- End of card -->
 
 			<!-- Card -->
-			<div class="col-span-2 md:col-span-1 lg:col-span-2 xl:col-span-1 card-wrapper bg-gray-50">
+			<div class="col-span-2 md:col-span-1 lg:col-span-2 xl:col-span-1 card-wrapper-1 bg-gray-50">
 				<!-- Card header -->
-				<div class="card-header relative">
-					<div class="card-header-icon">
+				<div class="card-header-1 relative">
+					<div class="card-icon-1">
 						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path></svg>
 					</div>
 
 					<!-- Edit button -->
-					<button id="editCustom" class="card-header-icon focus:outline-none rounded bg-green-200 border border-green-300 text-green-600 transition duration-200 hover:bg-green-300 hover:shadow-lg cursor-pointer absolute right-0" title="Edit">
+					<button id="editCustom" class="card-icon-1 rounded focus:outline-none bg-green-200 border border-green-400 text-green-600 transition hover:bg-green-300 cursor-pointer absolute right-0 p-1.5" title="Edit">
 						<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path></svg>
 					</button>
 
-					<div class="card-header-title">
+					<div class="card-title-1">
 						Custom
 					</div>
 				</div>
 
 				<!-- Card body -->
-				<div class="flex-auto flex flex-col p-2">					
+				<div class="card-body-1 justify-start items-stretch flex-col p-2">					
 					<div class="flex items-center h-10 border-b">
 						<div class="flex-none w-16 text-xs uppercase text-gray-500 pl-1 whitespace-nowrap">Alias</div>
 						<div class="flex-auto text-center whitespace-nowrap truncate text-sm font-semibold text-gray-800"><span id="custom-alias"></span></div>
@@ -912,19 +920,19 @@ $(document).ready(function () {
 			<!-- End of card -->
 
 			<!-- Card -->
-			<div id="mapCard" class="col-span-2 lg:col-span-4 bg-gray-50 card-wrapper">
+			<div id="mapCard" class="col-span-2 lg:col-span-4 card-wrapper-1">
 				<!-- Card header -->
-				<div class="card-header">
-					<div class="card-header-icon bg-red-100 text-red-500">
+				<div class="card-header-1">
+					<div class="card-icon-1">
 						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>
 					</div>
-					<div class="card-header-title text-red-800 bg-red-100">
-						Map
+					<div class="card-title-1">
+						Device Location
 					</div>
 				</div>
 
 				<!-- Card body -->
-				<div class="flex-auto p-2" style="height: 26rem;">
+				<div class="card-body-1 p-2" style="height: 26rem;">
 					<div id="map" class="w-full h-full rounded"></div>
 				</div>
 			</div>
@@ -1233,23 +1241,23 @@ $(document).ready(function () {
 		var output = `
 		<div class="grid grid-cols-2 gap-4 md:grid-cols-2 md:gap-4 lg:grid-cols-4 lg:gap-6">
 			<!-- Card -->
-			<div class="col-span-2 md:col-span-2 lg:col-span-2 card-wrapper">
+			<div class="col-span-2 md:col-span-2 lg:col-span-2 card-wrapper-1">
 				<!-- Card header -->
-				<div class="card-header">
-					<div class="card-header-icon bg-green-100 text-green-500">
+				<div class="card-header-1">
+					<div class="card-icon-1">
 						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path></svg>
 					</div>
-					<div class="card-header-title text-green-800 bg-green-100">
+					<div class="card-title-1">
 						Manage Alarms
 					</div>
 				</div>
 
 				<!-- Card body -->
-				<div class="flex-auto flex bg-gray-50 rounded-b-xl">
+				<div class="card-body-1 justify-start items-stretch">
 					<!-- Side nav -->
 					<div id="alarmsNav" class="flex-none flex flex-col w-14 md:w-20">
 
-						<div id="testHere" class="flex flex-col justify-center items-center py-2 border-gray-200">
+						<div class="flex flex-col justify-center items-center py-2 border-gray-200">
 							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd"></path></svg>
 							<p class="text-xs uppercase font-medium text-center mt-1">Alarms</p>
 						</div>
@@ -1283,17 +1291,17 @@ $(document).ready(function () {
 			<!-- End of card-->
 
 			<!-- Card -->
-			<div class="col-span-2 md:col-span-2 lg:col-span-2 card-wrapper">
+			<div class="col-span-2 md:col-span-2 lg:col-span-2 card-wrapper-1">
 				<!-- Card header -->
-				<div class="card-header relative">
-					<div class="card-header-icon bg-purple-100 text-purple-500">
+				<div class="card-header-1 relative">
+					<div class="card-icon-1">
 						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd"></path></svg>	
 					</div>
-					<div class="card-header-title text-purple-800 bg-purple-100">
+					<div class="card-title-1">
 						Alarms	
 					</div>
 
-					<div id="AlarmCal" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800 absolute right-4">
+					<div id="AlarmCal" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800 ring-gray-300 hover:ring-1 absolute right-4">
 						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
 					</div>
 					<div id="AlarmCalSelector" class="w-48 bg-white shadow rounded z-10 absolute top-10 right-4 border flex flex-col p-2 hidden">
@@ -1309,7 +1317,7 @@ $(document).ready(function () {
 				</div>
 
 				<!-- Table -->
-				<div id="alarmsCardBody" class="flex-auto py-2 px-4 bg-gray-50 rounded-b-xl">
+				<div id="alarmsCardBody" class="card-body-1 justify-start items-stretch block py-2 px-4">
 					<div id="triggeredAlarms">
 					
 					</div>
@@ -1334,8 +1342,8 @@ $(document).ready(function () {
 
 					<div class="flex flex-col items-center justify-center py-4">
 						<div class="flex">
-							<button id="previous_alarms" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-200 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Previous</button>
-							<button id="next_alarms" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-200 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Next</button>
+							<button id="previous_alarms" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-300 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Previous</button>
+							<button id="next_alarms" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-300 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Next</button>
 						</div>
 						<p class="mt-4 text-xs font-semibold">Showing <span id="range_alarms"></span> of <span id="total_alarms"></span></p>
 					</div>
@@ -1355,7 +1363,7 @@ $(document).ready(function () {
 		var fillerTab = $('#alarmsNav').children().last();
 
 		// Tab behaviour
-		var activeAlarmTab = 'bg-gray-50 cursor-default text-green-500';
+		var activeAlarmTab = 'bg-gray-50 cursor-default text-lightblue-500';
 		var inactiveAlarmTab = 'bg-gray-100 border-r cursor-pointer text-gray-500 hover:text-gray-800';
 		var topSiblingClass = 'border-b rounded-br-lg';
 		var bottomSiblingClass = 'border-t rounded-tr-lg';
@@ -1762,23 +1770,23 @@ $(document).ready(function () {
 		}
 
 		output = `
-		<div class="grid grid-cols-2">
+		<div class="grid grid-cols-2 card-wrapper-1">
 			<!-- Card -->
-			<div class="col-span-2 shadow-lg rounded-xl grid grid-cols-2">
+			<div class="col-span-2 grid grid-cols-2">
 				<!-- Left card -->
 				<div class="flex flex-col" style="height: 36rem;">
 					<!-- Card header -->
-					<div class="card-header rounded-r-none">
-						<div class="card-header-icon bg-red-100 text-red-500">
+					<div class="card-header-1">
+						<div class="card-icon-1">
 							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
 						</div>
-						<div class="card-header-title text-red-800 bg-red-100">
+						<div class="card-title-1">
 							Selected recipients	
 						</div>
 					</div>
 
 					<!-- Left body -->
-					<div id="recipientsDiv" class="p-4 space-y-2 h-full rounded-bl-xl overflow-y-auto bg-white">
+					<div id="recipientsDiv" class="card-body-1 justify-start items-stretch block p-4 space-y-2 h-full overflow-y-auto">
 						<!-- Filled via js -->
 					</div>
 					<!-- End of left body -->
@@ -1787,19 +1795,20 @@ $(document).ready(function () {
 				<!-- End of left card -->
 
 				<!-- Right card -->
-				<div class="flex flex-col border-l relative" style="height: 36rem;">
+				<div class="flex flex-col border-l border-gray-300 relative" style="height: 36rem;">
 					<!-- Card header -->
-					<div class="card-header rounded-l-none">
-						<div class="card-header-icon bg-lightblue-100 text-lightblue-500">
+					<div class="card-header-1">
+						<div class="card-icon-1">
 							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M8 2a1 1 0 000 2h2a1 1 0 100-2H8z"></path><path d="M3 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v6h-4.586l1.293-1.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L10.414 13H15v3a2 2 0 01-2 2H5a2 2 0 01-2-2V5zM15 11h2a1 1 0 110 2h-2v-2z"></path></svg>
 						</div>
-						<div class="card-header-title text-lightblue-800 bg-lightblue-100">
+						<div class="card-title-1">
 							User list
 						</div>
 					</div>
 					
 					<!-- Right body -->
-					<div class="py-4 px-2 md:p-4 overflow-y-auto space-y-4 text-center h-full rounded-br-xl bg-white">
+					<div class="py-4 px-2 md:p-4 overflow-y-auto space-y-4 text-center h-full rounded-br-xl bg-gray-50">
+					<div class="card-body-1 flex-initial justify-start items-stretch block px-2 md:p-4 h-full overflow-y-auto space-y-4">
 						<input type="text" id="userSearchBar" placeholder="Search..." spellcheck="false" autocomplete="none" class="outline-none h-10 w-full max-w-xl px-4 text-sm font-semibold text-gray-800 bg-gray-100 transition-all focus:bg-gray-50 border rounded">
 						
 						<div class="border-b"></div>
@@ -1843,17 +1852,17 @@ $(document).ready(function () {
 		var output = `
 		<div class="grid grid-cols-2">
 			<!-- Card -->
-			<div class="col-span-2 lg:col-span-1 card-wrapper">
+			<div class="col-span-2 lg:col-span-1 card-wrapper-1">
 				<!-- Card header -->
-				<div class="card-header relative">
-					<div class="card-header-icon bg-lightblue-100 text-lightblue-500">
-						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5 4a3 3 0 00-3 3v6a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3H5zm-1 9v-1h5v2H5a1 1 0 01-1-1zm7 1h4a1 1 0 001-1v-1h-5v2zm0-4h5V8h-5v2zM9 8H4v2h5V8z" clip-rule="evenodd"></path></svg>
+				<div class="card-header-1 relative">
+					<div class="card-icon-1">
+						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
 					</div>
-					<div class="card-header-title text-lightblue-800 bg-lightblue-100">
+					<div class="card-title-1">
 						Measurements log
 					</div>
 
-					<div id="logCal" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800 absolute right-4">
+					<div id="logCal" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-50 ring-gray-300 hover:ring-1 hover:text-gray-800 absolute right-4">
 						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
 					</div>
 					<div id="logCalSelector" class="w-48 bg-white shadow rounded z-10 absolute top-10 right-4 border flex flex-col p-2 hidden">
@@ -1869,10 +1878,10 @@ $(document).ready(function () {
 				</div>
 
 				<!-- Table -->
-				<div class="flex-auto py-2 px-4 bg-gray-50 rounded-b-xl">
+				<div class="card-body-1 block items-stretch justify-start py-2 px-4">
 					<div class="flex overflow-x-auto">
 						<table class="table-fixed min-w-full">
-							<thead class="uppercase text-xs bg-bluegray-50 border-b border-gray-200 text-bluegray-900">
+							<thead class="uppercase text-xs border-b border-gray-200 text-bluegray-900">
 								<tr>
 									<th class="text-left w-4/12 py-2 px-4 font-medium text-gray-500">Channel</th>
 									<th class="text-center w-2/12 lg:w-4/12 py-2 px-4 font-medium text-gray-500">Reading</th>
@@ -1891,8 +1900,8 @@ $(document).ready(function () {
 
 					<div class="flex flex-col items-center justify-center py-4">
 						<div class="flex">
-							<button id="previous_measurements" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-200 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Previous</button>
-							<button id="next_measurements" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-200 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Next</button>
+							<button id="previous_measurements" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-300 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Previous</button>
+							<button id="next_measurements" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-300 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Next</button>
 						</div>
 						<p class="mt-4 text-xs font-semibold">Showing <span id="range_measurements"></span> of <span id="total_measurements"></span></p>
 					</div>
@@ -1955,12 +1964,12 @@ $(document).ready(function () {
 			<!-- Right panel -->
 			<div class="lg:col-span-3">
 				<!-- Card -->
-				<div class="col-span-2 md:col-span-2 lg:col-span-2 card-wrapper bg-gray-50">
-					<div class="card-header relative">
-						<div class="card-header-icon bg-purple-100 text-purple-500">
+				<div class="col-span-2 md:col-span-2 lg:col-span-2 card-wrapper-1">
+					<div class="card-header-1 relative">
+						<div class="card-icon-1">
 							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clip-rule="evenodd"></path></svg>
 						</div>
-						<div class="card-header-title text-purple-800 bg-purple-100">
+						<div class="card-title-1">
 							Message history	
 						</div>
 
@@ -1980,10 +1989,10 @@ $(document).ready(function () {
 					</div>
 
 					<!-- Table -->
-					<div id="messageHistoryCardBody" class="flex-auto py-2 px-4">
+					<div id="messageHistoryCardBody" class="card-body-1 block items-stretch justify-start py-2 px-4">
 						<div class="flex overflow-x-auto">
 							<table class="table-fixed min-w-full">
-								<thead class="uppercase text-xs bg-bluegray-50 border-b border-gray-200 text-bluegray-900">
+								<thead class="uppercase text-xs border-b border-gray-200 text-bluegray-900">
 									<tr>
 										<th class="text-center w-1/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">From</th>
 										<th class="text-center w-1/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">To</th>
@@ -2004,8 +2013,8 @@ $(document).ready(function () {
 
 						<div class="flex flex-col items-center justify-center py-4">
 							<div class="flex">
-								<button id="previous_messageHistory" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-200 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Previous</button>
-								<button id="next_messageHistory" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-200 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Next</button>
+								<button id="previous_messageHistory" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-300 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Previous</button>
+								<button id="next_messageHistory" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-300 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Next</button>
 							</div>
 							<p class="mt-4 text-xs font-semibold">Showing <span id="range_messageHistory"></span> of <span id="total_messageHistory"></span></p>
 						</div>
@@ -2023,13 +2032,12 @@ $(document).ready(function () {
 		getEWBChannels().then( function(channelData) {
 			channelDisplay = '';
 			getDeviceData().then( function(deviceData) {
-				status = deviceData.deviceStatus
-				
+				var status = deviceData.deviceStatus
 				if (status == 1) {
 					channelDisplay += `
 					<!-- Card -->
 					<div class="col-span-1">
-						<div class="bg-green-50 shadow-md rounded-xl h-24 flex justify-center items-center relative overflow-hidden">
+						<div class="bg-green-50 shadow-md border border-green-400 h-24 flex justify-center items-center relative overflow-hidden">
 							<div class="text-green-300 opacity-40 transform left-0 -rotate-12 ml-4 absolute overflow-hidden">
 								<svg class="w-44 h-44" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.05 3.636a1 1 0 010 1.414 7 7 0 000 9.9 1 1 0 11-1.414 1.414 9 9 0 010-12.728 1 1 0 011.414 0zm9.9 0a1 1 0 011.414 0 9 9 0 010 12.728 1 1 0 11-1.414-1.414 7 7 0 000-9.9 1 1 0 010-1.414zM7.879 6.464a1 1 0 010 1.414 3 3 0 000 4.243 1 1 0 11-1.415 1.414 5 5 0 010-7.07 1 1 0 011.415 0zm4.242 0a1 1 0 011.415 0 5 5 0 010 7.072 1 1 0 01-1.415-1.415 3 3 0 000-4.242 1 1 0 010-1.415zM10 9a1 1 0 011 1v.01a1 1 0 11-2 0V10a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
 							</div>
@@ -2045,7 +2053,7 @@ $(document).ready(function () {
 					channelDisplay += `
 					<!-- Card -->
 					<div class="col-span-1">
-						<div class="bg-red-50 shadow-md rounded-xl h-24 flex justify-center items-center relative overflow-hidden">
+						<div class="bg-red-50 shadow-md border border-red-400 h-24 flex justify-center items-center relative overflow-hidden">
 							<div class="text-red-300 opacity-40 transform left-0 -rotate-12 ml-4 absolute overflow-hidden">
 								<svg class="w-44 h-44" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M3.707 2.293a1 1 0 00-1.414 1.414l6.921 6.922c.05.062.105.118.168.167l6.91 6.911a1 1 0 001.415-1.414l-.675-.675a9.001 9.001 0 00-.668-11.982A1 1 0 1014.95 5.05a7.002 7.002 0 01.657 9.143l-1.435-1.435a5.002 5.002 0 00-.636-6.294A1 1 0 0012.12 7.88c.924.923 1.12 2.3.587 3.415l-1.992-1.992a.922.922 0 00-.018-.018l-6.99-6.991zM3.238 8.187a1 1 0 00-1.933-.516c-.8 3-.025 6.336 2.331 8.693a1 1 0 001.414-1.415 6.997 6.997 0 01-1.812-6.762zM7.4 11.5a1 1 0 10-1.73 1c.214.371.48.72.795 1.035a1 1 0 001.414-1.414c-.191-.191-.35-.4-.478-.622z"></path></svg>
 							</div>
@@ -2076,16 +2084,16 @@ $(document).ready(function () {
 
 					channelDisplay += `
 					<!-- Card -->
-						<div class="col-span-1 card-wrapper bg-gray-50 `+redBorder+`">
-							<div class="card-header">
-								<div class="card-header-icon bg-`+defaultColor+`-100 text-`+defaultColor+`-500 lg:hidden xl:block">
+						<div class="col-span-1 card-wrapper-1 `+redBorder+`">
+							<div class="card-header-1">
+								<div class="card-icon-1 text-`+defaultColor+`-500">
 									<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
 								</div>
-								<div class="card-header-title text-`+defaultColor+`-800 bg-`+defaultColor+`-100">
+								<div class="card-title-1 text-`+defaultColor+`-800 bg-`+defaultColor+`-100">
 									`+channelData['DI']['channelName']+`
 								</div>
 							</div>
-							<div class="flex flex-col justify-center items-center my-4">
+							<div class="card-body-1 flex-col py-4">
 								<p class="text-2xl xl:text-3xl font-semibold text-gray-800 text-center uppercase whitespace-nowrap `+redText+`">`+channelData['DI']['smsAlarmHeader']+`<br>
 								<p class="text-xs text-gray-400 italic mt-4">`+dateDisplay+`</p>
 							</div>
@@ -2095,16 +2103,16 @@ $(document).ready(function () {
 				} else {
 					channelDisplay += `
 						<!-- Card -->
-							<div class="col-span-1 card-wrapper bg-gray-50">
-								<div class="card-header">
-									<div class="card-header-icon bg-lightblue-100 text-lightblue-500 lg:hidden xl:block">
+							<div class="col-span-1 card-wrapper-1">
+								<div class="card-header-1">
+									<div class="card-icon-1">
 										<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
 									</div>
-									<div class="card-header-title text-lightblue-800 bg-lightblue-100">
+									<div class="card-title-1">
 										EWB BOARD
 									</div>
 								</div>
-								<div class="flex flex-col justify-center items-center">
+								<div class="card-body-1">
 									<p class="italic my-4">No alarms found...</p>
 								</div>
 							</div>
@@ -2142,16 +2150,16 @@ $(document).ready(function () {
 
 					channelDisplay += `
 					<!-- Card -->
-						<div class="col-span-1 card-wrapper bg-gray-50 `+redBorder+`">
-							<div class="card-header">
-								<div class="card-header-icon bg-`+defaultColor+`-100 text-`+defaultColor+`-500 lg:hidden xl:block">
+						<div class="col-span-1 card-wrapper-1 `+redBorder+`">
+							<div class="card-header-1">
+								<div class="card-icon-1 text-`+defaultColor+`-500 lg:hidden xl:block">
 									<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
 								</div>
-								<div class="card-header-title text-`+defaultColor+`-800 bg-`+defaultColor+`-100">
+								<div class="card-title-1 text-`+defaultColor+`-800 bg-`+defaultColor+`-100">
 									VOLTAGE MONITOR
 								</div>
 							</div>
-							<div class="flex flex-col justify-center items-center my-4">
+							<div class="card-body-1 flex-col py-4">
 								<p class="text-2xl xl:text-3xl font-semibold text-gray-800 text-center uppercase whitespace-nowrap `+redText+`">`+channelData['AI']['smsAlarmHeader']+`<br>
 								<span class="text-2xl font-medium lg:text-xl">`+alarmReadingDisplay+` `+unitDisplay+`</span></p>
 								<p class="text-xs text-gray-400 italic mt-4">`+dateDisplay+`</p>
@@ -2162,16 +2170,16 @@ $(document).ready(function () {
 				} else {
 					channelDisplay += `
 						<!-- Card -->
-							<div class="col-span-1 card-wrapper bg-gray-50">
-								<div class="card-header">
-									<div class="card-header-icon bg-lightblue-100 text-lightblue-500 lg:hidden xl:block">
+							<div class="col-span-1 card-wrapper-1">
+								<div class="card-header-1">
+									<div class="card-icon-1">
 										<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
 									</div>
-									<div class="card-header-title text-lightblue-800 bg-lightblue-100">
+									<div class="card-title-1">
 										VOLTAGE MONITOR
 									</div>
 								</div>
-								<div class="flex flex-col justify-center items-center">
+								<div class="card-body-1">
 									<p class="italic my-4">No alarms found...</p>
 								</div>
 							</div>
@@ -2179,72 +2187,75 @@ $(document).ready(function () {
 						`
 				}
 
-				for (i = 0; i < channelData.length; i++) {
-					if ( channelData[i]['reading'] != null ) {
-						var dateDisplay = new Date( channelData[i]['reading']['smsAlarmTime'] );
-						dateDisplay = dateDisplay.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
+				console.log(channelData);
+
+				// for (i = 0; i < channelData.length; i++) {
+				// 	if ( channelData[i]['reading'] != null ) {
+				// 		var dateDisplay = new Date( channelData[i]['reading']['smsAlarmTime'] );
+				// 		dateDisplay = dateDisplay.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
 						
-						unitDisplay = '';
-						if (channelData[i]['reading']['unitName'] != null) { 
-							unitDisplay = channelData[i]['reading']['unitName'];
-						}
+				// 		unitDisplay = '';
+				// 		if (channelData[i]['reading']['unitName'] != null) { 
+				// 			unitDisplay = channelData[i]['reading']['unitName'];
+				// 		}
 	
-						alarmReadingDisplay = '';
-						if (channelData[i]['reading']['smsAlarmReading'] != null) { 
-							alarmReadingDisplay = channelData[i]['reading']['smsAlarmReading'];
-						}
+				// 		alarmReadingDisplay = '';
+				// 		if (channelData[i]['reading']['smsAlarmReading'] != null) { 
+				// 			alarmReadingDisplay = channelData[i]['reading']['smsAlarmReading'];
+				// 		}
 	
-						// Extra processing for red warnings
-						redBorder = '';
-						redText = '';
-						defaultColor = 'lightblue'
-						if ( channelData[i]['reading']['smsAlarmHeader'].toUpperCase() == 'FALLEN DOWN' ||
-							channelData[i]['reading']['smsAlarmHeader'].toUpperCase() == 'BOARD LIGHTS OUT'	
-						) {
-							redBorder = 'border border-red-400';
-							redText = 'text-red-600';
-							defaultColor = 'red';
-						}
+				// 		// Extra processing for red warnings
+				// 		redBorder = '';
+				// 		redText = '';
+				// 		defaultColor = 'lightblue'
+				// 		if ( channelData[i]['reading']['smsAlarmHeader'].toUpperCase() == 'FALLEN DOWN' ||
+				// 			channelData[i]['reading']['smsAlarmHeader'].toUpperCase() == 'BOARD LIGHTS OUT'	
+				// 		) {
+				// 			redBorder = 'border border-red-400';
+				// 			redText = 'text-red-600';
+				// 			defaultColor = 'red';
+				// 		}
 	
-						channelDisplay += `
-						<!-- Card -->
-							<div class="col-span-1 card-wrapper bg-gray-50 `+redBorder+`">
-								<div class="card-header">
-									<div class="card-header-icon bg-`+defaultColor+`-100 text-`+defaultColor+`-500 lg:hidden xl:block">
-										<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
-									</div>
-									<div class="card-header-title text-`+defaultColor+`-800 bg-`+defaultColor+`-100">
-										`+channelData[i]['channelName']+`
-									</div>
-								</div>
-								<div class="flex flex-col justify-center items-center my-4">
-									<p class="text-2xl xl:text-3xl font-semibold text-gray-800 text-center uppercase whitespace-nowrap `+redText+`">`+channelData[i]['reading']['smsAlarmHeader']+`<br>
-									<span class="text-2xl font-medium lg:text-xl">`+alarmReadingDisplay+` `+unitDisplay+`</span></p>
-									<p class="text-xs text-gray-400 italic mt-4">`+dateDisplay+`</p>
-								</div>
-							</div>
-							<!-- End of card -->
-						`
-					} else {
-						channelDisplay += `
-						<!-- Card -->
-							<div class="col-span-1 card-wrapper bg-gray-50">
-								<div class="card-header">
-									<div class="card-header-icon bg-lightblue-100 text-lightblue-500 lg:hidden xl:block">
-										<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
-									</div>
-									<div class="card-header-title text-lightblue-800 bg-lightblue-100">
-										`+channelData[i]['channelName']+`
-									</div>
-								</div>
-								<div class="flex flex-col justify-center items-center">
-									<p class="italic my-4">No alarms found...</p>
-								</div>
-							</div>
-							<!-- End of card -->
-						`
-					}
-				}
+				// 		channelDisplay += `
+				// 		<!-- Card -->
+				// 			<div class="col-span-1 card-wrapper-1 `+redBorder+`">
+				// 				<div class="card-header">
+				// 					<div class="card-icon-1 text-`+defaultColor+`-500">
+				// 						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+				// 					</div>
+				// 					<div class="card-title-1 text-`+defaultColor+`-800 bg-`+defaultColor+`-100">
+				// 						`+channelData[i]['channelName']+`
+				// 					</div>
+				// 				</div>
+				// 				<div class="card-body-1 py-4">
+				// 					<p class="text-2xl xl:text-3xl font-semibold text-gray-800 text-center uppercase whitespace-nowrap `+redText+`">`+channelData[i]['reading']['smsAlarmHeader']+`<br>
+				// 					<span class="text-2xl font-medium lg:text-xl">`+alarmReadingDisplay+` `+unitDisplay+`</span></p>
+				// 					<p class="text-xs text-gray-400 italic mt-4">`+dateDisplay+`</p>
+				// 				</div>
+				// 			</div>
+				// 			<!-- End of card -->
+				// 		`
+				// 	} else {
+				// 		channelDisplay += `
+				// 		<!-- Card -->
+				// 			<div class="col-span-1 card-wrapper-1">
+				// 				<div class="card-header-1">
+				// 					<div class="card-icon-1">
+				// 						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+				// 					</div>
+				// 					<div class="card-title-1">
+				// 						`+channelData[i]['channelName']+`
+				// 					</div>
+				// 				</div>
+				// 				<div class="card-body-1">
+				// 					<p class="italic my-4">No alarms found...</p>
+				// 				</div>
+				// 			</div>
+				// 			<!-- End of card -->
+				// 		`
+				// 	}
+				// }
+
 				$('#channelDisplay').html(channelDisplay);
 
 				// Display message history
@@ -2312,20 +2323,20 @@ $(document).ready(function () {
 			<!-- End of card -->
 
 			<!-- Card -->
-			<div class="col-span-2 md:col-span-2 lg:col-span-2 card-wrapper bg-gray-50">
+			<div class="col-span-2 md:col-span-2 lg:col-span-2 card-wrapper-1">
 				<!-- Title -->
-				<div class="flex-none flex justify-between items-center h-12 bg-white rounded-t-xl border-b relative">
+				<div class="card-header-1 relative">
 					<div class="flex items-center">
-						<div class="hidden md:block bg-blue-100 text-blue-500 rounded-full p-2 ml-4 mr-2 lg:mr-4">
+						<div class="hidden sm:block text-gray-500 p-2 ml-4 mr-2 lg:mr-4">
 							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path></svg>
 						</div>
 						<div id="dateSelectors" class="flex justify-center items-center space-x-2 ml-2">
-							<div data-id="3hr" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">3hr</div>
-							<div data-id="12hr" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">12hr</div>
-							<div data-id="1d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">1d</div>
-							<div data-id="7d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">7d</div>
-							<div data-id="30d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">30d</div>
-							<div data-id="ChartCal" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800">
+							<div data-id="3hr" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">3hr</div>
+							<div data-id="12hr" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">12hr</div>
+							<div data-id="1d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">1d</div>
+							<div data-id="7d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">7d</div>
+							<div data-id="30d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">30d</div>
+							<div data-id="ChartCal" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">
 								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
 							</div>
 						</div>
@@ -2340,7 +2351,7 @@ $(document).ready(function () {
 				</div>
 
 				<!-- Chart -->
-				<div class="flex-auto p-2 lg:p-4 flex justify-center items-center">
+				<div class="card-body-1 p-2 lg:p-4">
 					<canvas id="canvas">
 						<!-- Filled with js -->
 					</canvas>
@@ -2349,16 +2360,16 @@ $(document).ready(function () {
 			<!-- End of card-->
 
 			<!-- Card -->
-			<div class="col-span-2 md:col-span-2 lg:col-span-2 card-wrapper bg-gray-50">
-				<div class="card-header relative">
-					<div class="card-header-icon bg-purple-100 text-purple-500">
+			<div class="col-span-2 md:col-span-2 lg:col-span-2 card-wrapper-1">
+				<div class="card-header-1 relative">
+					<div class="card-icon-1">
 						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd"></path></svg>	
 					</div>
-					<div class="card-header-title text-purple-800 bg-purple-100">
+					<div class="card-title-1">
 						Alarms	
 					</div>
 
-					<div id="AlarmCal" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800 absolute right-4">
+					<div id="AlarmCal" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white ring-gray-300 hover:ring-1 hover:text-gray-800 absolute right-4">
 						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
 					</div>
 					<div id="AlarmCalSelector" class="w-48 bg-white shadow rounded z-10 absolute top-10 right-4 border flex flex-col p-2 hidden">
@@ -2374,7 +2385,7 @@ $(document).ready(function () {
 				</div>
 
 				<!-- Table -->
-				<div id="alarmsCardBody" class="flex-auto py-2 px-4">
+				<div id="alarmsCardBody" class="card-body-1 items-stretch justify-start block py-2 px-4">
 					<div id="triggeredAlarms">
 					
 					</div>
@@ -2399,8 +2410,8 @@ $(document).ready(function () {
 
 					<div class="flex flex-col items-center justify-center py-4">
 						<div class="flex">
-							<button id="previous_alarms" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-200 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Previous</button>
-							<button id="next_alarms" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-200 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Next</button>
+							<button id="previous_alarms" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-300 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Previous</button>
+							<button id="next_alarms" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-300 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Next</button>
 						</div>
 						<p class="mt-4 text-xs font-semibold">Showing <span id="range_alarms"></span> of <span id="total_alarms"></span></p>
 					</div>
@@ -2415,13 +2426,13 @@ $(document).ready(function () {
 		// * Status and EWB BOARD channel
 		ewbv2_getLatestReadings().then( function (ewbChannels) {
 			getDeviceData().then( function(deviceData ) {
-				status = deviceData.deviceStatus;
+				var status = deviceData.deviceStatus;
 				// STATUS processing
 				if (status == 1) {
 					statusHTML = `
 					<!-- Card -->
 					<div class="col-span-1">
-						<div class="bg-green-50 shadow-md rounded-xl h-40 flex justify-center items-center relative overflow-hidden">
+						<div class="bg-green-50 border border-green-400 shadow-md h-40 flex justify-center items-center relative overflow-hidden">
 							<div class="text-green-300 opacity-40 transform left-0 -rotate-12 -ml-6 absolute overflow-hidden">
 								<svg class="w-44 h-44" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.05 3.636a1 1 0 010 1.414 7 7 0 000 9.9 1 1 0 11-1.414 1.414 9 9 0 010-12.728 1 1 0 011.414 0zm9.9 0a1 1 0 011.414 0 9 9 0 010 12.728 1 1 0 11-1.414-1.414 7 7 0 000-9.9 1 1 0 010-1.414zM7.879 6.464a1 1 0 010 1.414 3 3 0 000 4.243 1 1 0 11-1.415 1.414 5 5 0 010-7.07 1 1 0 011.415 0zm4.242 0a1 1 0 011.415 0 5 5 0 010 7.072 1 1 0 01-1.415-1.415 3 3 0 000-4.242 1 1 0 010-1.415zM10 9a1 1 0 011 1v.01a1 1 0 11-2 0V10a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
 							</div>
@@ -2438,7 +2449,7 @@ $(document).ready(function () {
 					statusHTML = `
 					<!-- Card -->
 					<div class="col-span-1">
-						<div class="bg-red-50 shadow-md rounded-xl h-40 flex justify-center items-center relative overflow-hidden">
+						<div class="bg-red-50 border border-red-400 shadow-md h-40 flex justify-center items-center relative overflow-hidden">
 							<div class="text-red-300 opacity-40 transform left-0 -rotate-12 -ml-6 absolute overflow-hidden">
 								<svg class="w-44 h-44" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M3.707 2.293a1 1 0 00-1.414 1.414l6.921 6.922c.05.062.105.118.168.167l6.91 6.911a1 1 0 001.415-1.414l-.675-.675a9.001 9.001 0 00-.668-11.982A1 1 0 1014.95 5.05a7.002 7.002 0 01.657 9.143l-1.435-1.435a5.002 5.002 0 00-.636-6.294A1 1 0 0012.12 7.88c.924.923 1.12 2.3.587 3.415l-1.992-1.992a.922.922 0 00-.018-.018l-6.99-6.991zM3.238 8.187a1 1 0 00-1.933-.516c-.8 3-.025 6.336 2.331 8.693a1 1 0 001.414-1.415 6.997 6.997 0 01-1.812-6.762zM7.4 11.5a1 1 0 10-1.73 1c.214.371.48.72.795 1.035a1 1 0 001.414-1.414c-.191-.191-.35-.4-.478-.622z"></path></svg>
 							</div>
@@ -2470,16 +2481,16 @@ $(document).ready(function () {
 
 					ewbBoardHTML = `
 					<!-- Card -->
-						<div class="col-span-1 h-40 card-wrapper bg-gray-50 `+redBorder+`">
-							<div class="card-header">
-								<div class="card-header-icon bg-`+defaultColor+`-100 text-`+defaultColor+`-500 lg:hidden 2xl:block">
+						<div class="col-span-1 h-40 card-wrapper-1 `+redBorder+`">
+							<div class="card-header-1">
+								<div class="card-icon-1 text-`+defaultColor+`-500">
 									<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
 								</div>
-								<div class="card-header-title text-`+defaultColor+`-800 bg-`+defaultColor+`-100">
+								<div class="card-title-1 text-`+defaultColor+`-800 bg-`+defaultColor+`-100">
 									`+ewbChannels['DI']['alarm']['channelName']+`
 								</div>
 							</div>
-							<div class="flex flex-col justify-center items-center my-4">
+							<div class="card-body-1 flex-col py-4">
 								<p class="text-xl xl:text-2xl font-semibold text-gray-800 text-center uppercase whitespace-nowrap `+redText+`">`+ewbChannels['DI']['alarm']['smsAlarmHeader']+`<br>
 								<p class="text-xs text-gray-400 italic mt-4">`+dateDisplay+`</p>
 							</div>
@@ -2490,16 +2501,16 @@ $(document).ready(function () {
 				} else {
 					ewbBoardHTML = `
 						<!-- Card -->
-							<div class="col-span-1 card-wrapper h-40 bg-gray-50">
-								<div class="card-header">
-									<div class="card-header-icon bg-lightblue-100 text-lightblue-500 lg:hidden xl:block">
+							<div class="col-span-1 card-wrapper-1 h-40">
+								<div class="card-header-1">
+									<div class="card-icon-1">
 										<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
 									</div>
-									<div class="card-header-title text-lightblue-800 bg-lightblue-100">
+									<div class="card-title-1">
 										EWB BOARD
 									</div>
 								</div>
-								<div class="flex flex-col justify-center items-center">
+								<div class="card-body-1">
 									<p class="italic my-4">No alarms found...</p>
 								</div>
 							</div>
@@ -2551,16 +2562,16 @@ $(document).ready(function () {
 
 						returnCardHTML = `
 						<!-- Card -->
-							<div class="col-span-1 card-wrapper bg-gray-50 border border-red-400">
-								<div class="card-header">
-									<div class="card-header-icon bg-red-100 text-red-500 lg:hidden 2xl:block">
+							<div class="col-span-1 card-wrapper-1 border border-red-400">
+								<div class="card-header-1">
+									<div class="card-icon-1 text-red-500">
 										<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
 									</div>
-									<div class="card-header-title text-red-800 bg-red-100 whitespace-nowrap truncate text-xs sm:text-sm">
+									<div class="card-title-1 text-red-800 bg-red-100 whitespace-nowrap truncate">
 										`+jsonDataRow['channelName']+`
 									</div>
 								</div>
-								<div class="flex flex-col justify-center items-center my-4">
+								<div class="card-body-1 flex-col py-4">
 									<p class="text-base xl:text-xl font-semibold text-center uppercase text-red-600 ">`+jsonDataRow['alarm']['smsAlarmHeader']+`<br>
 									<span class="text-lg font-medium lg:text-xl">`+alarmReadingDisplay+` `+unitDisplay+`</span></p>
 									<p class="text-xs text-gray-400 italic mt-2">`+dateDisplay+`</p>
@@ -2582,16 +2593,16 @@ $(document).ready(function () {
 
 						returnCardHTML = `
 						<!-- Card -->
-							<div class="col-span-1 card-wrapper bg-gray-50 border border-red-400">
-								<div class="card-header">
-									<div class="card-header-icon bg-red-100 text-red-500 lg:hidden 2xl:block">
+							<div class="col-span-1 card-wrapper-1 border border-red-400">
+								<div class="card-header-1">
+									<div class="card-icon-1 text-red-500">
 										<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
 									</div>
-									<div class="card-header-title text-red-800 bg-red-100 whitespace-nowrap truncate text-xs sm:text-sm">
+									<div class="card-title-1 text-red-800 bg-red-100 whitespace-nowrap truncate">
 										`+jsonDataRow['channelName']+`
 									</div>
 								</div>
-								<div class="flex flex-col justify-center items-center my-4">
+								<div class="card-body-1 flex-col py-4">
 									<p class="text-base xl:text-xl font-semibold text-center uppercase text-red-600 ">`+alarmOutput+`
 									<span class="text-lg font-medium lg:text-xl">`+jsonDataRow['reading']['measurement']+` `+unitDisplay+`</span></p>
 									<p class="text-xs text-gray-400 italic mt-2">`+dateDisplay+`</p>
@@ -2618,16 +2629,16 @@ $(document).ready(function () {
 
 						returnCardHTML = `
 						<!-- Card -->
-							<div class="col-span-1 h-40 card-wrapper bg-gray-50">
-								<div class="card-header">
-									<div class="card-header-icon bg-lightblue-100 text-lightblue-500 lg:hidden 2xl:block">
+							<div class="col-span-1 h-40 card-wrapper-1">
+								<div class="card-header-1">
+									<div class="card-icon-1">
 										<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
 									</div>
-									<div class="card-header-title text-lightblue-800 bg-lightblue-100 whitespace-nowrap truncate text-xs sm:text-sm">
+									<div class="card-title-1 whitespace-nowrap truncate">
 										`+jsonDataRow['channelName']+`
 									</div>
 								</div>
-								<div class="flex flex-col justify-center items-center my-4">
+								<div class="card-body-1 flex-col py-4">
 									<p class="text-2xl xl:text-2xl font-semibold text-gray-800 text-center uppercase whitespace-nowrap">`+jsonDataRow['reading']['measurement']+` `+unitDisplay+`<br>
 									<p class="text-xs text-gray-400 italic mt-4">`+dateDisplay+`</p>
 								</div>
@@ -2645,16 +2656,16 @@ $(document).ready(function () {
 						// Return card saying no readings if received yet if doesn't have an alarm or reading
 						returnCard = `
 						<!-- Card -->
-							<div class="col-span-1 card-wrapper h-40 bg-gray-50">
-								<div class="card-header">
-									<div class="card-header-icon bg-lightblue-100 text-lightblue-500 lg:hidden 2xl:block">
+							<div class="col-span-1 card-wrapper-1 h-40">
+								<div class="card-header-1">
+									<div class="card-icon-1">
 										<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
 									</div>
-									<div class="card-header-title text-lightblue-800 bg-lightblue-100 whitespace-nowrap truncate text-xs sm:text-sm">
+									<div class="card-title-1 whitespace-nowrap truncate">
 										`+data['channelName']+`
 									</div>
 								</div>
-								<div class="flex flex-col justify-center items-center">
+								<div class="card-body-1">
 									<p class="italic my-4 text-center">No readings received yet...</p>
 								</div>
 							</div>
@@ -2732,16 +2743,16 @@ $(document).ready(function () {
 				} else {
 					ai1HTML = `
 					<!-- Card -->
-					<div class="col-span-1 card-wrapper h-40 bg-gray-50">
-						<div class="card-header">
-							<div class="card-header-icon bg-lightblue-100 text-lightblue-500 lg:hidden xl:block">
+					<div class="col-span-1 card-wrapper-1 h-40">
+						<div class="card-header-1">
+							<div class="card-icon-1">
 								<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
 							</div>
-							<div class="card-header-title text-lightblue-800 bg-lightblue-100">
+							<div class="card-title-1">
 								Analog Channel #1
 							</div>
 						</div>
-						<div class="flex flex-col justify-center items-center">
+						<div class="card-body-1">
 							<p class="italic my-4 text-center">Analog channel #1 not registered</p>
 						</div>
 					</div>
@@ -2757,16 +2768,16 @@ $(document).ready(function () {
 				} else {
 					ai2HTML = `
 					<!-- Card -->
-					<div class="col-span-1 card-wrapper h-40 bg-gray-50">
-						<div class="card-header">
-							<div class="card-header-icon bg-lightblue-100 text-lightblue-500 lg:hidden xl:block">
+					<div class="col-span-1 card-wrapper-1 h-40">
+						<div class="card-header-1">
+							<div class="card-icon-1">
 								<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
 							</div>
-							<div class="card-header-title text-lightblue-800 bg-lightblue-100">
+							<div class="card-title-1">
 								Analog Channel #2
 							</div>
 						</div>
-						<div class="flex flex-col justify-center items-center">
+						<div class="card-body-1">
 							<p class="italic my-4 text-center">Analog channel #2 not registered</p>
 						</div>
 					</div>
@@ -2892,7 +2903,7 @@ $(document).ready(function () {
 			drawChart(chart, data);
 		})
 
-		var activeClass = 'text-gray-800 bg-gray-100';
+		var activeClass = 'text-gray-800 bg-white ring-gray-300 ring-1';
 		$('#dateSelectors').children().first().addClass(activeClass);
 		$('#dateSelectors').children().on('click', function() {
 			$('#dateSelectors').children().removeClass(activeClass);
@@ -2930,16 +2941,16 @@ $(document).ready(function () {
 			<!-- Left panel -->
 			<div class="col-span-1">
 				<!-- Card -->
-				<div class="col-span-2 md:col-span-2 lg:col-span-2 card-wrapper bg-gray-50">
-					<div class="card-header relative">
-						<div class="card-header-icon bg-purple-100 text-purple-500">
+				<div class="col-span-2 md:col-span-2 lg:col-span-2 card-wrapper-1">
+					<div class="card-header-1 relative">
+						<div class="card-icon-1">
 							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clip-rule="evenodd"></path></svg>
 						</div>
-						<div class="card-header-title text-purple-800 bg-purple-100">
+						<div class="card-title-1">
 							Message history	
 						</div>
 
-						<div id="messageHistoryCal" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800 absolute right-4">
+						<div id="messageHistoryCal" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white ring-gray-300 hover:ring-1 hover:text-gray-800 absolute right-4">
 							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path></svg>
 						</div>
 						<div id="messageHistoryCalSelector" class="w-48 bg-white shadow rounded z-10 absolute top-10 right-4 border flex flex-col p-2 hidden">
@@ -2955,10 +2966,10 @@ $(document).ready(function () {
 					</div>
 
 					<!-- Table -->
-					<div id="messageHistoryCardBody" class="flex-auto py-2 px-4">
+					<div id="messageHistoryCardBody" class="card-body-1 block items-stretch justify-start py-2 px-4">
 						<div class="flex overflow-x-auto">
 							<table class="table-fixed min-w-full">
-								<thead class="uppercase text-xs bg-bluegray-50 border-b border-gray-200 text-bluegray-900">
+								<thead class="uppercase text-xs border-b border-gray-200 text-bluegray-900">
 									<tr>
 										<th class="text-center w-1/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">From</th>
 										<th class="text-center w-1/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">To</th>
@@ -2979,8 +2990,8 @@ $(document).ready(function () {
 
 						<div class="flex flex-col items-center justify-center py-4">
 							<div class="flex">
-								<button id="previous_messageHistory" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-200 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Previous</button>
-								<button id="next_messageHistory" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-200 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Next</button>
+								<button id="previous_messageHistory" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-300 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Previous</button>
+								<button id="next_messageHistory" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-300 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Next</button>
 							</div>
 							<p class="mt-4 text-xs font-semibold">Showing <span id="range_messageHistory"></span> of <span id="total_messageHistory"></span></p>
 						</div>

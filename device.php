@@ -105,16 +105,16 @@ include_once('header.php');
 	</div>
 
 	<!-- Filters subnav -->
-	<div class="block w-screen overflow-x-auto flex-none bg-gray-200 lg:h-full lg:w-44 xl:w-60 lg:rounded-tr-3xl shadow-md">
-		<div class="lg:fixed h-16 lg:h-full flex flex-row lg:flex-col" style="width: inherit;">
+	<div class="block w-screen overflow-x-auto flex-none bg-gray-200 lg:h-full lg:w-44 xl:w-60">
+		<div class="lg:fixed h-16 lg:h-full flex flex-row lg:flex-col border-b lg:border-b-0 lg:border-r border-gray-300" style="width: inherit;">
 			<!-- Subpage nav -->
-			<div class="bg-gray-100 shadow-sm rounded-br-3xl item flex lg:flex-col items-center justify-center">
-				<span id="sidePanel-deviceName" class="px-2 py-6 font-semibold text-gray-700 text-sm uppercase whitespace-nowrap mx-6 lg:mx-0 truncate"></span>
+			<div class="bg-gray-100 border-r lg:border-r-0 lg:border-b border-gray-300 flex lg:flex-col items-center justify-center py-6 px-2">
+				<span id="sidePanel-deviceName" class="text-sm whitespace-nowrap font-semibold uppercase mx-6 lg:mx-0 bg-blue-100 text-lightblue-600"></span>
 				<?php 
 				if ($_SESSION['roleId'] == 1 || $_SESSION['roleId'] == 2) {
 					echo '
-					<button id="editDevice" class="px-3 py-2 mr-4 lg:mx-2 lg:mb-4 rounded-xl text-sm font-medium text-white bg-lightblue-500 hover:bg-lightblue-700 focus:outline-none transition-all flex justify-center items-center">
-						<svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path></svg>
+					<button id="editDevice" class="lg:mt-4 mr-2 lg:mr-0 p-1 flex justify-center items-center text-xs uppercase font-semibold text-lightblue-600 border border-lightblue-500 transition-all hover:text-white hover:bg-lightblue-500 focus:outline-none focus:text-white focus:bg-lightblue-500">
+						<svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path></svg>
 						Edit
 					</button>';
 				}
