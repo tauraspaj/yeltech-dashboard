@@ -11,6 +11,7 @@ module.exports = {
     fontFamily: {
       display: ['Roboto', 'system-ui', 'sans-serif'],
       body: ['Roboto', 'system-ui', 'sans-serif'],
+      spacemono: ['Space Mono', 'system-ui', 'sans-serif'],
     },
   	extend: {
   		colors: {
