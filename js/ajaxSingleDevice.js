@@ -34,6 +34,9 @@ $(document).ready(function () {
 			case 'ewbv2_dashboard':
 				display_ewbv2_dashboard();
 				break;
+			case 'tilt_dashboard':
+				display_tilt_dashboard();
+				break;
 			case 'alarms':
 				display_alarms();
 				break;
@@ -389,11 +392,11 @@ $(document).ready(function () {
 					</div>
 					<div class="flex overflow-x-auto">
 						<table class="table-fixed min-w-full">
-							<thead class="uppercase text-xs bg-bluegray-50 border-b border-gray-200 text-bluegray-900">
+							<thead class="uppercase text-xs border-b border-gray-200 text-bluegray-900">
 								<tr>
-									<th class="text-left w-2/12 py-2 px-4 font-medium text-gray-500 whitespace-nowrap">Channel</th>
-									<th class="text-center w-6/12 lg:w-4/12 py-2 px-4 font-medium text-gray-500 whitespace-nowrap">Alarm</th>
-									<th class="text-center w-4/12 lg:w-4/12 py-2 px-4 font-medium text-gray-500 whitespace-nowrap">Timestamp</th>
+									<th class="text-left w-2/12 py-2 px-4 font-medium text-gray-600 whitespace-nowrap">Channel</th>
+									<th class="text-center w-6/12 lg:w-4/12 py-2 px-4 font-medium text-gray-600 whitespace-nowrap">Alarm</th>
+									<th class="text-center w-4/12 lg:w-4/12 py-2 px-4 font-medium text-gray-600 whitespace-nowrap">Timestamp</th>
 								</tr>
 							</thead>
 							<tbody id="table_alarms">
@@ -1323,11 +1326,11 @@ $(document).ready(function () {
 					</div>
 					<div class="flex overflow-x-auto">
 						<table class="table-fixed min-w-full">
-							<thead class="uppercase text-xs bg-bluegray-50 border-b border-gray-200 text-bluegray-900">
+							<thead class="uppercase text-xs border-b border-gray-200 text-bluegray-900">
 								<tr>
-									<th class="text-left w-2/12 py-2 px-4 font-medium text-gray-500">Channel</th>
-									<th class="text-center w-6/12 lg:w-4/12 py-2 px-4 font-medium text-gray-500">Alarm</th>
-									<th class="text-center w-4/12 lg:w-4/12 py-2 px-4 font-medium text-gray-500">Timestamp</th>
+									<th class="text-left w-2/12 py-2 px-4 font-medium text-gray-600">Channel</th>
+									<th class="text-center w-6/12 lg:w-4/12 py-2 px-4 font-medium text-gray-600">Alarm</th>
+									<th class="text-center w-4/12 lg:w-4/12 py-2 px-4 font-medium text-gray-600">Timestamp</th>
 								</tr>
 							</thead>
 							<tbody id="table_alarms">
@@ -1883,9 +1886,9 @@ $(document).ready(function () {
 						<table class="table-fixed min-w-full">
 							<thead class="uppercase text-xs border-b border-gray-200 text-bluegray-900">
 								<tr>
-									<th class="text-left w-4/12 py-2 px-4 font-medium text-gray-500">Channel</th>
-									<th class="text-center w-2/12 lg:w-4/12 py-2 px-4 font-medium text-gray-500">Reading</th>
-									<th class="text-center w-6/12 lg:w-4/12 py-2 px-4 font-medium text-gray-500">Timestamp</th>
+									<th class="text-left w-4/12 py-2 px-4 font-medium text-gray-600">Channel</th>
+									<th class="text-center w-2/12 lg:w-4/12 py-2 px-4 font-medium text-gray-600">Reading</th>
+									<th class="text-center w-6/12 lg:w-4/12 py-2 px-4 font-medium text-gray-600">Timestamp</th>
 								</tr>
 							</thead>
 							<tbody id="table_measurements">
@@ -1994,11 +1997,11 @@ $(document).ready(function () {
 							<table class="table-fixed min-w-full">
 								<thead class="uppercase text-xs border-b border-gray-200 text-bluegray-900">
 									<tr>
-										<th class="text-center w-1/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">From</th>
-										<th class="text-center w-1/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">To</th>
-										<th class="text-center w-6/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Message</th>
-										<th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Timestamp</th>
-										<th class="text-center w-2/12 py-4 px-4 font-medium text-gray-400 whitespace-nowrap">Message Type</th>
+										<th class="text-center w-1/12 py-4 px-4 font-medium text-gray-600 whitespace-nowrap">From</th>
+										<th class="text-center w-1/12 py-4 px-4 font-medium text-gray-600 whitespace-nowrap">To</th>
+										<th class="text-center w-6/12 py-4 px-4 font-medium text-gray-600 whitespace-nowrap">Message</th>
+										<th class="text-center w-2/12 py-4 px-4 font-medium text-gray-600 whitespace-nowrap">Timestamp</th>
+										<th class="text-center w-2/12 py-4 px-4 font-medium text-gray-600 whitespace-nowrap">Message Type</th>
 									</tr>
 								</thead>
 								<tbody id="table_messageHistory">
@@ -2391,11 +2394,11 @@ $(document).ready(function () {
 					</div>
 					<div class="flex overflow-x-auto">
 						<table class="table-fixed min-w-full">
-							<thead class="uppercase text-xs bg-bluegray-50 border-b border-gray-200 text-bluegray-900">
+							<thead class="uppercase text-xs border-b border-gray-200 text-bluegray-900">
 								<tr>
-									<th class="text-left w-2/12 py-2 px-4 font-medium text-gray-500 whitespace-nowrap">Channel</th>
-									<th class="text-center w-6/12 lg:w-4/12 py-2 px-4 font-medium text-gray-500 whitespace-nowrap">Alarm</th>
-									<th class="text-center w-4/12 lg:w-4/12 py-2 px-4 font-medium text-gray-500 whitespace-nowrap">Timestamp</th>
+									<th class="text-left w-2/12 py-2 px-4 font-medium text-gray-600 whitespace-nowrap">Channel</th>
+									<th class="text-center w-6/12 lg:w-4/12 py-2 px-4 font-medium text-gray-600 whitespace-nowrap">Alarm</th>
+									<th class="text-center w-4/12 lg:w-4/12 py-2 px-4 font-medium text-gray-600 whitespace-nowrap">Timestamp</th>
 								</tr>
 							</thead>
 							<tbody id="table_alarms">
@@ -3045,6 +3048,318 @@ $(document).ready(function () {
 		})
 		//#endregion
 	}
+
+	// ! SHOW COMPONENT: Tilt Dashboard
+	function display_tilt_dashboard() {
+		// * Put all cards together and generate final output
+		var output = `
+			<div class="flex lg:space-y-0 flex-col lg:flex-row lg:space-x-6">
+				<div class="flex flex-col space-y-6 w-full lg:w-1/2 lg:max-w-xl order-last lg:order-first">
+					
+					<div class="hidden lg:block card-wrapper-1">
+						<div class="card-header-1">
+							<div class="card-icon-1">
+								<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path></svg>
+							</div>
+							<div class="card-title-1">
+								Site Overview
+							</div>
+						</div>
+						<div id="" class="card-body-1 py-4" style="height: 700px;">
+							
+						</div>
+					</div>
+					
+					
+				</div>
+				
+				<div id="rightPanel" class="flex-auto grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
+					
+					<!-- 4 AI channel cards will be added through js -->
+
+					<!-- Card -->
+					<div class="col-span-1 md:col-span-2 card-wrapper-1">
+						<div class="card-header-1 relative">
+							<div class="card-icon-1">
+								<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd"></path></svg>	
+							</div>
+							<div class="card-title-1">
+								Alarms	
+							</div>
+
+							<div id="AlarmCal" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800 absolute right-4">
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+							</div>
+							<div id="AlarmCalSelector" class="w-48 bg-white shadow rounded z-10 absolute top-10 right-4 border flex flex-col p-2 hidden">
+								<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">From</p>
+								<input id="alarmFrom" type="date" class="bg-white text-gray-700">
+								<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">To</p>
+								<input id="alarmTo" type="date" class="bg-white text-gray-700">
+								<div class="flex justify-center items-center">
+									<button id="goAlarmCal" class="bg-gray-50 border rounded w-16 mx-auto mt-2 hover:bg-gray-100">Go</button>
+									<button id="resetAlarmCal" class="bg-gray-50 border rounded w-16 mx-auto mt-2 hover:bg-gray-100">Reset</button>
+								</div>
+							</div>
+						</div>
+
+						<!-- Table -->
+						<div id="alarmsCardBody" class="flex-auto bg-gray-50 py-2 px-4">
+							<div id="triggeredAlarms">
+							
+							</div>
+							<div class="flex overflow-x-auto">
+								<table class="table-fixed min-w-full">
+									<thead class="uppercase text-xs border-b border-gray-200 text-bluegray-900">
+										<tr>
+											<th class="text-left w-2/12 py-2 px-4 font-medium text-gray-500 whitespace-nowrap">Channel</th>
+											<th class="text-center w-6/12 lg:w-4/12 py-2 px-4 font-medium text-gray-500 whitespace-nowrap">Alarm</th>
+											<th class="text-center w-4/12 lg:w-4/12 py-2 px-4 font-medium text-gray-500 whitespace-nowrap">Timestamp</th>
+										</tr>
+									</thead>
+									<tbody id="table_alarms">
+										<!-- This area gets filled via PHP -->
+									</tbody>
+								</table>
+							</div>
+							<div id="loadingOverlay_alarms" class="flex flex-auto w-full block justify-center items-center space-x-2 uppercase font-semibold text-bluegray-800 py-8">
+								<svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+								<p>Loading...</p>
+							</div>
+
+							<div class="flex flex-col items-center justify-center py-4">
+								<div class="flex">
+									<button id="previous_alarms" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-300 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Previous</button>
+									<button id="next_alarms" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-300 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Next</button>
+								</div>
+								<p class="mt-4 text-xs font-semibold">Showing <span id="range_alarms"></span> of <span id="total_alarms"></span></p>
+							</div>
+						</div>
+					</div>
+					<!-- End of card-->
+
+					<!-- Card -->
+					<div class="col-span-1 md:col-span-2 card-wrapper-1">
+						<!-- Title -->
+						<div class="card-header-1 relative">
+							<div class="flex items-center">
+								<div class="hidden sm:block text-gray-500 p-2 ml-4 mr-2 lg:mr-4">
+									<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path></svg>
+								</div>
+								<div id="dateSelectors" class="flex justify-center items-center space-x-2 ml-2">
+									<div data-id="3hr" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">3hr</div>
+									<div data-id="12hr" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">12hr</div>
+									<div data-id="1d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">1d</div>
+									<div data-id="7d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">7d</div>
+									<div data-id="30d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">30d</div>
+									<div data-id="ChartCal" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">
+										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+									</div>
+								</div>
+								<div id="ChartCalSelector" class="w-48 bg-white shadow rounded z-10 absolute left-28 top-10 border flex flex-col p-2 hidden">
+									<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">From</p>
+									<input id="chartFrom" type="date" class="bg-white text-gray-700">
+									<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">To</p>
+									<input id="chartTo" type="date" class="bg-white text-gray-700">
+									<button class="bg-gray-50 border rounded w-16 mx-auto mt-2 hover:bg-gray-100">Go</button>
+								</div>
+							</div>
+						</div>
+
+						<!-- Chart -->
+						<div class="card-body-1 p-2 lg:p-4">
+							<canvas id="canvas">
+								<!-- Filled with js -->
+							</canvas>
+						</div>
+					</div>
+					<!-- End of card-->
+
+				</div>
+			</div>
+		`;
+		// * Update site content once its generated
+		siteContent.html(output);
+
+		rtmu_getLatestReadings().then( function(readingsData) {
+			console.log(readingsData);
+
+			// Display readings of the AI channels
+			// We use i-- to compensate for using .prepend as that will display channels in reverse order
+			for(i = readingsData.latestMeasurements.length-1; i >= 0; i--) {
+				var dateDisplay = new Date( readingsData.latestMeasurements[i].measurementTime );
+				dateDisplay = dateDisplay.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
+				
+				// Add card
+				$('#rightPanel').prepend(`
+					<!-- Card -->
+					<div class="col-span-1 card-wrapper-1">
+						<div class="card-header-1">
+							<div class="card-icon-1">
+								<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" class="bi bi-thermometer-half" viewBox="0 0 16 16">
+									<path d="M9.5 12.5a1.5 1.5 0 1 1-2-1.415V6.5a.5.5 0 0 1 1 0v4.585a1.5 1.5 0 0 1 1 1.415z"/>
+									<path d="M5.5 2.5a2.5 2.5 0 0 1 5 0v7.55a3.5 3.5 0 1 1-5 0V2.5zM8 1a1.5 1.5 0 0 0-1.5 1.5v7.987l-.167.15a2.5 2.5 0 1 0 3.333 0l-.166-.15V2.5A1.5 1.5 0 0 0 8 1z"/>
+								</svg>
+							</div>
+							<div class="card-title-1">
+								`+readingsData.latestMeasurements[i].channelName+`	
+							</div>
+						</div>
+						<div id="latestMeasurements_body" class="card-body-1 flex-col py-4">
+							<div>
+								<span class="text-3xl lg:text-5xl font-medium text-gray-800">`+readingsData.latestMeasurements[i].measurement+`</span><span class="">`+readingsData.latestMeasurements[i].unitName+`</span>
+							</div>
+							<div>
+								<p class="text-xs text-gray-400 italic mt-1 mb-2">`+dateDisplay+`</p>
+							</div>
+						</div>
+					</div>
+					<!-- End of card -->
+				`);
+			}
+		})
+
+		// * Load alarms card
+		//#region 
+		var alarmPageNumber = 1;
+		var alarmsPerPage = 5;
+		var fromDate = null;
+		var toDate = null;
+		getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
+
+		// Alarm paging
+		$('#next_alarms').on('click', function () {
+			alarmPageNumber += 1;
+			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
+		})
+		$('#previous_alarms').on('click', function () {
+			alarmPageNumber -= 1;
+			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
+		})
+
+		$('#AlarmCal').on('click', function() {
+			$('#AlarmCalSelector').toggleClass('hidden');
+		})
+		$('#goAlarmCal').on('click', function() {
+			alarmPageNumber = 1;
+			fromDate = $('#alarmFrom').val();
+			toDate = $('#alarmTo').val();
+			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
+			$('#AlarmCalSelector').addClass('hidden');
+		})
+
+		$('#resetAlarmCal').on('click', function() {
+			alarmPageNumber = 1;
+			fromDate = null;
+			toDate = null;
+			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
+			$('#AlarmCalSelector').addClass('hidden');
+			$('#alarmFrom, #alarmTo').val("");
+		})
+
+		function displayTriggeredAlarms(triggeredAlarms) {
+			var triggeredAlarmsOutput = '';
+			for (i = 0; i < triggeredAlarms.length; i++) {
+				triggeredAlarmsOutput += `
+				<!-- Alarm -->
+				<div class="flex h-10 text-sm text-red-600 font-medium items-center pl-4 bg-red-50 border border-red-500 rounded my-2">
+					<div class="hidden xl:block flex-1 whitespace-nowrap mx-2 text-xs italic">
+						ACTIVE ALARM!
+					</div>
+					<div class="flex-1 whitespace-nowrap">
+						<span class="text-xs uppercase text-red-400 mr-1">Channel:</span> `+triggeredAlarms[i].channelName+`
+					</div>
+					<div class="flex-1 whitespace-nowrap text-center">
+						<span class="text-xs uppercase text-red-400 mr-1">Trigger:</span> `+triggeredAlarms[i].operator+` `+triggeredAlarms[i].thresholdValue+` `+triggeredAlarms[i].unitName+`
+					</div>
+				</div>
+				<!-- End of alarm -->
+				`
+			}
+			$('#triggeredAlarms').html(triggeredAlarmsOutput);
+		}
+		// Display triggered alarms
+		getTriggeredAlarms().then( function(triggeredAlarms) {
+			displayTriggeredAlarms(triggeredAlarms);
+		})
+		//#endregion
+	
+		// * Load chart card
+		//#region 
+		var ctx = $('#canvas')[0].getContext('2d');
+		var chart = new Chart(ctx, {
+			type: 'line',
+			data: { datasets: [] },
+			options: {
+				scales: {
+					xAxes: [{
+						type: 'time',
+						time: {
+							unit: 'hour',
+							stepSize: 0.5,
+							tooltipFormat: 'HH:mm DD-MM-YYYY',
+						},
+						ticks: {
+							autoSkip: true,
+							maxTicksLimit: 10,
+							major: {
+								enabled: true,
+								fontStyle: 'bold',
+								fontSize: 14
+							},
+						},
+						scaleLabel: {
+							display: true,
+							labelString: 'Time of alarm'
+						},
+						gridLines: {
+							drawOnChartArea: false
+						}
+					}],
+					yAxes: [{
+						scaleLabel: {
+							display: true,
+							labelString: 'Temperature (°C)'
+						},
+						ticks: {
+							autoSkip: true,
+							maxTicksLimit: 6
+						}
+					}]
+				}
+			}
+		});
+		getDatasets('3hr','NOW').then( function (data) {
+			drawChart(chart, data);
+		})
+
+		var activeClass = 'text-gray-800 bg-white ring-1 ring-gray-300';
+		$('#dateSelectors').children().first().addClass(activeClass);
+		$('#dateSelectors').children().on('click', function() {
+			$('#dateSelectors').children().removeClass(activeClass);
+			$(this).addClass(activeClass);
+			var dataid = $(this).attr('data-id');
+			if (dataid != 'ChartCal') {
+				getDatasets(dataid,'NOW').then( function (data) {
+					drawChart(chart, data);
+				})
+
+				if ( !$('#ChartCalSelector').hasClass('hidden') ) {
+					$('#ChartCalSelector').addClass('hidden');
+				}
+				$('#chartFrom, #chartTo').val("");
+			} else {
+				$('#ChartCalSelector').toggleClass('hidden');
+			}
+		})
+		$('#ChartCalSelector > button').on('click', function() {
+			getDatasets($('#chartFrom').val() , $('#chartTo').val()).then( function (data) {
+				drawChart(chart, data);
+			})
+			$('#ChartCalSelector').addClass('hidden');
+		})
+		//#endregion
+		
+	}
 	
 	// ! Hide loaders on load
     $('#loadingOverlay_measurements, #loadingOverlay_alarms, #loadingOverlay_messageHistory').hide();
@@ -3485,13 +3800,29 @@ $(document).ready(function () {
 				pageControl(totalCount, returnedCount, perPage, pageNumber, 'measurements');
 
 				var outputTable = '';
+				var bgCounter = 0;
+				var alternatingBg = 'bg-gray-100';
 				for (i = 0; i < measurements.length - 1; i++) {
-					var alternatingBg = '';
-					if (i%2 == 0) {
-						alternatingBg = 'bg-gray-100';
-					} else {
-						alternatingBg = '';
+					// We change bg in batches of readings. E.g. if device records 4 channels, background will only change between batches of measurements instead of each line
+					function changeBg() {
+						if (bgCounter%2 == 0) {
+							alternatingBg = '';
+						} else {
+							alternatingBg = 'bg-gray-100';
+						}
+						bgCounter++;
 					}
+					var newBatch = false;
+					if (i != 0) {
+						var currentTime = measurements[i].measurementTime;
+						var previousTime = measurements[i-1].measurementTime;
+
+						if (currentTime != previousTime) {
+							newBatch = true;
+							changeBg();
+						} 						
+					}
+					
 					var dateDisplay = new Date( measurements[i].measurementTime );
 					dateDisplay = dateDisplay.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
 
