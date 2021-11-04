@@ -63,12 +63,28 @@ if ($function == 'checkIfExists') {
             }
     
             mysqli_stmt_execute($stmt);
-
-            // echo "$unitId, $deviceId, $channelTypeId, $channelInterfaceId<br><br>";
         }
     
         echo 'Device has been registered!';
         mysqli_stmt_close($stmt);
+    }
+
+    // TILT devices need their dashboard settings too
+    $sql = "
+    SELECT productId FROM products WHERE productName='TILT' LIMIT 1;
+    ";
+    $result = mysqli_query($conn, $sql);
+    if ( mysqli_num_rows($result) > 0 ) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $tiltProductId = $row['productId'];
+        }
+    }
+    if ($productTypeId == $tiltProductId) {
+        $sql = "INSERT INTO tiltDashboardSettings (deviceId) VALUES (?);";
+        $stmt = mysqli_stmt_init($conn);
+        mysqli_stmt_prepare($stmt, $sql);
+        mysqli_stmt_bind_param($stmt, "s", $newDeviceId);
+        mysqli_stmt_execute($stmt);
     }
 }
 exit();
