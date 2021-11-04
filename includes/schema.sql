@@ -145,7 +145,7 @@ CREATE TABLE products (
     productName VARCHAR(128) NOT NULL UNIQUE,
     PRIMARY KEY (productId)
 ) ENGINE=InnoDB;
-INSERT INTO products (productName) VALUES ('RTMU'), ('EWB'), ('IPHT');
+INSERT INTO products (productName) VALUES ('RTMU'), ('EWB'), ('EWB V2'), ('TILT');
 
 
 CREATE TABLE devices (
@@ -268,12 +268,22 @@ CREATE TABLE alarmRecipients(
     FOREIGN KEY (deviceId) REFERENCES devices(deviceId) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
-
-truncate table devices;
-truncate table subscriptions;
-truncate table channels;
-truncate table smsAlarms;
-truncate table smsStatus;
-truncate table measurements;
-truncate table customAlarms;
-truncate table customAlarmRecipients;
+CREATE TABLE tiltDashboardSettings (
+	tiltDashboardSetting INT UNSIGNED AUTO_INCREMENT NOT NULL,
+    deviceId INT UNSIGNED NOT NULL,
+    imageURL VARCHAR(256),
+    horizontalBox_offset_top INT,
+    horizontalBox_offset_left INT,
+    horizontalBox_lt0_text VARCHAR(64),
+    horizontalBox_mt0_text VARCHAR(64),
+    horizontalBox_lt0_arrowDirection VARCHAR(8),
+    horizontalBox_mt0_arrowDirection VARCHAR(8),
+    verticalBox_offset_top INT,
+    verticalBox_offset_left INT,
+    verticalBox_lt0_text VARCHAR(64),
+    verticalBox_mt0_text VARCHAR(64),
+    verticalBox_lt0_arrowDirection VARCHAR(8),
+    verticalBox_mt0_arrowDirection VARCHAR(8),
+    PRIMARY KEY (tiltDashboardSetting),
+    FOREIGN KEY (deviceId) REFERENCES devices(deviceId) ON DELETE CASCADE
+) ENGINE=InnoDB;
