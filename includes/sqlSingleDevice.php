@@ -1117,6 +1117,123 @@ switch ($_POST['function']) {
 		break;
 	// ! End EWB V2 - Get latest readings
 
+	// ! TILT - Get dashboard settings
+	case 'getTiltDashboardSettings':
+		$deviceId = $_POST['deviceId'];
+		$response = array();
+
+		// First find the status of the Digital (EWB Board) channel
+		$sql = "
+		SELECT tiltDashboardSettings.imageURL, tiltDashboardSettings.horizontalBox_offset_top, tiltDashboardSettings.horizontalBox_offset_left, tiltDashboardSettings.horizontalBox_lt0_text, tiltDashboardSettings.horizontalBox_mt0_text, tiltDashboardSettings.horizontalBox_lt0_arrowDirection, tiltDashboardSettings.horizontalBox_mt0_arrowDirection, tiltDashboardSettings.verticalBox_offset_top, tiltDashboardSettings.verticalBox_offset_left, tiltDashboardSettings.verticalBox_lt0_text, tiltDashboardSettings.verticalBox_mt0_text, tiltDashboardSettings.verticalBox_lt0_arrowDirection, tiltDashboardSettings.verticalBox_mt0_arrowDirection
+		FROM tiltDashboardSettings
+		WHERE tiltDashboardSettings.deviceId = $deviceId
+		LIMIT 1
+		";
+		$result = mysqli_query($conn, $sql);
+		if ( mysqli_num_rows($result) > 0 ) {
+			while ($row = mysqli_fetch_assoc($result)) {
+				$response = $row;
+			}
+		} else {
+			$response = null;
+		}
+
+		echo json_encode($response);
+		break;
+	// ! End of TILT - Get dashboard settings
+
+	// ! TILT - Update tilt box position
+	case 'updateTiltBoxPosition':
+		$deviceId = $_POST['deviceId'];
+		$pos_left = $_POST['pos_left'];
+		$pos_top = $_POST['pos_top'];
+		$direction = $_POST['direction'];
+
+		if ($direction == 'horizontal') {
+			$sql = "UPDATE tiltDashboardSettings SET horizontalBox_offset_top=?, horizontalBox_offset_left=? WHERE deviceId=?";
+			$stmt = mysqli_stmt_init($conn);
+			mysqli_stmt_prepare($stmt, $sql);
+			mysqli_stmt_bind_param($stmt, "sss", $pos_top, $pos_left, $deviceId);
+			mysqli_stmt_execute($stmt);
+			if (mysqli_stmt_error($stmt)) {
+				$response['status'] = 500;
+				$response['message'] = mysqli_stmt_error($stmt);
+			} else {
+				$response['status'] = 200;
+				$response['message'] = 'Device updated!';
+			}
+		} elseif ($direction == 'vertical') {
+			$sql = "UPDATE tiltDashboardSettings SET verticalBox_offset_top=?, verticalBox_offset_left=? WHERE deviceId=?";
+			$stmt = mysqli_stmt_init($conn);
+			mysqli_stmt_prepare($stmt, $sql);
+			mysqli_stmt_bind_param($stmt, "sss", $pos_top, $pos_left, $deviceId);
+			mysqli_stmt_execute($stmt);
+			if (mysqli_stmt_error($stmt)) {
+				$response['status'] = 500;
+				$response['message'] = mysqli_stmt_error($stmt);
+			} else {
+				$response['status'] = 200;
+				$response['message'] = 'Device updated!';
+			}
+		} else {
+			$response['status'] = 500;
+			$response['message'] = 'Unknown direction!';
+			echo json_encode($response);
+			exit();
+		}
+
+		$response = array();
+		
+		echo json_encode($response);
+		break;
+	// ! TILT - End of update tilt box position
+	
+	// ! TILT - Update tilt settings
+	case 'updateTiltSettings':
+		$deviceId = $_POST['deviceId'];
+		$imageURL = $_POST['imageURL'];
+
+		$horiz_lt0_text = $_POST['horiz_lt0_text'];
+		$horiz_mt0_text = $_POST['horiz_mt0_text'];
+
+		if (isset($_POST['horiz_lt0_arrow'])) { $horiz_lt0_arrow = $_POST['horiz_lt0_arrow']; } else { $horiz_lt0_arrow = NULL; }
+		if (isset($_POST['horiz_mt0_arrow'])) { $horiz_mt0_arrow = $_POST['horiz_mt0_arrow']; } else { $horiz_mt0_arrow = NULL; }
+		
+		$vert_lt0_text = $_POST['vert_lt0_text'];
+		$vert_mt0_text = $_POST['vert_mt0_text'];
+		
+		if (isset($_POST['vert_lt0_arrow'])) { $vert_lt0_arrow = $_POST['vert_lt0_arrow']; } else { $vert_lt0_arrow = NULL; }
+		if (isset($_POST['vert_mt0_arrow'])) { $vert_mt0_arrow = $_POST['vert_mt0_arrow']; } else { $vert_mt0_arrow = NULL; }
+
+		if ($imageURL == '') { $imageURL = NULL; };
+		if ($horiz_lt0_text == '') { $horiz_lt0_text = NULL; };
+		if ($horiz_mt0_text == '') { $horiz_mt0_text = NULL; };
+
+		if ($vert_lt0_text == '') { $vert_lt0_text = NULL; };
+		if ($vert_mt0_text == '') { $vert_mt0_text = NULL; };
+
+		$sql = "UPDATE tiltDashboardSettings SET imageURL=?, horizontalBox_lt0_text=?, horizontalBox_mt0_text=?, horizontalBox_lt0_arrowDirection=?, horizontalBox_mt0_arrowDirection=?, verticalBox_lt0_text=?, verticalBox_mt0_text=?, verticalBox_lt0_arrowDirection=?, verticalBox_mt0_arrowDirection=? WHERE deviceId=?";
+		$stmt = mysqli_stmt_init($conn);
+		mysqli_stmt_prepare($stmt, $sql);
+		mysqli_stmt_bind_param($stmt, "ssssssssss", $imageURL, $horiz_lt0_text, $horiz_mt0_text, $horiz_lt0_arrow, $horiz_mt0_arrow, $vert_lt0_text, $vert_mt0_text, $vert_lt0_arrow, $vert_mt0_arrow, $deviceId);
+		mysqli_stmt_execute($stmt);
+		if (mysqli_stmt_error($stmt)) {
+			$response['status'] = 500;
+			$response['message'] = mysqli_stmt_error($stmt);
+		} else {
+			$response['status'] = 200;
+			$response['message'] = 'Device updated!';
+
+			echo json_encode($response);
+			exit();
+		}
+
+		$response = array();
+		
+		echo json_encode($response);
+		break;
+	// ! TILT - End of update tilt settings
+
 	default: break;
 		// 
 }

@@ -2190,8 +2190,6 @@ $(document).ready(function () {
 						`
 				}
 
-				console.log(channelData);
-
 				// for (i = 0; i < channelData.length; i++) {
 				// 	if ( channelData[i]['reading'] != null ) {
 				// 		var dateDisplay = new Date( channelData[i]['reading']['smsAlarmTime'] );
@@ -3053,24 +3051,152 @@ $(document).ready(function () {
 	function display_tilt_dashboard() {
 		// * Put all cards together and generate final output
 		var output = `
+			<div id="tilt_settings_modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center hidden">
+				<div id="modal-box" class="border border-gray-300 shadow-xl bg-gray-200 w-full mx-4 max-w-sm sm:max-w-md md:max-w-2xl overflow-hidden flex flex-col rounded p-4">
+					<!-- Title/close btn -->
+					<div class="flex justify-between items-center border-b pb-1 border-gray-300">
+						<p class="uppercase text-gray-800 font-extrabold text-sm mx-2">Dashboard settings</p>
+						<svg id="close-modal" class="w-6 h-6 text-gray-400 hover:text-gray-600 cursor-pointer" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+					</div>
+					<div class="w-full">
+						<div class="flex flex-col">
+		
+							<div class="flex flex-col mt-2">
+								<p class="form-field-title">Image Link</p>
+								<input id="settings_imageURL" value="" type="text" class="border border-gray-300">
+							</div>
+		
+							<!-- Row -->
+							<div class="flex flex-auto justify-center mt-8">
+								<p class="text-sm uppercase font-semibold text-gray-800 bg-blue-200">Horizontal settings</p>
+							</div>
+
+							<div class="flex flex-col md:flex-row md:space-x-6 flex-auto">
+								<div class="flex flex-col flex-1 mt-2">
+									<p class="form-field-title">TEXT WHEN READING LESS THAN 0</p>
+									<input id="settings_horizontalBox_lt0_text" value="" type="text" class="border border-gray-300">
+
+									<p class="form-field-title mt-2">ARROW DIRECTION WHEN READING LESS THAN 0</p>
+									<div class="flex items-center justify-center space-x-12">
+										<div class="flex items-center">
+											<input id="" value="LEFT" type="radio" name="horizontal_lt0_arrow" class="border border-gray-300">
+											<p class="text-gray-800 uppercase font-medium text-sm ml-2">Left</p>
+										</div>
+										<div class="flex items-center">
+											<input id="" value="RIGHT" type="radio" name="horizontal_lt0_arrow" class="border border-gray-300">
+											<p class="text-gray-800 uppercase font-medium text-sm ml-2">Right</p>
+										</div>
+									</div>
+								</div>
+			
+								<div class="flex flex-col flex-1 mt-2">
+									<p class="form-field-title">TEXT WHEN READING MORE THAN 0</p>
+									<input id="settings_horizontalBox_mt0_text" value="" type="text" class="border border-gray-300">
+
+									<p class="form-field-title mt-2">ARROW DIRECTION WHEN READING MORE THAN 0</p>
+									<div class="flex items-center justify-center space-x-12">
+										<div class="flex items-center">
+											<input id="" value="LEFT" type="radio" name="horizontal_mt0_arrow" class="border border-gray-300">
+											<p class="text-gray-800 uppercase font-medium text-sm ml-2">Left</p>
+										</div>
+										<div class="flex items-center">
+											<input id="" value="RIGHT" type="radio" name="horizontal_mt0_arrow" class="border border-gray-300">
+											<p class="text-gray-800 uppercase font-medium text-sm ml-2">Right</p>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- End of row -->
+							
+							<div class="flex flex-auto justify-center mt-8">
+								<p class="text-sm uppercase font-semibold text-gray-800 bg-blue-200">Vertical Settings</p>
+							</div>
+		
+							<!-- Row -->
+							<div class="flex flex-col md:flex-row md:space-x-6 flex-auto">
+								<div class="flex flex-col flex-1 mt-2">
+									<p class="form-field-title">TEXT WHEN READING LESS THAN 0</p>
+									<input id="settings_verticalBox_lt0_text" value="" type="text" class="border border-gray-300">
+
+									<p class="form-field-title mt-2">ARROW DIRECTION WHEN READING LESS THAN 0</p>
+									<div class="flex items-center justify-center space-x-12">
+										<div class="flex items-center">
+											<input id="" value="UP" type="radio" name="vertical_lt0_arrow" class="border border-gray-300">
+											<p class="text-gray-800 uppercase font-medium text-sm ml-2">Up</p>
+										</div>
+										<div class="flex items-center">
+											<input id="" value="DOWN" type="radio" name="vertical_lt0_arrow" class="border border-gray-300">
+											<p class="text-gray-800 uppercase font-medium text-sm ml-2">Down</p>
+										</div>
+									</div>
+								</div>
+			
+								<div class="flex flex-col flex-1 mt-2">
+									<p class="form-field-title">TEXT WHEN READING MORE THAN 0</p>
+									<input id="settings_verticalBox_mt0_text" value="" type="text" class="border border-gray-300">
+
+									<p class="form-field-title mt-2">ARROW DIRECTION WHEN READING MORE THAN 0</p>
+									<div class="flex items-center justify-center space-x-12">
+										<div class="flex items-center">
+											<input id="" value="UP" type="radio" name="vertical_mt0_arrow" class="border border-gray-300">
+											<p class="text-gray-800 uppercase font-medium text-sm ml-2">Up</p>
+										</div>
+										<div class="flex items-center">
+											<input id="" value="DOWN" type="radio" name="vertical_mt0_arrow" class="border border-gray-300">
+											<p class="text-gray-800 uppercase font-medium text-sm ml-2">Down</p>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- End of row -->
+		
+							<div class="flex justify-end items-center mt-4 space-x-4">
+								<button id="cancelBtn" class="h-10 border-0 hover:border-0 px-4 rounded text-gray-800 hover:bg-red-500 hover:text-white transition-all focus:bg-red-500 focus:text-white">Cancel</button>
+								<button id="saveSettings" class="h-10 bg-green-500 border-0 hover:border-0 px-4 rounded text-white hover:bg-green-700 transition-all focus:bg-green-700 focus:text-white">Save</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			<div class="flex lg:space-y-0 flex-col lg:flex-row lg:space-x-6">
 				<div class="flex flex-col space-y-6 w-full lg:w-1/2 lg:max-w-xl order-last lg:order-first">
 					
 					<div class="hidden lg:block card-wrapper-1">
-						<div class="card-header-1">
+						<div class="card-header-1 relative">
 							<div class="card-icon-1">
 								<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path></svg>
 							</div>
+
+							<!-- Edit button -->
+							<button id="tilt_settings_button" class="card-icon-1 border-gray-300 focus:outline-none border text-gray-500 transition hover:text-green-600 hover:border-green-400 hover:bg-green-300 cursor-pointer absolute right-0 p-1" title="Edit">
+								<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path></svg>
+							</button>
+
 							<div class="card-title-1">
 								Site Overview
 							</div>
 						</div>
-						<div id="" class="card-body-1 py-4" style="height: 700px;">
-							
+						<div class="card-body-1 overflow-hidden" style="height: 700px;">
+								<div id="tilt_image" class="bg-auto bg-no-repeat bg-center w-full h-full relative">
+									<div id="horizontalBox" data-direction="horizontal" class="absolute flex flex-col justify-center items-center p-1 text-gray-800 rounded shadow border bg-gray-50 cursor-move transition hover:bg-gray-100 hover:bg-opacity-90 select-none" style="width: 128px;">
+										<div id="horizontalBox_arrow"></div>
+										
+										<p id="horizontalBox_reading" class="font-extrabold"></p>
+										<p id="horizontalBox_text" class="text-center text-xs font-medium">Waiting for horizontal readings...</p>
+										<p id="horizontalBox_timer" class="text-center text-xs text-gray-400"></p>
+									</div>
+
+									<div id="verticalBox" data-direction="vertical" class="absolute flex flex-col justify-center items-center p-1 text-gray-800 rounded shadow border bg-gray-50 cursor-move transition hover:bg-gray-100 hover:bg-opacity-90 select-none" style="width: 128px;">
+										<div id="verticalBox_arrow"></div>
+
+										<p id="verticalBox_reading" class="font-extrabold"></p>
+										<p id="verticalBox_text" class="text-center text-xs font-medium">Waiting for vertical readings...</p>
+										<p id="verticalBox_timer" class="text-center text-xs text-gray-400"></p>
+									</div>
+								</div>
 						</div>
 					</div>
-					
-					
 				</div>
 				
 				<div id="rightPanel" class="flex-auto grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
@@ -3180,9 +3306,204 @@ $(document).ready(function () {
 		// * Update site content once its generated
 		siteContent.html(output);
 
-		rtmu_getLatestReadings().then( function(readingsData) {
-			console.log(readingsData);
+		$('#tilt_settings_button, #close-modal, #cancelBtn').on('click', function() {
+			$('#tilt_settings_modal').toggleClass('hidden');
+		})
 
+		// Initial load info box settings
+		getTiltDashboardSettings(deviceId).then( function (settings) {
+			$('#horizontalBox, #verticalBox').draggable({
+				stop: function() {
+					var pos_left = $(this).offset().left;
+					var pos_top = $(this).offset().top;
+					var direction = $(this).data('direction');
+
+					updateTiltBoxPosition(pos_left, pos_top, direction);
+				}
+			});
+
+			if (settings.horizontalBox_offset_left == null) {
+				$('#horizontalBox').offset({left: $('#tilt_image').offset().left+100});
+			} else {
+				$('#horizontalBox').offset({left: settings.horizontalBox_offset_left});
+			}
+			if (settings.horizontalBox_offset_top == null) {
+				$('#horizontalBox').offset({top: $('#tilt_image').offset().top+100});
+			} else {
+				$('#horizontalBox').offset({top: settings.horizontalBox_offset_top});
+			}
+			if (settings.verticalBox_offset_left == null) {
+				$('#verticalBox').offset({left: $('#tilt_image').offset().left+100});
+			} else {
+				$('#verticalBox').offset({left: settings.verticalBox_offset_left});
+			}
+			if (settings.verticalBox_offset_top == null) {
+				$('#verticalBox').offset({top: $('#tilt_image').offset().top+300});
+			} else {
+				$('#verticalBox').offset({top: settings.verticalBox_offset_top});
+			}
+
+			if (settings.horizontalBox_lt0_text == null) { $('#settings_horizontalBox_lt0_text').val('') } else { $('#settings_horizontalBox_lt0_text').val(settings.horizontalBox_lt0_text) }
+			if (settings.horizontalBox_mt0_text == null) { $('#settings_horizontalBox_mt0_text').val('') } else { $('#settings_horizontalBox_mt0_text').val(settings.horizontalBox_mt0_text) }
+			if (settings.verticalBox_lt0_text == null) { $('#settings_verticalBox_lt0_text').val('') } else { $('#settings_verticalBox_lt0_text').val(settings.verticalBox_lt0_text) }
+			if (settings.verticalBox_mt0_text == null) { $('#settings_verticalBox_mt0_text').val('') } else { $('#settings_verticalBox_mt0_text').val(settings.verticalBox_mt0_text) }
+			
+			// Load horizontal arrow directions
+			if (settings.horizontalBox_lt0_arrowDirection != null ) { $('input[name=horizontal_lt0_arrow][value="'+settings.horizontalBox_lt0_arrowDirection+'"]').prop("checked",true); }
+			if (settings.horizontalBox_mt0_arrowDirection != null ) { $('input[name=horizontal_mt0_arrow][value="'+settings.horizontalBox_mt0_arrowDirection+'"]').prop("checked",true); }
+
+			// Load vertical arrow directions
+			if (settings.verticalBox_lt0_arrowDirection != null ) { $('input[name=vertical_lt0_arrow][value="'+settings.verticalBox_lt0_arrowDirection+'"]').prop("checked",true); }
+			if (settings.verticalBox_mt0_arrowDirection != null ) { $('input[name=vertical_mt0_arrow][value="'+settings.verticalBox_mt0_arrowDirection+'"]').prop("checked",true); }
+
+		})
+
+		function timeSince(date) {
+			var seconds = Math.floor((new Date() - date) / 1000);
+			var interval = seconds / 31536000;
+		  
+			if (interval > 1) {
+			  return Math.floor(interval) + " years";
+			}
+			interval = seconds / 2592000;
+			if (interval > 1) {
+			  return Math.floor(interval) + " months";
+			}
+			interval = seconds / 86400;
+			if (interval > 1) {
+			  return Math.floor(interval) + " days";
+			}
+			interval = seconds / 3600;
+			if (interval > 1) {
+			  return Math.floor(interval) + " hours";
+			}
+			interval = seconds / 60;
+			if (interval > 1) {
+			  return Math.floor(interval) + " minutes";
+			}
+			return Math.floor(seconds) + " seconds";
+		}
+
+		function updateSiteOverviewDisplay() {
+			rtmu_getLatestReadings().then( function(readingsData) {
+				getTiltDashboardSettings(deviceId).then( function (settings) {
+					// Set image
+					if (settings.imageURL == null) {
+						$('#settings_imageURL').val('');
+						$('#tilt_image').css('background-image', 'url("https://i.gyazo.com/d373e51cebaf9121efc1d672fdc15b17.jpg")');						
+					} else {
+						$('#settings_imageURL').val(settings.imageURL)
+						$('#tilt_image').css('background-image', 'url("'+settings.imageURL+'")');
+					}
+					
+					for(var i = 0; i<readingsData.latestMeasurements.length; i++) {
+						if(readingsData.latestMeasurements[i].channelName == 'X AXIS') {
+							var xReading = readingsData.latestMeasurements[i].measurement;
+							var xReadingTime = readingsData.latestMeasurements[i].measurementTime;
+							var xUnit = readingsData.latestMeasurements[i].unitName;
+						}
+						if(readingsData.latestMeasurements[i].channelName == 'Y AXIS') {
+							var yReading = readingsData.latestMeasurements[i].measurement;
+							var yReadingTime = readingsData.latestMeasurements[i].measurementTime;
+							var yUnit = readingsData.latestMeasurements[i].unitName;
+						}
+					}
+
+					// Define arrow direction icons
+					//#region
+					var leftArrow = '<svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg>';
+					var rightArrow = '<svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>';
+					var upArrow = '<svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>';
+					var downArrow = '<svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>';
+					//#endregion
+					
+					// Load horizontal box
+					$('#horizontalBox_reading').html(xReading + xUnit);
+					$('#horizontalBox_timer').html(timeSince(new Date(xReadingTime)) + ' ago');
+					if (xReading >= 0) {
+						if (settings.horizontalBox_mt0_text == null) {
+							$('#horizontalBox_text').html('Text not set');
+						} else {
+							$('#horizontalBox_text').html(settings.horizontalBox_mt0_text);
+						}
+						// Arrow
+						if (settings.horizontalBox_mt0_arrowDirection == 'RIGHT') {
+							$('#horizontalBox_arrow').html(rightArrow);
+						} else {
+							$('#horizontalBox_arrow').html(leftArrow);
+						}
+
+					} else {
+						if (settings.horizontalBox_lt0_text == null) {
+							$('#horizontalBox_text').html('Text not set');
+						} else {
+							$('#horizontalBox_text').html(settings.horizontalBox_lt0_text);
+						}
+
+						// Arrow
+						if (settings.horizontalBox_lt0_arrowDirection == 'RIGHT') {
+							$('#horizontalBox_arrow').html(rightArrow);
+						} else {
+							$('#horizontalBox_arrow').html(leftArrow);
+						}
+					}
+
+					// Load vertical box
+					$('#verticalBox_reading').html(yReading + yUnit);
+					$('#verticalBox_timer').html(timeSince(new Date(yReadingTime)) + ' ago');
+					if (yReading >= 0) {
+						if (settings.verticalBox_mt0_text == null) {
+							$('#verticalBox_text').html('Text not set');
+						} else {
+							$('#verticalBox_text').html(settings.verticalBox_mt0_text);
+						}
+
+						// Arrow
+						if (settings.verticalBox_mt0_arrowDirection == 'UP') {
+							$('#verticalBox_arrow').html(upArrow);
+						} else {
+							$('#verticalBox_arrow').html(downArrow);
+						}
+					} else {
+						if (settings.verticalBox_lt0_text == null) {
+							$('#verticalBox_text').html('Text not set');
+						} else {
+							$('#verticalBox_text').html(settings.verticalBox_lt0_text);
+						}
+						// Arrow
+						if (settings.verticalBox_lt0_arrowDirection == 'UP') {
+							$('#verticalBox_arrow').html(upArrow);
+						} else {
+							$('#verticalBox_arrow').html(downArrow);
+						}
+					}
+
+				})
+			})
+		}
+		updateSiteOverviewDisplay();
+
+		$('#saveSettings').on('click', function() {
+			var imageURL = $.trim($('#settings_imageURL').val());
+
+			var horiz_lt0_text = $.trim($('#settings_horizontalBox_lt0_text').val());
+			var horiz_mt0_text = $.trim($('#settings_horizontalBox_mt0_text').val());
+
+			var vert_lt0_text = $.trim($('#settings_verticalBox_lt0_text').val());
+			var vert_mt0_text = $.trim($('#settings_verticalBox_mt0_text').val());
+
+			var horiz_lt0_arrow = $('input[name=horizontal_lt0_arrow]:checked').val();
+			var horiz_mt0_arrow = $('input[name=horizontal_mt0_arrow]:checked').val();
+
+			var vert_mt0_arrow = $('input[name=vertical_mt0_arrow]:checked').val();
+			var vert_lt0_arrow = $('input[name=vertical_lt0_arrow]:checked').val();
+			
+			updateTiltSettings(imageURL, horiz_lt0_text, horiz_mt0_text, horiz_lt0_arrow, horiz_mt0_arrow, vert_lt0_text, vert_mt0_text, vert_lt0_arrow, vert_mt0_arrow);
+			$('#tilt_settings_modal').addClass('hidden');
+			updateSiteOverviewDisplay();
+		})
+
+		rtmu_getLatestReadings().then( function(readingsData) {
 			// Display readings of the AI channels
 			// We use i-- to compensate for using .prepend as that will display channels in reverse order
 			for(i = readingsData.latestMeasurements.length-1; i >= 0; i--) {
@@ -4093,6 +4414,68 @@ $(document).ready(function () {
 				}
 				$('#'+displayTableId).html(outputTable);
 			}
+		})
+	}
+
+	function getTiltDashboardSettings(deviceId) {
+		return new Promise(function (resolve, reject) {
+			$.ajax({
+				url: './includes/sqlSingleDevice.php',
+				type: 'POST',
+				data: {
+					deviceId: deviceId,
+					function: 'getTiltDashboardSettings'
+				},
+				success: function (data) {
+					data = JSON.parse(data);
+					resolve(data);
+				}
+			})
+		})
+	}
+
+	function updateTiltBoxPosition(pos_left, pos_top, direction) {
+		$.ajax({
+			url: './includes/sqlSingleDevice.php',
+			type: 'POST',
+			data: {
+				deviceId: deviceId,
+				pos_left: pos_left,
+				pos_top: pos_top,
+				direction: direction,
+				function: 'updateTiltBoxPosition'
+			}
+		})
+	}
+
+	function updateTiltSettings(imageURL, horiz_lt0_text, horiz_mt0_text, horiz_lt0_arrow, horiz_mt0_arrow, vert_lt0_text, vert_mt0_text, vert_lt0_arrow, vert_mt0_arrow) {
+		return new Promise(function (resolve, reject) {
+			$.ajax({
+				url: './includes/sqlSingleDevice.php',
+				type: 'POST',
+				data: {
+					deviceId: deviceId,
+					imageURL: imageURL,
+
+					horiz_lt0_text: horiz_lt0_text,
+					horiz_mt0_text: horiz_mt0_text,
+					horiz_lt0_arrow: horiz_lt0_arrow,
+					horiz_mt0_arrow: horiz_mt0_arrow,
+
+					vert_lt0_text: vert_lt0_text,
+					vert_mt0_text: vert_mt0_text,
+					vert_lt0_arrow: vert_lt0_arrow,
+					vert_mt0_arrow: vert_mt0_arrow,
+
+					function: 'updateTiltSettings'
+				},
+				success: function (data) {
+					data = JSON.parse(data);
+					if (data.status != 200) {
+						alert('Something went wrong!');
+					}
+				}
+			})
 		})
 	}
 	
