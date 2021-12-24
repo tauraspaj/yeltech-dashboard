@@ -176,6 +176,26 @@ $(document).ready(function () {
 						}
 					}
 
+					// Process end of subscription. This should go orange if you're within the last 30 days and red if you're past the date.
+					var subsriptionFinish = '-';
+					if (devices[i].subFinish != null) {
+						var currentDate = new Date();
+						var subsriptionFinish = new Date( Date.parse(devices[i].subFinish) );
+
+						// Calculate month warning
+						var monthWarning = new Date(subsriptionFinish.getFullYear(), subsriptionFinish.getMonth()-1, subsriptionFinish.getDate());
+
+						// Format to dd month yyyy
+						var formattedDate = subsriptionFinish.toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+						if ( currentDate >= subsriptionFinish ) {
+							subsriptionFinish = '<svg class="w-4 h-4 mr-1 text-red-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg><p class="text-red-500 text-sm font-medium">' + formattedDate + '</p>';
+						} else if ( currentDate < subsriptionFinish && currentDate >= monthWarning ) {
+							subsriptionFinish = '<svg class="w-4 h-4 mr-1 text-yellow-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg><p class="text-yellow-500 text-sm font-medium">' + formattedDate + '</p>';
+						} else if (currentDate < monthWarning) {
+							subsriptionFinish = '<p class="text-gray-800 text-sm font-medium">' + formattedDate + '</p>';
+						}
+					}
+
 
 					outputTable += `
 					<div class="flex flex-col">
@@ -240,7 +260,7 @@ $(document).ready(function () {
 							</div>
 							<div class="flex items-center">
 									<div class="w-32 md:w-72 text-gray-600 text-sm">Subscription Finish</div>
-									<div class="text-sm font-medium text-gray-800">31 July 2022</div>
+									<div class="flex items-center">`+subsriptionFinish+`</div>
 							</div>
 							<div class="flex items-center">
 									<div class="w-32 md:w-72 text-gray-600 text-sm">Alarms</div>
