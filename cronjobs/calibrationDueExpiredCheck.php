@@ -1,7 +1,7 @@
 <?php
 
-// ! This is a CRON JOB that should be set to run weekly
-// ! It will loop through all groups, check for calibration dates that will expire in 1 or 3 months and send out appropriate emails
+// ! This is a CRON JOB that should be set to run every 2 weeks
+// ! It will loop through all groups, check for calibration dates that have expired and send out appropriate emails
 
 // Connect database
 require_once './../includes/dbh.inc.php';
