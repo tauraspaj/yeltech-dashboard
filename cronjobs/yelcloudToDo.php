@@ -100,7 +100,7 @@ $emailRecipients[] = 'tauras@yeltech.co.uk';
 // Send email if email check is true
 if ($sendEmailCheck == true) {
     // echo $emailBody;
-    sendEmail($thisEmailRecipients, $thisEmailSubject, $thisEmailBody);
+    sendEmail($emailRecipients, $emailSubject, $emailBody);
 }
 
 // Get devices with no calibration dates
