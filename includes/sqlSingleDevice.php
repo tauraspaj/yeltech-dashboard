@@ -1122,7 +1122,6 @@ switch ($_POST['function']) {
 		$deviceId = $_POST['deviceId'];
 		$response = array();
 
-		// First find the status of the Digital (EWB Board) channel
 		$sql = "
 		SELECT tiltDashboardSettings.imageURL, tiltDashboardSettings.horizontalBox_offset_top, tiltDashboardSettings.horizontalBox_offset_left, tiltDashboardSettings.horizontalBox_lt0_text, tiltDashboardSettings.horizontalBox_mt0_text, tiltDashboardSettings.horizontalBox_lt0_arrowDirection, tiltDashboardSettings.horizontalBox_mt0_arrowDirection, tiltDashboardSettings.verticalBox_offset_top, tiltDashboardSettings.verticalBox_offset_left, tiltDashboardSettings.verticalBox_lt0_text, tiltDashboardSettings.verticalBox_mt0_text, tiltDashboardSettings.verticalBox_lt0_arrowDirection, tiltDashboardSettings.verticalBox_mt0_arrowDirection
 		FROM tiltDashboardSettings
@@ -1233,6 +1232,219 @@ switch ($_POST['function']) {
 		echo json_encode($response);
 		break;
 	// ! TILT - End of update tilt settings
+
+	// ! Get dashboard settings
+	case 'getDashboardSettings':
+		$deviceId = $_POST['deviceId'];
+		$response = array();
+		$response['imageURL'] = null;
+		$response['box'] = array();
+
+		// Get image URL
+		$sql = "
+			SELECT imageURL FROM dashboardImage WHERE deviceId = $deviceId LIMIT 1
+		";
+		$result = mysqli_query($conn, $sql);
+		if ( mysqli_num_rows($result) > 0 ) {
+			while ($row = mysqli_fetch_assoc($result)) {
+				$response['imageURL'] = $row['imageURL'];
+			}
+		}
+		
+		// Get movable box positions
+		$sql = "
+			SELECT dashboardMovableBox.channelId, dashboardMovableBox.offset_top, dashboardMovableBox.offset_left, channels.channelName, units.unitName
+			FROM dashboardMovableBox
+			LEFT JOIN channels ON dashboardMovableBox.channelId = channels.channelId
+			LEFT JOIN units ON channels.unitId = units.unitId
+			WHERE dashboardMovableBox.deviceId = $deviceId
+		";
+		$result = mysqli_query($conn, $sql);
+		if ( mysqli_num_rows($result) > 0 ) {
+			while ($row = mysqli_fetch_assoc($result)) {
+				array_push($response['box'], $row);
+			}
+		}
+
+		echo json_encode($response);
+		break;
+	// ! End of Get dashboard settings
+
+	// ! Update movable box settings
+	case 'updateMovableBoxPosition':
+		$channelId = $_POST['channelId'];
+		$pos_top = $_POST['pos_top'];
+		$pos_left = $_POST['pos_left'];
+
+
+		$sql = "UPDATE dashboardMovableBox SET offset_top=?, offset_left=? WHERE channelId=?";
+		$stmt = mysqli_stmt_init($conn);
+		mysqli_stmt_prepare($stmt, $sql);
+		mysqli_stmt_bind_param($stmt, "sss", $pos_top, $pos_left, $channelId);
+		mysqli_stmt_execute($stmt);
+		if (mysqli_stmt_error($stmt)) {
+			$response['status'] = 500;
+			$response['message'] = mysqli_stmt_error($stmt);
+		} else {
+			$response['status'] = 200;
+			$response['message'] = 'Device updated!';
+
+			echo json_encode($response);
+			exit();
+		}
+
+		$response = array();
+		
+		echo json_encode($response);
+		break;
+	// ! End of Update movable box settings
+
+	// ! Update dashboard image
+	case 'updateDashboardImage':
+		$deviceId = $_POST['deviceId'];
+		$imageURL = $_POST['imageURL'];
+
+		if ($imageURL == '') { $imageURL = NULL; };
+
+		$sql = "UPDATE dashboardImage SET imageURL=? WHERE deviceId=?";
+
+		$stmt = mysqli_stmt_init($conn);
+		mysqli_stmt_prepare($stmt, $sql);
+		mysqli_stmt_bind_param($stmt, "ss", $imageURL, $deviceId);
+		mysqli_stmt_execute($stmt);
+		if (mysqli_stmt_error($stmt)) {
+			$response['status'] = 500;
+			$response['message'] = mysqli_stmt_error($stmt);
+		} else {
+			$response['status'] = 200;
+			$response['message'] = 'Device updated!';
+
+			echo json_encode($response);
+			exit();
+		}
+
+		$response = array();
+		
+		echo json_encode($response);
+		break;
+	// ! End of update dashboard image
+
+	// ! Update bwm formulas
+	case 'updateBWMFormulas':
+		$deviceId = $_POST['deviceId'];
+		$formulaA = $_POST['formulaA'];
+		$formulaB = $_POST['formulaB'];
+		$formulaC = $_POST['formulaC'];
+		$formulaD = $_POST['formulaD'];
+
+		if ($formulaA == '') { $formulaA = NULL; };
+		if ($formulaB == '') { $formulaB = NULL; };
+		if ($formulaC == '') { $formulaC = NULL; };
+		if ($formulaD == '') { $formulaD = NULL; };
+
+		$sql = "UPDATE bwmFormulas SET formulaA=?, formulaB=?, formulaC=?, formulaD=? WHERE deviceId=?";
+
+		$stmt = mysqli_stmt_init($conn);
+		mysqli_stmt_prepare($stmt, $sql);
+		mysqli_stmt_bind_param($stmt, "sssss", $formulaA, $formulaB, $formulaC, $formulaD, $deviceId);
+		mysqli_stmt_execute($stmt);
+		if (mysqli_stmt_error($stmt)) {
+			$response['status'] = 500;
+			$response['message'] = mysqli_stmt_error($stmt);
+		} else {
+			$response['status'] = 200;
+			$response['message'] = 'Formulas updated!';
+
+			echo json_encode($response);
+			exit();
+		}
+
+		$response = array();
+		
+		echo json_encode($response);
+		break;
+	// ! End of update bwm formulas
+
+	// ! Get formulas
+	case 'getBWMFormulas':
+		$deviceId = $_POST['deviceId'];
+		$response = array();
+		$response['imageURL'] = null;
+		$response['formulas'] = array();
+
+		// Get image URL
+		$sql = "
+			SELECT imageURL FROM dashboardImage WHERE deviceId = $deviceId LIMIT 1
+		";
+		$result = mysqli_query($conn, $sql);
+		if ( mysqli_num_rows($result) > 0 ) {
+			while ($row = mysqli_fetch_assoc($result)) {
+				$response['imageURL'] = $row['imageURL'];
+			}
+		}
+		
+		// Get formulas
+		$sql = "
+			SELECT *
+			FROM bwmFormulas
+			WHERE bwmFormulas.deviceId = $deviceId
+		";
+		$result = mysqli_query($conn, $sql);
+		if ( mysqli_num_rows($result) > 0 ) {
+			while ($row = mysqli_fetch_assoc($result)) {
+				array_push($response['formulas'], $row);
+			}
+		}
+
+		echo json_encode($response);
+		break;
+	// ! End of get formulas
+
+	// ! Update BWM movable box settings
+	case 'updateBWMMovableBoxPosition':
+		$deviceId = $_POST['deviceId'];
+		$formula = $_POST['formula'];
+		$pos_top = $_POST['pos_top'];
+		$pos_left = $_POST['pos_left'];
+
+
+		switch ($formula) {
+			case 'A':
+				$sql = "UPDATE bwmFormulas SET formulaA_offset_top=?, formulaA_offset_left=? WHERE deviceId=?";
+				break;
+			case 'B':
+				$sql = "UPDATE bwmFormulas SET formulaB_offset_top=?, formulaB_offset_left=? WHERE deviceId=?";
+				break;
+			case 'C':
+				$sql = "UPDATE bwmFormulas SET formulaC_offset_top=?, formulaC_offset_left=? WHERE deviceId=?";
+				break;
+			case 'D':
+				$sql = "UPDATE bwmFormulas SET formulaD_offset_top=?, formulaD_offset_left=? WHERE deviceId=?";
+				break;
+			default:
+				break;				
+		}
+
+		$stmt = mysqli_stmt_init($conn);
+		mysqli_stmt_prepare($stmt, $sql);
+		mysqli_stmt_bind_param($stmt, "sss", $pos_top, $pos_left, $deviceId);
+		mysqli_stmt_execute($stmt);
+		if (mysqli_stmt_error($stmt)) {
+			$response['status'] = 500;
+			$response['message'] = mysqli_stmt_error($stmt);
+		} else {
+			$response['status'] = 200;
+			$response['message'] = 'Device updated!';
+
+			echo json_encode($response);
+			exit();
+		}
+
+		$response = array();
+		
+		echo json_encode($response);
+		break;
+	// ! End of Update BWM movable box settings
 
 	default: break;
 		// 

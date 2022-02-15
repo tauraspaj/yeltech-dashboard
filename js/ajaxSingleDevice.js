@@ -34,6 +34,12 @@ $(document).ready(function () {
 			case 'ewbv2_dashboard':
 				display_ewbv2_dashboard();
 				break;
+			case 'bwm_dashboard':
+				display_bwm_dashboard();
+				break;
+			case 'bwm_radar_dashboard':
+				display_bwm_radar_dashboard();
+				break;
 			case 'tilt_dashboard':
 				display_tilt_dashboard();
 				break;
@@ -82,6 +88,20 @@ $(document).ready(function () {
 		],
 		'tilt': [
 			{ title: 'Dashboard', component:'tilt_dashboard' },
+			{ title: 'Control Panel', component:'rtmu_controlPanel' },
+			{ title: 'Alarms', component:'alarms' },
+			{ title: 'Recipients', component:'recipients' },
+			{ title: 'Log', component:'log' }
+		],
+		'bwm': [
+			{ title: 'Dashboard', component:'bwm_dashboard' },
+			{ title: 'Control Panel', component:'rtmu_controlPanel' },
+			{ title: 'Alarms', component:'alarms' },
+			{ title: 'Recipients', component:'recipients' },
+			{ title: 'Log', component:'log' }
+		],
+		'bwm radar': [
+			{ title: 'Dashboard', component:'bwm_radar_dashboard' },
 			{ title: 'Control Panel', component:'rtmu_controlPanel' },
 			{ title: 'Alarms', component:'alarms' },
 			{ title: 'Recipients', component:'recipients' },
@@ -3498,7 +3518,7 @@ $(document).ready(function () {
 			var vert_mt0_arrow = $('input[name=vertical_mt0_arrow]:checked').val();
 			var vert_lt0_arrow = $('input[name=vertical_lt0_arrow]:checked').val();
 			
-			updateTiltSettings(imageURL, horiz_lt0_text, horiz_mt0_text, horiz_lt0_arrow, horiz_mt0_arrow, vert_lt0_text, vert_mt0_text, vert_lt0_arrow, vert_mt0_arrow);
+			updateTiltSettings(deviceId, imageURL, horiz_lt0_text, horiz_mt0_text, horiz_lt0_arrow, horiz_mt0_arrow, vert_lt0_text, vert_mt0_text, vert_lt0_arrow, vert_mt0_arrow);
 			$('#tilt_settings_modal').addClass('hidden');
 			updateSiteOverviewDisplay();
 		})
@@ -3506,36 +3526,40 @@ $(document).ready(function () {
 		rtmu_getLatestReadings().then( function(readingsData) {
 			// Display readings of the AI channels
 			// We use i-- to compensate for using .prepend as that will display channels in reverse order
-			for(i = readingsData.latestMeasurements.length-1; i >= 0; i--) {
-				var dateDisplay = new Date( readingsData.latestMeasurements[i].measurementTime );
-				dateDisplay = dateDisplay.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
-				
-				// Add card
-				$('#rightPanel').prepend(`
-					<!-- Card -->
-					<div class="col-span-1 card-wrapper-1">
-						<div class="card-header-1">
-							<div class="card-icon-1">
-								<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" class="bi bi-thermometer-half" viewBox="0 0 16 16">
-									<path d="M9.5 12.5a1.5 1.5 0 1 1-2-1.415V6.5a.5.5 0 0 1 1 0v4.585a1.5 1.5 0 0 1 1 1.415z"/>
-									<path d="M5.5 2.5a2.5 2.5 0 0 1 5 0v7.55a3.5 3.5 0 1 1-5 0V2.5zM8 1a1.5 1.5 0 0 0-1.5 1.5v7.987l-.167.15a2.5 2.5 0 1 0 3.333 0l-.166-.15V2.5A1.5 1.5 0 0 0 8 1z"/>
-								</svg>
+			for(i = 0; i < readingsData.latestMeasurements.length; i++) {
+				if (readingsData.latestMeasurements[i].channelName.toUpperCase() != 'INTERNAL TEMP') {				
+					var dateDisplay = new Date( readingsData.latestMeasurements[i].measurementTime );
+					dateDisplay = dateDisplay.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
+					
+					var highlight = ''
+					if (readingsData.latestMeasurements[i].channelName.toUpperCase() == 'X AXIS' || readingsData.latestMeasurements[i].channelName.toUpperCase() == 'Y AXIS') {
+						highlight = 'border border-lightblue-500'
+					}
+
+					// Add card
+					$('#rightPanel').prepend(`
+						<!-- Card -->
+						<div class="col-span-1 card-wrapper-1 `+highlight+`">
+							<div class="card-header-1">
+								<div class="card-icon-1">
+									<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+								</div>
+								<div class="card-title-1">
+									`+readingsData.latestMeasurements[i].channelName+`	
+								</div>
 							</div>
-							<div class="card-title-1">
-								`+readingsData.latestMeasurements[i].channelName+`	
+							<div id="latestMeasurements_body" class="card-body-1 flex-col py-4">
+								<div>
+									<span class="text-3xl lg:text-5xl font-medium text-gray-800">`+readingsData.latestMeasurements[i].measurement+`</span><span class="">`+readingsData.latestMeasurements[i].unitName+`</span>
+								</div>
+								<div>
+									<p class="text-xs text-gray-400 italic mt-1 mb-2">`+dateDisplay+`</p>
+								</div>
 							</div>
 						</div>
-						<div id="latestMeasurements_body" class="card-body-1 flex-col py-4">
-							<div>
-								<span class="text-3xl lg:text-5xl font-medium text-gray-800">`+readingsData.latestMeasurements[i].measurement+`</span><span class="">`+readingsData.latestMeasurements[i].unitName+`</span>
-							</div>
-							<div>
-								<p class="text-xs text-gray-400 italic mt-1 mb-2">`+dateDisplay+`</p>
-							</div>
-						</div>
-					</div>
-					<!-- End of card -->
-				`);
+						<!-- End of card -->
+					`);
+				}
 			}
 		})
 
@@ -3680,6 +3704,1181 @@ $(document).ready(function () {
 		})
 		//#endregion
 		
+	}
+
+	// ! SHOW COMPONENT: BWM Dashboard
+	function display_bwm_dashboard() {
+		// * Put all cards together and generate final output
+		var output = `
+			<div id="dashboard_settings_modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center hidden">
+				<div id="modal-box" class="border border-gray-300 shadow-xl bg-gray-200 w-full mx-4 max-w-sm sm:max-w-md md:max-w-2xl overflow-hidden flex flex-col rounded p-4">
+					<!-- Title/close btn -->
+					<div class="flex justify-between items-center border-b pb-1 border-gray-300">
+						<p class="uppercase text-gray-800 font-extrabold text-sm mx-2">Dashboard settings</p>
+						<svg id="close-modal" class="w-6 h-6 text-gray-400 hover:text-gray-600 cursor-pointer" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+					</div>
+					<div class="w-full">
+						<div class="flex flex-col">
+			
+							<div class="flex flex-col mt-2">
+								<p class="form-field-title">Image Link</p>
+								<input id="settings_imageURL" value="" type="text" class="border border-gray-300">
+							</div>
+							<div class="flex flex-col mt-2">
+								<p class="form-field-title">Formula [A]</p>
+								<input id="settings_formulaA" value="" type="text" class="border border-gray-300">
+							</div>
+							<div class="flex flex-col mt-2">
+								<p class="form-field-title">Formula [B]</p>
+								<input id="settings_formulaB" value="" type="text" class="border border-gray-300">
+							</div>
+							<div class="flex flex-col mt-2">
+								<p class="form-field-title">Formula [C]</p>
+								<input id="settings_formulaC" value="" type="text" class="border border-gray-300">
+							</div>
+							<div class="flex flex-col mt-2">
+								<p class="form-field-title">Formula [D]</p>
+								<input id="settings_formulaD" value="" type="text" class="border border-gray-300">
+							</div>
+			
+							<div class="flex justify-end items-center mt-4 space-x-4">
+								<button id="cancelBtn" class="h-10 border-0 hover:border-0 px-4 rounded text-gray-800 hover:bg-red-500 hover:text-white transition-all focus:bg-red-500 focus:text-white">Cancel</button>
+								<button id="saveSettings" class="h-10 bg-green-500 border-0 hover:border-0 px-4 rounded text-white hover:bg-green-700 transition-all focus:bg-green-700 focus:text-white">Save</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-6">
+				<div class="hidden md:block col-span-1 md:col-span-4 lg:col-span-5 xl:col-span-3">
+					<div class="hidden md:block card-wrapper-1">
+						<div class="card-header-1 relative">
+							<div class="card-icon-1">
+								<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path></svg>
+							</div>
+
+							<!-- Edit button -->
+							<button id="settings_button" class="card-icon-1 border-gray-300 focus:outline-none border text-gray-500 transition hover:text-green-600 hover:border-green-400 hover:bg-green-300 cursor-pointer absolute right-0 p-1" title="Edit">
+								<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path></svg>
+							</button>
+
+							<div class="card-title-1">
+								Site Overview
+							</div>
+						</div>
+						<div class="card-body-1 overflow-hidden" style="height: 620px;">
+								<div id="site_image" class="bg-auto bg-no-repeat bg-center w-full h-full relative">
+									
+								</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Readings -->
+				<div id="rightPanel" class="col-span-1 md:col-span-4 lg:col-span-5 xl:col-span-2 flex flex-col space-y-6">
+				
+				</div>
+			</div>
+
+			<!-- Chart and alarms -->
+			<div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+				<!-- Card -->
+				<div class="col-span-1 card-wrapper-1">
+					<div class="card-header-1 relative">
+						<div class="card-icon-1">
+							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd"></path></svg>	
+						</div>
+						<div class="card-title-1">
+							Alarms
+						</div>
+
+						<div id="AlarmCal" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800 absolute right-4">
+							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+						</div>
+						<div id="AlarmCalSelector" class="w-48 bg-white shadow rounded z-10 absolute top-10 right-4 border flex flex-col p-2 hidden">
+							<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">From</p>
+							<input id="alarmFrom" type="date" class="bg-white text-gray-700">
+							<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">To</p>
+							<input id="alarmTo" type="date" class="bg-white text-gray-700">
+							<div class="flex justify-center items-center">
+								<button id="goAlarmCal" class="bg-gray-50 border rounded w-16 mx-auto mt-2 hover:bg-gray-100">Go</button>
+								<button id="resetAlarmCal" class="bg-gray-50 border rounded w-16 mx-auto mt-2 hover:bg-gray-100">Reset</button>
+							</div>
+						</div>
+					</div>
+
+					<!-- Table -->
+					<div id="alarmsCardBody" class="flex-auto bg-gray-50 py-2 px-4">
+						<div id="triggeredAlarms">
+						
+						</div>
+						<div class="flex overflow-x-auto">
+							<table class="table-fixed min-w-full">
+								<thead class="uppercase text-xs border-b border-gray-200 text-bluegray-900">
+									<tr>
+										<th class="text-left w-2/12 py-2 px-4 font-medium text-gray-500 whitespace-nowrap">Channel</th>
+										<th class="text-center w-6/12 lg:w-4/12 py-2 px-4 font-medium text-gray-500 whitespace-nowrap">Alarm</th>
+										<th class="text-center w-4/12 lg:w-4/12 py-2 px-4 font-medium text-gray-500 whitespace-nowrap">Timestamp</th>
+									</tr>
+								</thead>
+								<tbody id="table_alarms">
+									<!-- This area gets filled via PHP -->
+								</tbody>
+							</table>
+						</div>
+						<div id="loadingOverlay_alarms" class="flex flex-auto w-full block justify-center items-center space-x-2 uppercase font-semibold text-bluegray-800 py-8">
+							<svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+							<p>Loading...</p>
+						</div>
+
+						<div class="flex flex-col items-center justify-center py-4">
+							<div class="flex">
+								<button id="previous_alarms" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-300 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Previous</button>
+								<button id="next_alarms" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-300 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Next</button>
+							</div>
+							<p class="mt-4 text-xs font-semibold">Showing <span id="range_alarms"></span> of <span id="total_alarms"></span></p>
+						</div>
+					</div>
+				</div>
+				<!-- End of card-->
+
+				<!-- Card -->
+				<div class="col-span-1 card-wrapper-1">
+					<!-- Title -->
+					<div class="card-header-1 relative">
+						<div class="flex items-center">
+							<div class="hidden sm:block text-gray-500 p-2 ml-4 mr-2 lg:mr-4">
+								<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path></svg>
+							</div>
+							<div id="dateSelectors" class="flex justify-center items-center space-x-2 ml-2">
+								<div data-id="3hr" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">3hr</div>
+								<div data-id="12hr" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">12hr</div>
+								<div data-id="1d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">1d</div>
+								<div data-id="7d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">7d</div>
+								<div data-id="30d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">30d</div>
+								<div data-id="ChartCal" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">
+									<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+								</div>
+							</div>
+							<div id="ChartCalSelector" class="w-48 bg-white shadow rounded z-10 absolute left-28 top-10 border flex flex-col p-2 hidden">
+								<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">From</p>
+								<input id="chartFrom" type="date" class="bg-white text-gray-700">
+								<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">To</p>
+								<input id="chartTo" type="date" class="bg-white text-gray-700">
+								<button class="bg-gray-50 border rounded w-16 mx-auto mt-2 hover:bg-gray-100">Go</button>
+							</div>
+						</div>
+					</div>
+
+					<!-- Chart -->
+					<div class="card-body-1 p-2 lg:p-4">
+						<canvas id="canvas">
+							<!-- Filled with js -->
+						</canvas>
+					</div>
+				</div>
+				<!-- End of card-->
+			</div>
+		`;
+		// * Update site content once its generated
+		siteContent.html(output);
+
+		$('#settings_button, #close-modal, #cancelBtn').on('click', function() {
+			$('#dashboard_settings_modal').toggleClass('hidden');
+		})
+
+		function loadDashboardImage() {
+			getBWMFormulas(deviceId).then( function(settings) {
+				// Set image
+				if (settings.imageURL === null) {
+					$('#settings_imageURL').val('');
+					$('#site_image').css('background-image', 'url("https://i.gyazo.com/5a51eecfc347f40b46b429ab6cbd24f7.jpg")');						
+				} else {
+					$('#settings_imageURL').val(settings.imageURL)
+					$('#site_image').css('background-image', 'url("'+settings.imageURL+'")');
+				}
+			})
+		}
+
+		// Process passed values of A,B,C,D
+		function displayFormulas(A, B, C, D) {
+			$('#rightPanel').html('');
+			// For each formula, we need to add a movable box over the dashboard image and a reading display in the right panel
+			// ! Right panel
+			//#region 
+			// ! A
+			var A_dateDisplay = new Date( A.timestamp );
+			A_dateDisplay = A_dateDisplay.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
+			// Add card to the right panel
+			$('#rightPanel').append(`
+				<!-- Card -->
+				<div class="col-span-1 card-wrapper-1">
+					<div class="card-header-1">
+						<div class="card-icon-1">
+							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+						</div>
+						<div class="card-title-1">
+							FORMULA A
+						</div>
+					</div>
+					<div id="latestMeasurements_body" class="card-body-1 flex-col py-4">
+						<div>
+							<span class="text-3xl lg:text-5xl font-medium text-gray-800">`+A.reading+`</span><span class="">`+A.unitName+`</span>
+						</div>
+						<div>
+							<p class="text-xs text-gray-400 italic mt-1 mb-2">`+A_dateDisplay+`</p>
+						</div>
+					</div>
+				</div>
+				<!-- End of card -->
+			`);
+
+			// ! B
+			var B_dateDisplay = new Date( A.timestamp );
+			B_dateDisplay = B_dateDisplay.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
+			// Add card to the right panel
+			$('#rightPanel').append(`
+				<!-- Card -->
+				<div class="col-span-1 card-wrapper-1">
+					<div class="card-header-1">
+						<div class="card-icon-1">
+							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+						</div>
+						<div class="card-title-1">
+							FORMULA B
+						</div>
+					</div>
+					<div id="latestMeasurements_body" class="card-body-1 flex-col py-4">
+						<div>
+							<span class="text-3xl lg:text-5xl font-medium text-gray-800">`+B.reading+`</span><span class="">`+B.unitName+`</span>
+						</div>
+						<div>
+							<p class="text-xs text-gray-400 italic mt-1 mb-2">`+B_dateDisplay+`</p>
+						</div>
+					</div>
+				</div>
+				<!-- End of card -->
+			`);
+
+			// ! C
+			var C_dateDisplay = new Date( A.timestamp );
+			C_dateDisplay = C_dateDisplay.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
+			// Add card to the right panel
+			$('#rightPanel').append(`
+				<!-- Card -->
+				<div class="col-span-1 card-wrapper-1">
+					<div class="card-header-1">
+						<div class="card-icon-1">
+							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+						</div>
+						<div class="card-title-1">
+							FORMULA C
+						</div>
+					</div>
+					<div id="latestMeasurements_body" class="card-body-1 flex-col py-4">
+						<div>
+							<span class="text-3xl lg:text-5xl font-medium text-gray-800">`+C.reading+`</span><span class="">`+C.unitName+`</span>
+						</div>
+						<div>
+							<p class="text-xs text-gray-400 italic mt-1 mb-2">`+C_dateDisplay+`</p>
+						</div>
+					</div>
+				</div>
+				<!-- End of card -->
+			`);
+
+			// ! D
+			var D_dateDisplay = new Date( A.timestamp );
+			D_dateDisplay = D_dateDisplay.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
+			// Add card to the right panel
+			$('#rightPanel').append(`
+				<!-- Card -->
+				<div class="col-span-1 card-wrapper-1">
+					<div class="card-header-1">
+						<div class="card-icon-1">
+							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+						</div>
+						<div class="card-title-1">
+							FORMULA D
+						</div>
+					</div>
+					<div id="latestMeasurements_body" class="card-body-1 flex-col py-4">
+						<div>
+							<span class="text-3xl lg:text-5xl font-medium text-gray-800">`+D.reading+`</span><span class="">`+D.unitName+`</span>
+						</div>
+						<div>
+							<p class="text-xs text-gray-400 italic mt-1 mb-2">`+D_dateDisplay+`</p>
+						</div>
+					</div>
+				</div>
+				<!-- End of card -->
+			`);
+			//#endregion
+
+			// ! Movable box A
+			var movableBoxA = $(`
+				<div id="movableBoxA" data-formula="A" class="absolute flex flex-col justify-center items-center p-1 text-gray-800 rounded shadow border bg-gray-50 cursor-move transition hover:bg-gray-100 hover:bg-opacity-90 select-none py-1" style="width: 126px;">
+					<p class="font-bold text-xs uppercase text-gray-700 mx-auto bg-blue-100 font-spacemono tracking-wide mb-2">A</p>
+					<p class="text-2xl lg:text-2xl font-medium text-gray-800"><span>`+A.reading+`</span><span class="text-lg ml-1">`+A.unitName+`</span></p>
+					<p class="text-xs text-gray-400 italic mt-1"><span>`+timeSince( new Date(A_dateDisplay))+` ago</span></p>
+				</div>
+			`)
+			$('#site_image').append(movableBoxA.draggable({stop: function() {
+				var pos_left = $(this).offset().left
+				var pos_top = $(this).offset().top
+				updateBWMMovableBoxPosition(pos_left, pos_top, 'A', deviceId);
+
+			}}))
+			if (A.offset_top != null) { movableBoxA.offset({top: A.offset_top}) }
+			if (A.offset_left != null) { movableBoxA.offset({left: A.offset_left}) }
+
+			// ! Movable box B
+			var movableBoxB = $(`
+				<div id="movableBoxB" data-formula="B" class="absolute flex flex-col justify-center items-center p-1 text-gray-800 rounded shadow border bg-gray-50 cursor-move transition hover:bg-gray-100 hover:bg-opacity-90 select-none py-1" style="width: 126px;">
+					<p class="font-bold text-xs uppercase text-gray-700 mx-auto bg-blue-100 font-spacemono tracking-wide mb-2">B</p>
+					<p class="text-2xl lg:text-2xl font-medium text-gray-800"><span>`+B.reading+`</span><span class="text-lg ml-1">`+B.unitName+`</span></p>
+					<p class="text-xs text-gray-400 italic mt-1"><span>`+timeSince( new Date(B_dateDisplay))+` ago</span></p>
+				</div>
+			`)
+			$('#site_image').append(movableBoxB.draggable({stop: function() {
+				var pos_left = $(this).offset().left
+				var pos_top = $(this).offset().top
+				updateBWMMovableBoxPosition(pos_left, pos_top, 'B', deviceId);
+
+			}}))
+			if (B.offset_top != null) { movableBoxB.offset({top: B.offset_top}) }
+			if (B.offset_left != null) { movableBoxB.offset({left: B.offset_left}) }
+
+			// ! Movable box C
+			var movableBoxC = $(`
+				<div id="movableBoxC" data-formula="C" class="absolute flex flex-col justify-center items-center p-1 text-gray-800 rounded shadow border bg-gray-50 cursor-move transition hover:bg-gray-100 hover:bg-opacity-90 select-none py-1" style="width: 126px;">
+					<p class="font-bold text-xs uppercase text-gray-700 mx-auto bg-blue-100 font-spacemono tracking-wide mb-2">C</p>
+					<p class="text-2xl lg:text-2xl font-medium text-gray-800"><span>`+C.reading+`</span><span class="text-lg ml-1">`+C.unitName+`</span></p>
+					<p class="text-xs text-gray-400 italic mt-1"><span>`+timeSince( new Date(C_dateDisplay))+` ago</span></p>
+				</div>
+			`)
+			$('#site_image').append(movableBoxC.draggable({stop: function() {
+				var pos_left = $(this).offset().left
+				var pos_top = $(this).offset().top
+				updateBWMMovableBoxPosition(pos_left, pos_top, 'C', deviceId);
+
+			}}))
+			if (C.offset_top != null) { movableBoxC.offset({top: C.offset_top}) }
+			if (C.offset_left != null) { movableBoxC.offset({left: C.offset_left}) }
+
+			// ! Movable box D
+			var movableBoxD = $(`
+				<div id="movableBoxD" data-formula="D" class="absolute flex flex-col justify-center items-center p-1 text-gray-800 rounded shadow border bg-gray-50 cursor-move transition hover:bg-gray-100 hover:bg-opacity-90 select-none py-1" style="width: 126px;">
+					<p class="font-bold text-xs uppercase text-gray-700 mx-auto bg-blue-100 font-spacemono tracking-wide mb-2">D</p>
+					<p class="text-2xl lg:text-2xl font-medium text-gray-800"><span>`+D.reading+`</span><span class="text-lg ml-1">`+D.unitName+`</span></p>
+					<p class="text-xs text-gray-400 italic mt-1"><span>`+timeSince( new Date(D_dateDisplay))+` ago</span></p>
+				</div>
+			`)
+			$('#site_image').append(movableBoxD.draggable({stop: function() {
+				var pos_left = $(this).offset().left
+				var pos_top = $(this).offset().top
+				updateBWMMovableBoxPosition(pos_left, pos_top, 'D', deviceId);
+
+			}}))
+			if (D.offset_top != null) { movableBoxD.offset({top: D.offset_top}) }
+			if (D.offset_left != null) { movableBoxD.offset({left: D.offset_left}) }
+
+		}
+
+		// Load dashboard
+		function loadFormulas() {
+			getBWMFormulas(deviceId).then( function(settings) {
+				var formulas = settings.formulas[0]
+
+				// Update values in the settings
+				if (formulas.formulaA === null) { $('#settings_formulaA').val(''); } else { $('#settings_formulaA').val(formulas.formulaA) }
+				if (formulas.formulaB === null) { $('#settings_formulaB').val(''); } else { $('#settings_formulaB').val(formulas.formulaB) }
+				if (formulas.formulaC === null) { $('#settings_formulaC').val(''); } else { $('#settings_formulaC').val(formulas.formulaC) }
+				if (formulas.formulaD === null) { $('#settings_formulaD').val(''); } else { $('#settings_formulaD').val(formulas.formulaD) }
+
+				rtmu_getLatestReadings().then( function(readingsData) {
+					// Get distance reading
+					var distance, timestamp, unitName;
+					for(i = 0; i < readingsData.latestMeasurements.length; i++) {
+						if (readingsData.latestMeasurements[i].channelName.toUpperCase() == 'DISTANCE') {
+							distance = readingsData.latestMeasurements[i].measurement
+							timestamp = readingsData.latestMeasurements[i].measurementTime
+							unitName = readingsData.latestMeasurements[i].unitName
+						}
+					}
+
+					if (formulas.formulaA == null) {
+						var formulaA_reading = distance
+					} else {
+						var formulaA_reading = eval( formulas.formulaA.replace('{{x}}', distance) ).toFixed(2);
+					}
+
+					if (formulas.formulaB == null) {
+						var formulaB_reading = distance
+					} else {
+						var formulaB_reading = eval( formulas.formulaB.replace('{{x}}', distance) ).toFixed(2);
+					}
+
+					if (formulas.formulaC == null) {
+						var formulaC_reading = distance
+					} else {
+						var formulaC_reading = eval( formulas.formulaC.replace('{{x}}', distance) ).toFixed(2);
+					}
+
+					if (formulas.formulaD == null) {
+						var formulaD_reading = distance
+					} else {
+						var formulaD_reading = eval( formulas.formulaD.replace('{{x}}', distance) ).toFixed(2);
+					}
+
+					var formulaAOutput = {
+						'formula': formulas.formulaA,
+						'reading': formulaA_reading,
+						'offset_top': formulas.formulaA_offset_top,
+						'offset_left': formulas.formulaA_offset_left,
+						'timestamp': timestamp,
+						'unitName': unitName
+					}
+					var formulaBOutput = {
+						'formula': formulas.formulaB,
+						'reading': formulaB_reading,
+						'offset_top': formulas.formulaB_offset_top,
+						'offset_left': formulas.formulaB_offset_left,
+						'timestamp': timestamp,
+						'unitName': unitName
+					}
+					var formulaCOutput = {
+						'formula': formulas.formulaC,
+						'reading': formulaC_reading,
+						'offset_top': formulas.formulaC_offset_top,
+						'offset_left': formulas.formulaC_offset_left,
+						'timestamp': timestamp,
+						'unitName': unitName
+					}
+					var formulaDOutput = {
+						'formula': formulas.formulaD,
+						'reading': formulaD_reading,
+						'offset_top': formulas.formulaD_offset_top,
+						'offset_left': formulas.formulaD_offset_left,
+						'timestamp': timestamp,
+						'unitName': unitName
+					}
+
+					displayFormulas( formulaAOutput, formulaBOutput, formulaCOutput, formulaDOutput)
+				})
+			})
+		}
+		loadFormulas();
+		loadDashboardImage();
+		
+		$('#saveSettings').on('click', function() {
+			var imageURL = $.trim($('#settings_imageURL').val());
+			updateDashboardImage(deviceId, imageURL);
+
+			var formulaA = $.trim($('#settings_formulaA').val());
+			var formulaB = $.trim($('#settings_formulaB').val());
+			var formulaC = $.trim($('#settings_formulaC').val());
+			var formulaD = $.trim($('#settings_formulaD').val());
+			updateBWMFormulas(deviceId, formulaA, formulaB, formulaC, formulaD);
+
+			$('#dashboard_settings_modal').addClass('hidden');
+			loadDashboardImage();
+			loadFormulas();
+		})
+
+		function timeSince(date) {
+			var seconds = Math.floor((new Date() - date) / 1000);
+			var interval = seconds / 31536000;
+		
+			if (interval > 1) {
+			return Math.floor(interval) + " years";
+			}
+			interval = seconds / 2592000;
+			if (interval > 1) {
+			return Math.floor(interval) + " months";
+			}
+			interval = seconds / 86400;
+			if (interval > 1) {
+			return Math.floor(interval) + " days";
+			}
+			interval = seconds / 3600;
+			if (interval > 1) {
+			return Math.floor(interval) + " hours";
+			}
+			interval = seconds / 60;
+			if (interval > 1) {
+			return Math.floor(interval) + " minutes";
+			}
+			return Math.floor(seconds) + " seconds";
+		}
+
+
+		// * Load alarms card
+		//#region 
+		var alarmPageNumber = 1;
+		var alarmsPerPage = 5;
+		var fromDate = null;
+		var toDate = null;
+		getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
+
+		// Alarm paging
+		$('#next_alarms').on('click', function () {
+			alarmPageNumber += 1;
+			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
+		})
+		$('#previous_alarms').on('click', function () {
+			alarmPageNumber -= 1;
+			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
+		})
+
+		$('#AlarmCal').on('click', function() {
+			$('#AlarmCalSelector').toggleClass('hidden');
+		})
+		$('#goAlarmCal').on('click', function() {
+			alarmPageNumber = 1;
+			fromDate = $('#alarmFrom').val();
+			toDate = $('#alarmTo').val();
+			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
+			$('#AlarmCalSelector').addClass('hidden');
+		})
+
+		$('#resetAlarmCal').on('click', function() {
+			alarmPageNumber = 1;
+			fromDate = null;
+			toDate = null;
+			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
+			$('#AlarmCalSelector').addClass('hidden');
+			$('#alarmFrom, #alarmTo').val("");
+		})
+
+		function displayTriggeredAlarms(triggeredAlarms) {
+			var triggeredAlarmsOutput = '';
+			for (i = 0; i < triggeredAlarms.length; i++) {
+				triggeredAlarmsOutput += `
+				<!-- Alarm -->
+				<div class="flex h-10 text-sm text-red-600 font-medium items-center pl-4 bg-red-50 border border-red-500 rounded my-2">
+					<div class="hidden xl:block flex-1 whitespace-nowrap mx-2 text-xs italic">
+						ACTIVE ALARM!
+					</div>
+					<div class="flex-1 whitespace-nowrap">
+						<span class="text-xs uppercase text-red-400 mr-1">Channel:</span> `+triggeredAlarms[i].channelName+`
+					</div>
+					<div class="flex-1 whitespace-nowrap text-center">
+						<span class="text-xs uppercase text-red-400 mr-1">Trigger:</span> `+triggeredAlarms[i].operator+` `+triggeredAlarms[i].thresholdValue+` `+triggeredAlarms[i].unitName+`
+					</div>
+				</div>
+				<!-- End of alarm -->
+				`
+			}
+			$('#triggeredAlarms').html(triggeredAlarmsOutput);
+		}
+		// Display triggered alarms
+		getTriggeredAlarms().then( function(triggeredAlarms) {
+			displayTriggeredAlarms(triggeredAlarms);
+		})
+		//#endregion
+
+		// * Load chart card
+		//#region 
+		var ctx = $('#canvas')[0].getContext('2d');
+		var chart = new Chart(ctx, {
+			type: 'line',
+			data: { datasets: [] },
+			options: {
+				scales: {
+					xAxes: [{
+						type: 'time',
+						time: {
+							unit: 'hour',
+							stepSize: 0.5,
+							tooltipFormat: 'HH:mm DD-MM-YYYY',
+						},
+						ticks: {
+							autoSkip: true,
+							maxTicksLimit: 10,
+							major: {
+								enabled: true,
+								fontStyle: 'bold',
+								fontSize: 14
+							},
+						},
+						scaleLabel: {
+							display: true,
+							labelString: 'Time of alarm'
+						},
+						gridLines: {
+							drawOnChartArea: false
+						}
+					}],
+					yAxes: [{
+						scaleLabel: {
+							display: true,
+							labelString: 'Temperature (°C)'
+						},
+						ticks: {
+							autoSkip: true,
+							maxTicksLimit: 6
+						}
+					}]
+				}
+			}
+		});
+		getDatasets('3hr','NOW').then( function (data) {
+			processChartData(data).then( function(data) {
+				drawChart(chart, data);
+			})
+		})
+
+		function processChartData(data) {
+			return new Promise(function (resolve, reject) {
+				// Here we are given 2 channels. We need to only process DISTANCE and output 4 formulas A,B,C,D
+				getBWMFormulas(deviceId).then( function(settings) {
+					for (let index = 0; index < data.length; index++) {
+						if (data[index].channelName.toUpperCase() == 'DISTANCE') {
+							var channelId = data[index].channelId
+							var dataSet = data[index].data
+						}
+					}
+					var formulas = settings.formulas[0]
+
+					var returnArr = []
+
+					formulaAObj = {
+						'channelId': channelId,
+						'channelName': 'FORMULA A',
+						'data': dataSet
+					}
+					formulaBObj = {
+						'channelId': channelId,
+						'channelName': 'FORMULA B',
+						'data': dataSet
+					}
+					formulaCObj = {
+						'channelId': channelId,
+						'channelName': 'FORMULA C',
+						'data': dataSet
+					}
+					formulaDObj = {
+						'channelId': channelId,
+						'channelName': 'FORMULA D',
+						'data': dataSet
+					}
+
+					var tempDataSetA = []
+					var tempDataSetB = []
+					var tempDataSetC = []
+					var tempDataSetD = []
+
+					for (let i = 0; i < dataSet.length; i++) {
+						var tempObjA = {
+							'measurement': dataSet[i].measurement,
+							'measurementTime': dataSet[i].measurementTime
+						}
+						var tempObjB = {
+							'measurement': dataSet[i].measurement,
+							'measurementTime': dataSet[i].measurementTime
+						}
+						var tempObjC = {
+							'measurement': dataSet[i].measurement,
+							'measurementTime': dataSet[i].measurementTime
+						}
+						var tempObjD = {
+							'measurement': dataSet[i].measurement,
+							'measurementTime': dataSet[i].measurementTime
+						}
+
+						if (formulas.formulaA != null) {
+							tempObjA.measurement = eval( formulas.formulaA.replace('{{x}}', dataSet[i].measurement) ).toFixed(2);
+						}
+						if (formulas.formulaB != null) {
+							tempObjB.measurement = eval( formulas.formulaB.replace('{{x}}', dataSet[i].measurement) ).toFixed(2);
+						}
+						if (formulas.formulaC != null) {
+							tempObjC.measurement = eval( formulas.formulaC.replace('{{x}}', dataSet[i].measurement) ).toFixed(2);
+						}
+						if (formulas.formulaD != null) {
+							tempObjD.measurement = eval( formulas.formulaD.replace('{{x}}', dataSet[i].measurement) ).toFixed(2);
+						}
+
+						tempDataSetA.push(tempObjA)
+						tempDataSetB.push(tempObjB)
+						tempDataSetC.push(tempObjC)
+						tempDataSetD.push(tempObjD)
+					}
+					formulaAObj.data = tempDataSetA;
+					formulaBObj.data = tempDataSetB;
+					formulaCObj.data = tempDataSetC;
+					formulaDObj.data = tempDataSetD;
+					returnArr.push(formulaAObj)
+					returnArr.push(formulaBObj)
+					returnArr.push(formulaCObj)
+					returnArr.push(formulaDObj)
+
+					// console.log(returnArr);
+					resolve(returnArr)
+				})
+			})
+		}
+
+		var activeClass = 'text-gray-800 bg-white ring-1 ring-gray-300';
+		$('#dateSelectors').children().first().addClass(activeClass);
+		$('#dateSelectors').children().on('click', function() {
+			$('#dateSelectors').children().removeClass(activeClass);
+			$(this).addClass(activeClass);
+			var dataid = $(this).attr('data-id');
+			if (dataid != 'ChartCal') {
+				getDatasets(dataid,'NOW').then( function (data) {
+					processChartData(data).then( function(data) {
+						drawChart(chart, data);
+					})
+				})
+
+				if ( !$('#ChartCalSelector').hasClass('hidden') ) {
+					$('#ChartCalSelector').addClass('hidden');
+				}
+				$('#chartFrom, #chartTo').val("");
+			} else {
+				$('#ChartCalSelector').toggleClass('hidden');
+			}
+		})
+		$('#ChartCalSelector > button').on('click', function() {
+			getDatasets($('#chartFrom').val() , $('#chartTo').val()).then( function (data) {
+				processChartData(data).then( function(data) {
+					drawChart(chart, data);
+				})
+			})
+			$('#ChartCalSelector').addClass('hidden');
+		})
+		//#endregion
+
+	}
+
+	// ! SHOW COMPONENT: BWM RADAR Dashboard
+	function display_bwm_radar_dashboard() {
+		// * Put all cards together and generate final output
+		var output = `
+			<div id="dashboard_settings_modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center hidden">
+				<div id="modal-box" class="border border-gray-300 shadow-xl bg-gray-200 w-full mx-4 max-w-sm sm:max-w-md md:max-w-2xl overflow-hidden flex flex-col rounded p-4">
+					<!-- Title/close btn -->
+					<div class="flex justify-between items-center border-b pb-1 border-gray-300">
+						<p class="uppercase text-gray-800 font-extrabold text-sm mx-2">Dashboard settings</p>
+						<svg id="close-modal" class="w-6 h-6 text-gray-400 hover:text-gray-600 cursor-pointer" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+					</div>
+					<div class="w-full">
+						<div class="flex flex-col">
+			
+							<div class="flex flex-col mt-2">
+								<p class="form-field-title">Image Link</p>
+								<input id="settings_imageURL" value="" type="text" class="border border-gray-300">
+							</div>
+			
+							<div class="flex justify-end items-center mt-4 space-x-4">
+								<button id="cancelBtn" class="h-10 border-0 hover:border-0 px-4 rounded text-gray-800 hover:bg-red-500 hover:text-white transition-all focus:bg-red-500 focus:text-white">Cancel</button>
+								<button id="saveSettings" class="h-10 bg-green-500 border-0 hover:border-0 px-4 rounded text-white hover:bg-green-700 transition-all focus:bg-green-700 focus:text-white">Save</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="flex lg:space-y-0 flex-col lg:flex-row lg:space-x-6">
+				<div class="flex flex-col space-y-6 w-full lg:w-1/2 lg:max-w-xl order-last lg:order-first">
+					
+					<div class="hidden lg:block card-wrapper-1">
+						<div class="card-header-1 relative">
+							<div class="card-icon-1">
+								<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path></svg>
+							</div>
+
+							<!-- Edit button -->
+							<button id="settings_button" class="card-icon-1 border-gray-300 focus:outline-none border text-gray-500 transition hover:text-green-600 hover:border-green-400 hover:bg-green-300 cursor-pointer absolute right-0 p-1" title="Edit">
+								<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path></svg>
+							</button>
+
+							<div class="card-title-1">
+								Site Overview
+							</div>
+						</div>
+						<div class="card-body-1 overflow-hidden" style="height: 700px;">
+								<div id="site_image" class="bg-auto bg-no-repeat bg-center w-full h-full relative">
+									
+								</div>
+						</div>
+					</div>
+				</div>
+				
+				<div id="rightPanel" class="flex-auto grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
+					<!-- AI channel cards will be added through js -->
+
+					<!-- Card -->
+					<div class="col-span-1 md:col-span-2 card-wrapper-1">
+						<div class="card-header-1 relative">
+							<div class="card-icon-1">
+								<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd"></path></svg>	
+							</div>
+							<div class="card-title-1">
+								Alarms	
+							</div>
+
+							<div id="AlarmCal" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-gray-100 hover:text-gray-800 absolute right-4">
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+							</div>
+							<div id="AlarmCalSelector" class="w-48 bg-white shadow rounded z-10 absolute top-10 right-4 border flex flex-col p-2 hidden">
+								<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">From</p>
+								<input id="alarmFrom" type="date" class="bg-white text-gray-700">
+								<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">To</p>
+								<input id="alarmTo" type="date" class="bg-white text-gray-700">
+								<div class="flex justify-center items-center">
+									<button id="goAlarmCal" class="bg-gray-50 border rounded w-16 mx-auto mt-2 hover:bg-gray-100">Go</button>
+									<button id="resetAlarmCal" class="bg-gray-50 border rounded w-16 mx-auto mt-2 hover:bg-gray-100">Reset</button>
+								</div>
+							</div>
+						</div>
+
+						<!-- Table -->
+						<div id="alarmsCardBody" class="flex-auto bg-gray-50 py-2 px-4">
+							<div id="triggeredAlarms">
+							
+							</div>
+							<div class="flex overflow-x-auto">
+								<table class="table-fixed min-w-full">
+									<thead class="uppercase text-xs border-b border-gray-200 text-bluegray-900">
+										<tr>
+											<th class="text-left w-2/12 py-2 px-4 font-medium text-gray-500 whitespace-nowrap">Channel</th>
+											<th class="text-center w-6/12 lg:w-4/12 py-2 px-4 font-medium text-gray-500 whitespace-nowrap">Alarm</th>
+											<th class="text-center w-4/12 lg:w-4/12 py-2 px-4 font-medium text-gray-500 whitespace-nowrap">Timestamp</th>
+										</tr>
+									</thead>
+									<tbody id="table_alarms">
+										<!-- This area gets filled via PHP -->
+									</tbody>
+								</table>
+							</div>
+							<div id="loadingOverlay_alarms" class="flex flex-auto w-full block justify-center items-center space-x-2 uppercase font-semibold text-bluegray-800 py-8">
+								<svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+								<p>Loading...</p>
+							</div>
+
+							<div class="flex flex-col items-center justify-center py-4">
+								<div class="flex">
+									<button id="previous_alarms" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-300 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Previous</button>
+									<button id="next_alarms" class="focus:outline-none h-8 w-24 bg-bluegray-50 text-bluegray-600 uppercase font-semibold text-xs border border-gray-300 disabled:opacity-75 disabled:text-bluegray-400 disabled:cursor-default">Next</button>
+								</div>
+								<p class="mt-4 text-xs font-semibold">Showing <span id="range_alarms"></span> of <span id="total_alarms"></span></p>
+							</div>
+						</div>
+					</div>
+					<!-- End of card-->
+
+					<!-- Card -->
+					<div class="col-span-1 md:col-span-2 card-wrapper-1">
+						<!-- Title -->
+						<div class="card-header-1 relative">
+							<div class="flex items-center">
+								<div class="hidden sm:block text-gray-500 p-2 ml-4 mr-2 lg:mr-4">
+									<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path></svg>
+								</div>
+								<div id="dateSelectors" class="flex justify-center items-center space-x-2 ml-2">
+									<div data-id="3hr" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">3hr</div>
+									<div data-id="12hr" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">12hr</div>
+									<div data-id="1d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">1d</div>
+									<div data-id="7d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">7d</div>
+									<div data-id="30d" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">30d</div>
+									<div data-id="ChartCal" class="text-gray-400 font-medium text-sm rounded-lg py-1 px-2 cursor-pointer hover:bg-white hover:text-gray-800">
+										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+									</div>
+								</div>
+								<div id="ChartCalSelector" class="w-48 bg-white shadow rounded z-10 absolute left-28 top-10 border flex flex-col p-2 hidden">
+									<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">From</p>
+									<input id="chartFrom" type="date" class="bg-white text-gray-700">
+									<p class="text-xs uppercase font-medium text-gray-700 ml-4 my-2">To</p>
+									<input id="chartTo" type="date" class="bg-white text-gray-700">
+									<button class="bg-gray-50 border rounded w-16 mx-auto mt-2 hover:bg-gray-100">Go</button>
+								</div>
+							</div>
+						</div>
+
+						<!-- Chart -->
+						<div class="card-body-1 p-2 lg:p-4">
+							<canvas id="canvas">
+								<!-- Filled with js -->
+							</canvas>
+						</div>
+					</div>
+					<!-- End of card-->
+
+				</div>
+			</div>
+		`;
+		// * Update site content once its generated
+		siteContent.html(output);
+
+		$('#settings_button, #close-modal, #cancelBtn').on('click', function() {
+			$('#dashboard_settings_modal').toggleClass('hidden');
+		})
+
+		function loadDashboardImage() {
+			getDashboardSettings(deviceId).then( function(settings) {
+				// Set image
+				if (settings.imageURL === null) {
+					$('#settings_imageURL').val('');
+					$('#site_image').css('background-image', 'url("https://i.gyazo.com/3d21c776eabb54c56f3d3cea83129387.jpg")');						
+				} else {
+					$('#settings_imageURL').val(settings.imageURL)
+					$('#site_image').css('background-image', 'url("'+settings.imageURL+'")');
+				}
+			})
+		}
+
+		// Load dashboard
+		function loadDashboard() {
+			getDashboardSettings(deviceId).then( function(settings) {
+				// Set image
+				loadDashboardImage();
+
+				// Display movable boxes, 1 for each channel, identified by channelId
+				for (i = 0; i < settings.box.length; i++) {
+					var movableBox = $(`
+						<div id="movableBox" data-channelId="`+settings.box[i].channelId+`" class="absolute flex flex-col justify-center items-center p-1 text-gray-800 rounded shadow border bg-gray-50 cursor-move transition hover:bg-gray-100 hover:bg-opacity-90 select-none py-4" style="width: 128px;">
+							<p class="font-bold text-xs uppercase text-gray-700 mx-auto bg-blue-100 font-spacemono tracking-wide mb-2">`+settings.box[i].channelName+`</p>
+							<p class="text-3xl lg:text-4xl font-medium text-gray-800"><span id="displayReading"></span><span class="text-lg ml-1">`+settings.box[i].unitName+`</span></p>
+							<p class="text-xs text-gray-400 italic mt-1 mb-2"><span id="dateDisplay"></span></p>
+						</div>
+					`)
+					movableBox.data('channelId', settings.box[i].channelId)
+					$('#site_image').append(movableBox.draggable({stop: function() {
+						var pos_left = $(this).offset().left
+						var pos_top = $(this).offset().top
+						var channelId = $(this).data('channelId');
+						updateMovableBoxPosition(pos_left, pos_top, channelId);
+					}}))
+
+					if (settings.box[i].offset_left != null) {
+						movableBox.offset({left: settings.box[i].offset_left})
+					}
+					if (settings.box[i].offset_top != null) {
+						movableBox.offset({top: settings.box[i].offset_top})
+					}
+				}
+
+				rtmu_getLatestReadings().then( function(readingsData) {
+					for(i = 0; i < readingsData.latestMeasurements.length; i++) {
+						$('#movableBox[data-channelId="'+readingsData.latestMeasurements[i].channelId+'"]').children().children('#displayReading').html(readingsData.latestMeasurements[i].measurement)
+						var dateDisplay = timeSince( new Date( readingsData.latestMeasurements[i].measurementTime ) ) + ' ago';
+						$('#movableBox[data-channelId="'+readingsData.latestMeasurements[i].channelId+'"]').children().children('#dateDisplay').html(dateDisplay)
+					}
+				})
+			})
+		}
+		loadDashboard();
+		
+		$('#saveSettings').on('click', function() {
+			var imageURL = $.trim($('#settings_imageURL').val());
+			updateDashboardImage(deviceId, imageURL);
+			$('#dashboard_settings_modal').addClass('hidden');
+			loadDashboardImage();
+		})
+
+		function timeSince(date) {
+			var seconds = Math.floor((new Date() - date) / 1000);
+			var interval = seconds / 31536000;
+		
+			if (interval > 1) {
+			return Math.floor(interval) + " years";
+			}
+			interval = seconds / 2592000;
+			if (interval > 1) {
+			return Math.floor(interval) + " months";
+			}
+			interval = seconds / 86400;
+			if (interval > 1) {
+			return Math.floor(interval) + " days";
+			}
+			interval = seconds / 3600;
+			if (interval > 1) {
+			return Math.floor(interval) + " hours";
+			}
+			interval = seconds / 60;
+			if (interval > 1) {
+			return Math.floor(interval) + " minutes";
+			}
+			return Math.floor(seconds) + " seconds";
+		}
+
+		rtmu_getLatestReadings().then( function(readingsData) {
+			// Display readings of the AI channels
+			// We use i-- to compensate for using .prepend as that will display channels in reverse order
+			for(i = readingsData.latestMeasurements.length-1; i >= 0; i--) {
+				var dateDisplay = new Date( readingsData.latestMeasurements[i].measurementTime );
+				dateDisplay = dateDisplay.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
+				// Add card
+				$('#rightPanel').prepend(`
+					<!-- Card -->
+					<div class="col-span-1 card-wrapper-1">
+						<div class="card-header-1">
+							<div class="card-icon-1">
+								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+							</div>
+							<div class="card-title-1">
+								`+readingsData.latestMeasurements[i].channelName+`	
+							</div>
+						</div>
+						<div id="latestMeasurements_body" class="card-body-1 flex-col py-4">
+							<div>
+								<span class="text-3xl lg:text-5xl font-medium text-gray-800">`+readingsData.latestMeasurements[i].measurement+`</span><span class="">`+readingsData.latestMeasurements[i].unitName+`</span>
+							</div>
+							<div>
+								<p class="text-xs text-gray-400 italic mt-1 mb-2">`+dateDisplay+`</p>
+							</div>
+						</div>
+					</div>
+					<!-- End of card -->
+				`);
+			}
+		})
+
+		// * Load alarms card
+		//#region 
+		var alarmPageNumber = 1;
+		var alarmsPerPage = 5;
+		var fromDate = null;
+		var toDate = null;
+		getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
+
+		// Alarm paging
+		$('#next_alarms').on('click', function () {
+			alarmPageNumber += 1;
+			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
+		})
+		$('#previous_alarms').on('click', function () {
+			alarmPageNumber -= 1;
+			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
+		})
+
+		$('#AlarmCal').on('click', function() {
+			$('#AlarmCalSelector').toggleClass('hidden');
+		})
+		$('#goAlarmCal').on('click', function() {
+			alarmPageNumber = 1;
+			fromDate = $('#alarmFrom').val();
+			toDate = $('#alarmTo').val();
+			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
+			$('#AlarmCalSelector').addClass('hidden');
+		})
+
+		$('#resetAlarmCal').on('click', function() {
+			alarmPageNumber = 1;
+			fromDate = null;
+			toDate = null;
+			getAlarms(alarmsPerPage, alarmPageNumber, 'table_alarms', fromDate, toDate);
+			$('#AlarmCalSelector').addClass('hidden');
+			$('#alarmFrom, #alarmTo').val("");
+		})
+
+		function displayTriggeredAlarms(triggeredAlarms) {
+			var triggeredAlarmsOutput = '';
+			for (i = 0; i < triggeredAlarms.length; i++) {
+				triggeredAlarmsOutput += `
+				<!-- Alarm -->
+				<div class="flex h-10 text-sm text-red-600 font-medium items-center pl-4 bg-red-50 border border-red-500 rounded my-2">
+					<div class="hidden xl:block flex-1 whitespace-nowrap mx-2 text-xs italic">
+						ACTIVE ALARM!
+					</div>
+					<div class="flex-1 whitespace-nowrap">
+						<span class="text-xs uppercase text-red-400 mr-1">Channel:</span> `+triggeredAlarms[i].channelName+`
+					</div>
+					<div class="flex-1 whitespace-nowrap text-center">
+						<span class="text-xs uppercase text-red-400 mr-1">Trigger:</span> `+triggeredAlarms[i].operator+` `+triggeredAlarms[i].thresholdValue+` `+triggeredAlarms[i].unitName+`
+					</div>
+				</div>
+				<!-- End of alarm -->
+				`
+			}
+			$('#triggeredAlarms').html(triggeredAlarmsOutput);
+		}
+		// Display triggered alarms
+		getTriggeredAlarms().then( function(triggeredAlarms) {
+			displayTriggeredAlarms(triggeredAlarms);
+		})
+		//#endregion
+
+		// * Load chart card
+		//#region 
+		var ctx = $('#canvas')[0].getContext('2d');
+		var chart = new Chart(ctx, {
+			type: 'line',
+			data: { datasets: [] },
+			options: {
+				scales: {
+					xAxes: [{
+						type: 'time',
+						time: {
+							unit: 'hour',
+							stepSize: 0.5,
+							tooltipFormat: 'HH:mm DD-MM-YYYY',
+						},
+						ticks: {
+							autoSkip: true,
+							maxTicksLimit: 10,
+							major: {
+								enabled: true,
+								fontStyle: 'bold',
+								fontSize: 14
+							},
+						},
+						scaleLabel: {
+							display: true,
+							labelString: 'Time of alarm'
+						},
+						gridLines: {
+							drawOnChartArea: false
+						}
+					}],
+					yAxes: [{
+						scaleLabel: {
+							display: true,
+							labelString: 'Temperature (°C)'
+						},
+						ticks: {
+							autoSkip: true,
+							maxTicksLimit: 6
+						}
+					}]
+				}
+			}
+		});
+		getDatasets('3hr','NOW').then( function (data) {
+			drawChart(chart, data);
+		})
+
+		var activeClass = 'text-gray-800 bg-white ring-1 ring-gray-300';
+		$('#dateSelectors').children().first().addClass(activeClass);
+		$('#dateSelectors').children().on('click', function() {
+			$('#dateSelectors').children().removeClass(activeClass);
+			$(this).addClass(activeClass);
+			var dataid = $(this).attr('data-id');
+			if (dataid != 'ChartCal') {
+				getDatasets(dataid,'NOW').then( function (data) {
+					drawChart(chart, data);
+				})
+
+				if ( !$('#ChartCalSelector').hasClass('hidden') ) {
+					$('#ChartCalSelector').addClass('hidden');
+				}
+				$('#chartFrom, #chartTo').val("");
+			} else {
+				$('#ChartCalSelector').toggleClass('hidden');
+			}
+		})
+		$('#ChartCalSelector > button').on('click', function() {
+			getDatasets($('#chartFrom').val() , $('#chartTo').val()).then( function (data) {
+				drawChart(chart, data);
+			})
+			$('#ChartCalSelector').addClass('hidden');
+		})
+		//#endregion
+
 	}
 	
 	// ! Hide loaders on load
@@ -4448,7 +5647,7 @@ $(document).ready(function () {
 		})
 	}
 
-	function updateTiltSettings(imageURL, horiz_lt0_text, horiz_mt0_text, horiz_lt0_arrow, horiz_mt0_arrow, vert_lt0_text, vert_mt0_text, vert_lt0_arrow, vert_mt0_arrow) {
+	function updateTiltSettings(deviceId, imageURL, horiz_lt0_text, horiz_mt0_text, horiz_lt0_arrow, horiz_mt0_arrow, vert_lt0_text, vert_mt0_text, vert_lt0_arrow, vert_mt0_arrow) {
 		return new Promise(function (resolve, reject) {
 			$.ajax({
 				url: './includes/sqlSingleDevice.php',
@@ -4474,6 +5673,122 @@ $(document).ready(function () {
 					if (data.status != 200) {
 						alert('Something went wrong!');
 					}
+				}
+			})
+		})
+	}
+
+	function getDashboardSettings(deviceId) {
+		return new Promise(function (resolve, reject) {
+			$.ajax({
+				url: './includes/sqlSingleDevice.php',
+				type: 'POST',
+				data: {
+					deviceId: deviceId,
+					function: 'getDashboardSettings'
+				},
+				success: function (data) {
+					data = JSON.parse(data);
+					resolve(data);
+				}
+			})
+		})
+	}
+
+	function updateMovableBoxPosition(pos_left, pos_top, channelId) {
+		return new Promise(function (resolve, reject) {
+			$.ajax({
+				url: './includes/sqlSingleDevice.php',
+				type: 'POST',
+				data: {
+					channelId: channelId,
+					pos_left: pos_left,
+					pos_top: pos_top,
+					function: 'updateMovableBoxPosition'
+				},
+				success: function (data) {
+					data = JSON.parse(data);
+					resolve(data);
+				}
+			})
+		})
+	}
+
+	function updateDashboardImage(deviceId, imageURL) {
+		return new Promise(function (resolve, reject) {
+			$.ajax({
+				url: './includes/sqlSingleDevice.php',
+				type: 'POST',
+				data: {
+					deviceId: deviceId,
+					imageURL: imageURL,
+					function: 'updateDashboardImage'
+				},
+				success: function (data) {
+					data = JSON.parse(data);
+					if (data.status != 200) {
+						alert('Something went wrong!');
+					}
+				}
+			})
+		})
+	}
+
+	function updateBWMFormulas(deviceId, formulaA, formulaB, formulaC, formulaD) {
+		return new Promise(function (resolve, reject) {
+			$.ajax({
+				url: './includes/sqlSingleDevice.php',
+				type: 'POST',
+				data: {
+					deviceId: deviceId,
+					formulaA: formulaA,
+					formulaB: formulaB,
+					formulaC: formulaC,
+					formulaD: formulaD,
+					function: 'updateBWMFormulas'
+				},
+				success: function (data) {
+					data = JSON.parse(data);
+					if (data.status != 200) {
+						alert('Something went wrong!');
+					}
+				}
+			})
+		})
+	}
+
+	function getBWMFormulas(deviceId) {
+		return new Promise(function (resolve, reject) {
+			$.ajax({
+				url: './includes/sqlSingleDevice.php',
+				type: 'POST',
+				data: {
+					deviceId: deviceId,
+					function: 'getBWMFormulas'
+				},
+				success: function (data) {
+					data = JSON.parse(data);
+					resolve(data);
+				}
+			})
+		})
+	}
+	
+	function updateBWMMovableBoxPosition(pos_left, pos_top, formula, deviceId) {
+		return new Promise(function (resolve, reject) {
+			$.ajax({
+				url: './includes/sqlSingleDevice.php',
+				type: 'POST',
+				data: {
+					deviceId: deviceId,
+					formula: formula,
+					pos_left: pos_left,
+					pos_top: pos_top,
+					function: 'updateBWMMovableBoxPosition'
+				},
+				success: function (data) {
+					data = JSON.parse(data);
+					resolve(data);
 				}
 			})
 		})

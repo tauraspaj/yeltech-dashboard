@@ -86,6 +86,74 @@ if ($function == 'checkIfExists') {
         mysqli_stmt_bind_param($stmt, "s", $newDeviceId);
         mysqli_stmt_execute($stmt);
     }
+
+    // 1. Check if BWM RADAR
+    // 2. If it is, initialise dashboardImage table
+    // 3. if it is, get its analog channels and initialise dashboardMovableBox table
+    $sql = "
+    SELECT productId FROM products WHERE productName='BWM RADAR' LIMIT 1;
+    ";
+    $result = mysqli_query($conn, $sql);
+    if ( mysqli_num_rows($result) > 0 ) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $bwmRadarProductId = $row['productId'];
+        }
+    }
+    if ($productTypeId == $bwmRadarProductId) {
+        // Initialise dashboardImageTable
+        $sql = "INSERT INTO dashboardImage (deviceId) VALUES (?);";
+        $stmt = mysqli_stmt_init($conn);
+        mysqli_stmt_prepare($stmt, $sql);
+        mysqli_stmt_bind_param($stmt, "s", $newDeviceId);
+        mysqli_stmt_execute($stmt);
+
+        // Initialise dashboardMovableBox
+        $chanArr = array();
+        $sql = "
+        SELECT channelId FROM channels WHERE deviceId=$newDeviceId
+        ";
+        $result = mysqli_query($conn, $sql);
+        if ( mysqli_num_rows($result) > 0 ) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                $chanArr[] = $row['channelId'];
+            }
+        }
+        // Insert analog channels
+        for($i = 0; $i < count($chanArr); $i++) {
+            $sql = "INSERT INTO dashboardMovableBox (deviceId, channelId) VALUES (?, ?);";
+            $stmt = mysqli_stmt_init($conn);
+            mysqli_stmt_prepare($stmt, $sql);
+            mysqli_stmt_bind_param($stmt, "ss", $newDeviceId, $chanArr[$i]);
+            mysqli_stmt_execute($stmt);
+        }
+    }
+
+    // Initialise 4 formulas for BSC BWM
+    $sql = "
+    SELECT productId FROM products WHERE productName='BWM' LIMIT 1;
+    ";
+    $result = mysqli_query($conn, $sql);
+    if ( mysqli_num_rows($result) > 0 ) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $bwmProductId = $row['productId'];
+        }
+    }
+    
+    if ($productTypeId == $bwmProductId) {
+        // Initialise dashboardImageTable
+        $sql = "INSERT INTO dashboardImage (deviceId) VALUES (?);";
+        $stmt = mysqli_stmt_init($conn);
+        mysqli_stmt_prepare($stmt, $sql);
+        mysqli_stmt_bind_param($stmt, "s", $newDeviceId);
+        mysqli_stmt_execute($stmt);
+
+        // Initialise 4 formulas
+        $sql = "INSERT INTO bwmFormulas (deviceId) VALUES (?);";
+        $stmt = mysqli_stmt_init($conn);
+        mysqli_stmt_prepare($stmt, $sql);
+        mysqli_stmt_bind_param($stmt, "s", $newDeviceId);
+        mysqli_stmt_execute($stmt);
+    }
 }
 exit();
 ?>
