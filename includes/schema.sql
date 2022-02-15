@@ -287,3 +287,42 @@ CREATE TABLE tiltDashboardSettings (
     PRIMARY KEY (tiltDashboardSetting),
     FOREIGN KEY (deviceId) REFERENCES devices(deviceId) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+CREATE TABLE dashboardImage (
+	dashboardImageId INT UNSIGNED AUTO_INCREMENT NOT NULL,
+    deviceId INT UNSIGNED NOT NULL,
+    imageURL VARCHAR(256),
+    PRIMARY KEY (dashboardImageId),
+    FOREIGN KEY (deviceId) REFERENCES devices(deviceId) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE dashboardMovableBox (
+	dashboardMovableBoxId INT UNSIGNED AUTO_INCREMENT NOT NULL,
+    channelId INT UNSIGNED NOT NULL,
+    deviceId INT UNSIGNED NOT NULL,
+    offset_top INT,
+    offset_left INT,
+    PRIMARY KEY (dashboardMovableBoxId),
+    FOREIGN KEY (channelId) REFERENCES channels(channelId) ON DELETE CASCADE,
+    FOREIGN KEY (deviceId) REFERENCES devices(deviceId) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE bwmFormulas (
+	bwmFormulaId INT UNSIGNED AUTO_INCREMENT NOT NULL,
+    deviceId INT UNSIGNED NOT NULL,
+    formulaA VARCHAR(64),
+    formulaA_offset_top INT,
+    formulaA_offset_left INT,
+	formulaB VARCHAR(64),
+    formulaB_offset_top INT,
+    formulaB_offset_left INT,
+	formulaC VARCHAR(64),
+    formulaC_offset_top INT,
+    formulaC_offset_left INT,
+	formulaD VARCHAR(64),
+    formulaD_offset_top INT,
+    formulaD_offset_left INT,
+    PRIMARY KEY (bwmFormulaId),
+    FOREIGN KEY (deviceId) REFERENCES devices(deviceId) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
