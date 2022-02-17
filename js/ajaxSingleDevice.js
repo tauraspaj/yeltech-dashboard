@@ -3903,7 +3903,11 @@ $(document).ready(function () {
 
 		// Process passed values of A,B,C,D
 		function displayFormulas(A, B, C, D) {
+			// Clear right panel
 			$('#rightPanel').html('');
+			// If any movable boxes exist on the image, delete them
+			$('#movableBoxA, #movableBoxB, #movableBoxC, #movableBoxD').remove();
+
 			// For each formula, we need to add a movable box over the dashboard image and a reading display in the right panel
 			// ! Right panel
 			//#region 
