@@ -3923,7 +3923,7 @@ $(document).ready(function () {
 							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
 						</div>
 						<div class="card-title-1">
-							FORMULA A
+							DISTANCE A
 						</div>
 					</div>
 					<div id="latestMeasurements_body" class="card-body-1 flex-col py-4">
@@ -3950,7 +3950,7 @@ $(document).ready(function () {
 							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
 						</div>
 						<div class="card-title-1">
-							FORMULA B
+							DISTANCE B
 						</div>
 					</div>
 					<div id="latestMeasurements_body" class="card-body-1 flex-col py-4">
@@ -3977,7 +3977,7 @@ $(document).ready(function () {
 							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
 						</div>
 						<div class="card-title-1">
-							FORMULA C
+							DISTANCE C
 						</div>
 					</div>
 					<div id="latestMeasurements_body" class="card-body-1 flex-col py-4">
@@ -4004,7 +4004,7 @@ $(document).ready(function () {
 							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
 						</div>
 						<div class="card-title-1">
-							FORMULA D
+							DISTANCE D
 						</div>
 					</div>
 					<div id="latestMeasurements_body" class="card-body-1 flex-col py-4">
@@ -4350,22 +4350,22 @@ $(document).ready(function () {
 
 					formulaAObj = {
 						'channelId': channelId,
-						'channelName': 'FORMULA A',
+						'channelName': 'DISTANCE A',
 						'data': dataSet
 					}
 					formulaBObj = {
 						'channelId': channelId,
-						'channelName': 'FORMULA B',
+						'channelName': 'DISTANCE B',
 						'data': dataSet
 					}
 					formulaCObj = {
 						'channelId': channelId,
-						'channelName': 'FORMULA C',
+						'channelName': 'DISTANCE C',
 						'data': dataSet
 					}
 					formulaDObj = {
 						'channelId': channelId,
-						'channelName': 'FORMULA D',
+						'channelName': 'DISTANCE D',
 						'data': dataSet
 					}
 
@@ -4419,7 +4419,6 @@ $(document).ready(function () {
 					returnArr.push(formulaCObj)
 					returnArr.push(formulaDObj)
 
-					// console.log(returnArr);
 					resolve(returnArr)
 				})
 			})
