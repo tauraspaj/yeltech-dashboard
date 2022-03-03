@@ -85,7 +85,7 @@ if (isset($_SESSION["userId"])) {
 
 				<!-- Sign in button -->
 				<div class="flex items-center justify-between h-12 rounded">
-					<button type="submit" id="login_submit" title="Sign in" class="appearance-none focus:outline-none h-full flex-1 flex items-center justify-center rounded-md text-white transition duration-200 ease-in bg-yellow-500 hover:bg-yellow-600 border-0">
+					<button type="submit" id="login_submit" title="Sign in" class="appearance-none focus:outline-none h-full flex-1 flex items-center justify-center rounded-md text-white transition duration-200 ease-in bg-yellow-primary hover:bg-yellow-400 border-0">
 						Sign in
 						<svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
@@ -106,14 +106,14 @@ if (isset($_SESSION["userId"])) {
 				<!--Social media icons  -->
 				<div class="flex justify-center items-center space-x-4">
 					<a href="https://www.linkedin.com/company/yeltech-limited/" class="inline-block" title="LinkedIn"><i
-							class="fab fa-linkedin-in text-gray-400 border-gray-200 border-2 rounded p-4 text-lg transition duration-300 ease-in-out hover:text-yellow-600 hover:border-yellow-600"></i></a>
+							class="fab fa-linkedin-in text-gray-400 border-gray-200 border-2 rounded p-4 text-lg transition duration-300 ease-in-out hover:text-yellow-400 hover:border-yellow-400"></i></a>
 					<a href="https://www.facebook.com/YeltechRailwaySolutions/" class="inline-block" title="Facebook"><i
-							class="fab fa-facebook-f text-gray-400 border-gray-200 border-2 rounded p-4 text-lg transition duration-300 ease-in-out hover:text-yellow-600 hover:border-yellow-600"></i></a>
+							class="fab fa-facebook-f text-gray-400 border-gray-200 border-2 rounded p-4 text-lg transition duration-300 ease-in-out hover:text-yellow-400 hover:border-yellow-400"></i></a>
 					<a href="https://twitter.com/yeltechltd?lang=en" class="inline-block" title="Twitter"><i
-							class="fab fa-twitter text-gray-400 border-gray-200 border-2 rounded p-4 text-lg transition duration-300 ease-in-out hover:text-yellow-600 hover:border-yellow-600"></i></a>
+							class="fab fa-twitter text-gray-400 border-gray-200 border-2 rounded p-4 text-lg transition duration-300 ease-in-out hover:text-yellow-400 hover:border-yellow-400"></i></a>
 					<a href="https://www.youtube.com/channel/UCRTmvfu0R_qiRwGIHNEMknQ" class="inline-block"
 						title="YouTube"><i
-							class="fab fa-youtube text-gray-400 border-gray-200 border-2 rounded p-4 text-lg transition duration-300 ease-in-out hover:text-yellow-600 hover:border-yellow-600"></i></a>
+							class="fab fa-youtube text-gray-400 border-gray-200 border-2 rounded p-4 text-lg transition duration-300 ease-in-out hover:text-yellow-400 hover:border-yellow-400"></i></a>
 				</div>
 			</div>
 			<!-- End of social media section -->

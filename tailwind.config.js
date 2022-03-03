@@ -17,6 +17,7 @@ module.exports = {
   		colors: {
   			bluegray: colors.blueGray,
   			lightblue: colors.lightBlue,
+        'yellow-primary': '#fde047'
   		}
     }
   },
