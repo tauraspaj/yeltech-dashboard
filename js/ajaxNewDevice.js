@@ -375,6 +375,7 @@ $(document).ready(function () {
             var deviceType = $('#deviceType').find(':selected').attr('data-id');
             var deviceName = $.trim($('#deviceName').val().toUpperCase());
             var devicePhone = $('#devicePhone').val();
+            var deviceMACId = $('#deviceMACId').val();
             var groupId = $('#groupId').find(':selected').attr('data-id');
             var submitChannels = JSON.stringify(submitArr);
     
@@ -384,6 +385,7 @@ $(document).ready(function () {
                 deviceName: deviceName,
             	devicePhone: devicePhone,
             	groupId: groupId,
+            	deviceMACId: deviceMACId,
                 submitChannels: submitChannels,
 
                 nextCalibrationDate: nextCalibrationDate,
@@ -398,8 +400,8 @@ $(document).ready(function () {
                 } else {
                     alert(data);
                     $('#devicePhone').val('');
+                    $('#deviceMACId').val('');
                 }
-
             });
         }
     })
