@@ -15,9 +15,9 @@ require_once './../messages/notifications.php';
 
 $processedIdsArray = [];
 $sql = "
-SELECT losantReadingsBuffer.losantReadingsBufferId, losantReadingsBuffer.measurement, losantReadingsBuffer.measurementTime, losantReadingsBuffer.macId, deviceMacId.deviceId, channels.channelName, channels.channelId, units.unitName
+SELECT losantReadingsBuffer.losantReadingsBufferId, losantReadingsBuffer.measurement, losantReadingsBuffer.measurementTime, losantReadingsBuffer.macId, deviceMACId.deviceId, channels.channelName, channels.channelId, units.unitName
 FROM losantReadingsBuffer
-LEFT JOIN deviceMacId ON losantReadingsBuffer.macId = deviceMacId.deviceMACId
+LEFT JOIN deviceMACId ON losantReadingsBuffer.macId = deviceMACId.deviceMACId
 LEFT JOIN channels ON UPPER(losantReadingsBuffer.channelName) = UPPER(channels.channelName) AND channels.deviceId = deviceMACId.deviceId
 LEFT JOIN units ON channels.unitId = units.unitId
 ";
