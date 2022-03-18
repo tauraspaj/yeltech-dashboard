@@ -37,6 +37,16 @@ if ($function == 'checkIfExists') {
         $newDeviceId = mysqli_insert_id($conn);
     }
 
+    // ! If device Mac ID is not empty, then this is a LOSANT device
+    $deviceMACId = $_POST['deviceMACId'];
+    if (!empty($deviceMACId)) {
+        $sql = "INSERT INTO deviceMACId (deviceMACId, deviceId) VALUES (?, ?);";
+        $stmt = mysqli_stmt_init($conn);
+        mysqli_stmt_prepare($stmt, $sql);
+        mysqli_stmt_bind_param($stmt, "ss", $deviceMACId, $newDeviceId);
+        mysqli_stmt_execute($stmt);
+    }
+
     // Only create subscriptions and channels if device has been successfully created
     if ($newDeviceId != '') {
         $sql = "INSERT INTO subscriptions (deviceId, subStart, subFinish) VALUES (?, ?, ?);";
