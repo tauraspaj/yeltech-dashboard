@@ -326,3 +326,27 @@ CREATE TABLE bwmFormulas (
     FOREIGN KEY (deviceId) REFERENCES devices(deviceId) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+CREATE TABLE deviceMACId (
+	_id INT UNSIGNED AUTO_INCREMENT NOT NULL,
+    deviceMACId VARCHAR(256),
+    deviceId INT UNSIGNED NOT NULL,
+    PRIMARY KEY (_id),
+    FOREIGN KEY (deviceId) REFERENCES devices(deviceId) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE losantMessageHistory (
+	losantMessageHistoryId INT UNSIGNED AUTO_INCREMENT NOT NULL,
+    deviceId INT UNSIGNED NOT NULL,
+    losantMessage VARCHAR(256),
+    PRIMARY KEY (losantMessageHistoryId),
+    FOREIGN KEY (deviceId) REFERENCES devices(deviceId) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE losantReadingsBuffer (
+	losantReadingsBufferId INT UNSIGNED AUTO_INCREMENT NOT NULL,
+    channelName VARCHAR(64),
+    measurement VARCHAR(64),
+    measurementTime VARCHAR(64),
+    macId VARCHAR(64),
+    PRIMARY KEY (losantReadingsBufferId)
+) ENGINE=InnoDB;
