@@ -13,6 +13,7 @@ require_once './../includes/dbh.inc.php';
 // Include email sending
 require_once './../messages/notifications.php';
 
+$processedIdsArray = [];
 $sql = "
 SELECT losantReadingsBuffer.losantReadingsBufferId, losantReadingsBuffer.measurement, losantReadingsBuffer.measurementTime, losantReadingsBuffer.macId, deviceMacId.deviceId, channels.channelName, channels.channelId, units.unitName
 FROM losantReadingsBuffer
@@ -23,6 +24,9 @@ LEFT JOIN units ON channels.unitId = units.unitId
 $result = mysqli_query($conn, $sql);
 if ( mysqli_num_rows($result) > 0 ) {
     while ($row = mysqli_fetch_assoc($result)) {
+        $losantReadingsBufferId = $row['losantReadingsBufferId'];
+        $processedIdsArray[] = $losantReadingsBufferId;
+
         $deviceId = $row['deviceId'];
         $channelId = $row['channelId'];
         $measurement = $row['measurement'];
@@ -40,14 +44,18 @@ if ( mysqli_num_rows($result) > 0 ) {
 
 
             // Insert into measurements
-            // addToMeasurements($channelId, $deviceId, $measurement, $measurementTime, $conn);
+            addToMeasurements($channelId, $deviceId, $measurement, $measurementTime, $conn);
         }
     }
 }
 
 
 // Clear table once all readings have been processed
-
+$idsList = implode(', ', $processedIdsArray);
+$sqlDelete = "
+DELETE FROM losantReadingsBuffer WHERE losantReadingsBufferId IN ($idsList)
+";
+mysqli_query($conn, $sqlDelete);
 
 
 function setDeviceStatus($deviceId, $state, $conn) {
