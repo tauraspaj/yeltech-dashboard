@@ -159,6 +159,17 @@ include_once('header.php');
 							</div>
 							<!-- End of row -->
 
+							<p class="form-field-title text-center mt-4 border-b mx-4">Losant Device?</p>
+
+							<!-- Row -->
+							<div class="flex flex-col lg:flex-row flex-auto">
+								<div class="flex flex-col flex-1 mx-4 mt-2">
+									<p class="form-field-title">Device MAC Id</p>
+									<input type="text" id="deviceMACId" placeholder="Device MAC ID" spellcheck="false" autocomplete="none">
+								</div>
+							</div>
+							<!-- End of row -->
+
 							<!-- Row -->
 							<div class="flex flex-col lg:flex-row lg:space-x-16">
 								<!-- Calibration -->
