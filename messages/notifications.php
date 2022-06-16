@@ -3,6 +3,9 @@
 require './../mailer/mailer.php';
 // SMS sending functionality
 include_once './../plivo/send.php';
+// SMS sending functionality to Norway numbers
+include_once './../plivo/textmagic_send.php';
+
 
 function sendTriggerNotifications($conn, $triggerId, $reading) {
 	$sql = "
@@ -127,12 +130,20 @@ function sendTriggerNotifications($conn, $triggerId, $reading) {
 		$smsCounter = 0;
 		foreach ($smsRecipients as $smsRecipient) {
 			if ($smsRecipient['phoneNumber'] != null ) {
-				// FROM IS OUR PLIVO NUMBER
-				$from = '+447862079649';
 				// TO IS USER PHONE NUMBER
 				$to = $smsRecipient['phoneNumber'];
 				$textBody = "$name1 $name2 - $alarmDescription ALARM, $channelName: $reading $smsLocation";
-				sendMessage($from, $to, $textBody);
+
+
+				// If the first 3 symbols of the recipient number is '+47', that means we must Norwegian service through TextMagic. Else use Plivo.
+				if ( substr($to, 0, 3) == '+47' ) {
+					sendWithTextMagic($to, $textBody);
+				} else {
+					// FROM IS OUR PLIVO NUMBER
+					$from = '+447862079649';
+					sendMessage($from, $to, $textBody);
+				}
+
 				$smsCounter += 1;
 			}
 		}
