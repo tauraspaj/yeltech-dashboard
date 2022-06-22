@@ -356,3 +356,11 @@ CREATE TABLE ftpTracker (
     lastKeyNum INT NOT NULL DEFAULT 0
 );
 INSERT INTO ftpTracker(lastKeyNum) VALUES (0);
+
+CREATE TABLE pwdReset (
+    pwdResetId INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    pwdResetEmail VARCHAR(128) NOT NULL,
+    selector VARCHAR(64) NOT NULL,
+    token VARCHAR(256) NOT NULL,
+    expires DATETIME NOT NULL
+);

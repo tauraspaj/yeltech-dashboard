@@ -4,17 +4,8 @@ $(document).ready(function () {
         $(this).prev().toggleClass('text-lightblue-500 scale-125');
     })
 
-    $('#forgotPasswordDiv').hide();
-    $('#forgotPassword').on('click', function() {
-        if ($('#forgotPasswordDiv').is(':visible')) {
-            $('#forgotPasswordDiv').slideUp('fast');
-        } else {
-            $('#forgotPasswordDiv').slideDown('fast');
-        }
-    })
-
-    // Submit form
-    $('form').on('submit', function (e) {
+    // Login form
+    $('#login-form').on('submit', function (e) {
         e.preventDefault();
 
         var email = $('#login_email').val();
@@ -46,6 +37,64 @@ $(document).ready(function () {
                         if (response.fields != null) {
                             $('#'+response.fields).parent().addClass('border-red-500');
                         }
+                    }
+                }
+            })
+        }
+    })
+
+    // Rest pwd form
+    $('#resetpwd-form').on('submit', function (e) {
+        e.preventDefault();
+        
+        var email = $.trim($('#resetpwd_email').val());
+        
+        if (email != '') {
+            $.ajax({
+                url: './includes/reset-pwd.php',
+                type: 'POST',
+                data: {
+                    email: email,
+                    function: 'request_passwordReset'
+                },
+                success: function (data) {
+                    response = JSON.parse(data);
+                    if (response.status == 200) {alert (response.message)}
+                    if (response.status == 404) {alert (response.message)}
+                }
+            })
+        }
+    })
+
+    // Change pwd form
+    $('#changepwd-form').on('submit', function (e) {
+        e.preventDefault();
+        
+        var selector = $.trim($('#selector').val());
+        var validator = $.trim($('#validator').val());
+        var new_password = $.trim($('#reset_newpwd').val());
+        var confirm_password = $.trim($('#reset_confirm_newpwd').val());
+
+        // alert(selector)
+        
+        if (new_password != '' || confirm_password != '') {
+            $.ajax({
+                url: './includes/reset-pwd.php',
+                type: 'POST',
+                data: {
+                    selector: selector,
+                    validator: validator,
+                    new_password: new_password,
+                    confirm_password: confirm_password,
+                    function: 'new_password'
+                },
+                success: function (data) {
+                    response = JSON.parse(data);
+                    if (response.status == 200) {
+                        alert(response.message)
+                        window.location.replace('https://yelcloud.com/');
+                    } else {
+                        alert(response.message)
                     }
                 }
             })

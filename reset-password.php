@@ -49,46 +49,34 @@ if (isset($_SESSION["userId"])) {
 		<div class="max-w-sm w-full space-y-12 px-6 md:px-0">
 			<!-- Logo -->
 			<div>
-				<a href="index.php"><img src="img/yeltech-dark.png" class="h-18 md:h-24 w-auto mx-auto" alt="Yeltech logo" title="Yeltech logo"></a>
+                <a href="index.php"><img src="img/yeltech-dark.png" class="h-18 md:h-24 w-auto mx-auto" alt="Yeltech logo" title="Yeltech logo"></a>
 			</div>
 
 			<!-- Form -->
-			<form id="login-form" method="post" class="space-y-4">
-				<p id="errorMessage" class="hidden text-center text-sm italic text-red-500">Password is incorrect</p>
+			<form id="resetpwd-form" method="post" class="space-y-4 pt-8">
+                <p class="text-sm text-center text-gray-600 font-medium">Enter your email to reset your password</p>
 				<!-- Email -->
 				<div class="flex items-center h-12 rounded bg-white border ease-in duration-200">
 					<div class="h-12 w-12 flex items-center justify-center flex-none text-gray-600 ease-in-out transform duration-200">
 						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path></svg>
 					</div>
-					<input type="email" id="login_email" name="login_email" placeholder="Email Address" required spellcheck="false" autocomplete="on" class="w-full h-full border-none bg-transparent focus:bg-transparent focus:ring-0 px-0 placeholder-gray-300 text-base font-normal">
-				</div>
-
-				<!-- Password -->
-				<div class="flex items-center h-12 rounded bg-white border ease-in duration-200">
-					<div class="h-12 w-12 flex items-center justify-center flex-none text-gray-600 ease-in-out transform duration-200">
-						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-					</div>
-					<input type="password" id="login_pwd" name="login_pwd" placeholder="Password"  class="-full h-full border-none bg-transparent focus:bg-transparent focus:ring-0 px-0 placeholder-gray-300 text-base font-normal">
-				</div>
-
-				<!-- Remember me -->
-				<div class="flex items-center justify-between">
-					<div class="flex items-center">
-						<input id="remember_me" type="checkbox" class="h-4 w-4 border-gray-300 cursor-pointer">
-						<label for="remember_me" class="text-md text-gray-700 tracking-wide cursor-pointer pl-2 select-none">Remember me</label>
-					</div>
-					<div class="relative">
-						<a href="./reset-password.php" id="forgotPassword" class="text-sm italic text-gray-400 underline cursor-pointer transition hover:text-gray-700" title="Click to reset password">Forgot password?</a>
-					</div>
+					<input type="email" id="resetpwd_email" name="resetpwd_email" placeholder="Email Address" required spellcheck="false" autocomplete="on" class="w-full h-full border-none bg-transparent focus:bg-transparent focus:ring-0 px-0 placeholder-gray-300 text-base font-normal">
 				</div>
 
 				<!-- Sign in button -->
 				<div class="flex items-center justify-between h-12 rounded">
-					<button type="submit" id="login_submit" title="Sign in" class="appearance-none focus:outline-none h-full flex-1 flex items-center justify-center rounded-md text-white transition duration-200 ease-in bg-yellow-primary hover:bg-yellow-400 border-0">
-						Sign in
+					<button type="submit" id="resetpwd_submit" title="Sign in" class="appearance-none focus:outline-none h-full flex-1 flex items-center justify-center rounded-md text-white transition duration-200 ease-in bg-yellow-primary hover:bg-yellow-400 border-0">
+						Receive new password
 						<svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
 						</button>
+				</div>
+
+                <!-- Remember me -->
+				<div class="flex items-center justify-end">
+					<div class="relative">
+						<a href="./index.php" class="text-sm italic text-gray-400 underline cursor-pointer transition hover:text-gray-700" title="Go to login page">Go back to Login</a>
+					</div>
 				</div>
 			</form>
 			<!-- End of form -->
