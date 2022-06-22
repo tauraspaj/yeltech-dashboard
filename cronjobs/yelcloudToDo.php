@@ -95,7 +95,6 @@ if ( mysqli_num_rows($result) > 0 ) {
 
 // Send this to-do email to yeltech
 $emailRecipients[] = 'info@yeltech.com';
-$emailRecipients[] = 'tauras@yeltech.co.uk';
 
 // Send email if email check is true
 if ($sendEmailCheck == true) {

@@ -73,7 +73,6 @@ if ( mysqli_num_rows($result) > 0 ) {
 
         // Recipients are all group admins for each group
         $thisEmailRecipients = getGroupAdmins($thisGroupId, $conn);
-        $thisEmailRecipients[] = 'tauras@yeltech.co.uk';
         $thisEmailRecipients[] = 'info@yeltech.com';
 
         // Send email if email check is true
