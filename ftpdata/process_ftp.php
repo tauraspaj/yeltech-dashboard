@@ -22,8 +22,6 @@ $updatedLastKeyNum = 0;
 for ($i = count($data)-1; $i > 0; $i--) {
     // Ensure current data being processed is not duplicate
     if ($data[$i]['KeyNum'] > $lastKeyNum) {
-        print_r( $data[$i]);
-
         $thisKeyNum = $data[$i]['KeyNum'];
         $macId = $data[$i]['PhoneNumber'];
         $channelName = $data[$i]['ChannelName'];
