@@ -350,3 +350,9 @@ CREATE TABLE losantReadingsBuffer (
     macId VARCHAR(64),
     PRIMARY KEY (losantReadingsBufferId)
 ) ENGINE=InnoDB;
+
+CREATE TABLE ftpTracker (
+    trackerId INT PRIMARY KEY DEFAULT 0,
+    lastKeyNum INT NOT NULL DEFAULT 0
+);
+INSERT INTO ftpTracker(lastKeyNum) VALUES (0);
