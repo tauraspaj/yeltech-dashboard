@@ -357,6 +357,12 @@ CREATE TABLE ftpTracker (
 );
 INSERT INTO ftpTracker(lastKeyNum) VALUES (0);
 
+CREATE TABLE mqttTracker (
+    trackerId INT PRIMARY KEY DEFAULT 0,
+    lastKeyNum INT NOT NULL DEFAULT 0
+);
+INSERT INTO mqttTracker(lastKeyNum) VALUES (0);
+
 CREATE TABLE pwdReset (
     pwdResetId INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     pwdResetEmail VARCHAR(128) NOT NULL,
